@@ -5,7 +5,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.evgeniy_mh.simpleaescipher.MainController">
    <children>
       <VBox layoutX="5.0" layoutY="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
          <children>
@@ -16,12 +16,12 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Label>
-                  <TextField editable="false" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="420.0" promptText="Путь" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
+                  <TextField fx:id="originalFilePath" editable="false" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="420.0" promptText="Путь" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
                      <HBox.margin>
                         <Insets right="5.0" />
                      </HBox.margin>
                   </TextField>
-                  <Button layoutX="273.0" layoutY="5.0" minWidth="-Infinity" mnemonicParsing="false" text="Открыть" AnchorPane.rightAnchor="5.0" HBox.hgrow="NEVER" />
+                  <Button layoutX="273.0" layoutY="5.0" minWidth="-Infinity" mnemonicParsing="false" onAction="#openFile" text="Открыть" AnchorPane.rightAnchor="5.0" HBox.hgrow="NEVER" />
                   <Button minWidth="-Infinity" mnemonicParsing="false" text="Сохранить">
                      <HBox.margin>
                         <Insets left="5.0" />
