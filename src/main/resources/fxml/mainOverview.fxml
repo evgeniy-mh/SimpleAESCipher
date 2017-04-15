@@ -21,7 +21,7 @@
                         <Insets />
                      </HBox.margin>
                   </TextField>
-                  <Button fx:id="openOriginalFileButton" layoutX="273.0" layoutY="5.0" minWidth="-Infinity" mnemonicParsing="false" text="Открыть" AnchorPane.rightAnchor="5.0" HBox.hgrow="NEVER">
+                  <Button fx:id="openOriginalFile" layoutX="273.0" layoutY="5.0" minWidth="-Infinity" mnemonicParsing="false" text="Открыть" AnchorPane.rightAnchor="5.0" HBox.hgrow="NEVER">
                      <HBox.margin>
                         <Insets left="5.0" />
                      </HBox.margin></Button>
@@ -34,17 +34,17 @@
             </TextArea>
             <HBox>
                <children>
-                  <Button minWidth="-Infinity" mnemonicParsing="false" text="Создать">
+                  <Button fx:id="createOriginalFile" minWidth="-Infinity" mnemonicParsing="false" text="Создать">
                      <HBox.margin>
                         <Insets right="5.0" />
                      </HBox.margin>
                   </Button>
-                  <Button minWidth="-Infinity" mnemonicParsing="false" text="Сохранить">
+                  <Button fx:id="saveOriginalFile" minWidth="-Infinity" mnemonicParsing="false" text="Сохранить">
                      <HBox.margin>
                         <Insets right="5.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="saveAsOriginalFileButton" minWidth="-Infinity" mnemonicParsing="false" text="Сохранить как" />
+                  <Button fx:id="saveAsOriginalFile" minWidth="-Infinity" mnemonicParsing="false" text="Сохранить как" />
                </children>
                <VBox.margin>
                   <Insets top="5.0" />
@@ -66,11 +66,6 @@
                      </HBox.margin>
                   </TextField>
                   <Button layoutX="273.0" layoutY="5.0" minWidth="-Infinity" mnemonicParsing="false" text="Открыть" AnchorPane.rightAnchor="5.0" HBox.hgrow="NEVER" />
-                  <Button minWidth="-Infinity" mnemonicParsing="false" text="Сохранить">
-                     <HBox.margin>
-                        <Insets left="5.0" />
-                     </HBox.margin>
-                  </Button>
                </children>
                <padding>
                   <Insets top="10.0" />
@@ -81,6 +76,24 @@
                   <Insets top="5.0" />
                </VBox.margin>
             </TextArea>
+            <HBox>
+               <children>
+                  <Button minWidth="-Infinity" mnemonicParsing="false" text="Создать">
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button minWidth="-Infinity" mnemonicParsing="false" text="Сохранить">
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button minWidth="-Infinity" mnemonicParsing="false" text="Сохранить как" />
+               </children>
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </HBox>
             <HBox>
                <children>
                   <Label alignment="CENTER" contentDisplay="CENTER" layoutX="5.0" layoutY="5.0" minWidth="-Infinity" text="Ключ:" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" HBox.hgrow="NEVER">

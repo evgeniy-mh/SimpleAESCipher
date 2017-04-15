@@ -21,17 +21,20 @@ public class MainController {
     private FileChooser fileChooser = new FileChooser();
     private Desktop desktop = Desktop.getDesktop();
     private MainApp mainApp;
-    
-    private File originalFile;
 
+    private File originalFile;
     @FXML
     TextField originalFilePath;
     @FXML
     TextArea originalFileTextArea;
     @FXML
-    Button openOriginalFileButton;
+    Button createOriginalFile;
     @FXML
-    Button saveAsOriginalFileButton;
+    Button openOriginalFile;
+    @FXML
+    Button saveOriginalFile;
+    @FXML
+    Button saveAsOriginalFile;
 
     public MainController() {
     }
@@ -40,37 +43,34 @@ public class MainController {
     public void initialize() {
         fileChooser = new FileChooser();
 
-        openOriginalFileButton.setOnAction((event) -> {
-            openFile(originalFilePath, originalFileTextArea);
+        createOriginalFile.setOnAction((event) -> {
+            File f=createNewFile(originalFilePath, originalFileTextArea);
+            if(f!=null) originalFile=f;
         });
         
-        saveAsOriginalFileButton.setOnAction((event)->{
+        openOriginalFile.setOnAction((event) -> {
+            File f= openFile(originalFilePath, originalFileTextArea);
+            if(f!=null) originalFile=f;
+        });
+        
+        saveOriginalFile.setOnAction((event)->{
+            saveFile(originalFilePath, originalFileTextArea, originalFile);
+        });
+
+        saveAsOriginalFile.setOnAction((event) -> {
             saveAsfile(originalFilePath, originalFileTextArea);
         });
 
     }
-
+    
     @FXML
-    private void openFile(TextField pathTextField, TextArea contentTextArea) {
-        File file = fileChooser.showOpenDialog(stage);
-        if (file != null) {           
-
-            updateFileInfo(pathTextField, contentTextArea, file);
-            originalFile=file;
-        }
-    }
-
-    public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
-    }
-
-    private void saveAsfile(TextField pathTextField, TextArea contentTextArea) {
-        File file=fileChooser.showSaveDialog(stage);
-        if(file!=null){
+    private File createNewFile(TextField pathTextField, TextArea contentTextArea){
+        File file = fileChooser.showSaveDialog(stage);
+        if(file!=null){   
             try {
                 FileWriter fw;
                 fw = new FileWriter(file);
-                fw.write(contentTextArea.getText());
+                fw.write("");
                 fw.close();
                 
                 updateFileInfo(pathTextField, contentTextArea, file);
@@ -78,16 +78,63 @@ public class MainController {
                 Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        return file;
     }
-    
-    private void updateFileInfo(TextField pathTextField, TextArea contentTextArea,File file){
-        try {
-                pathTextField.setText(file.getCanonicalPath());
-                String content = new String(Files.readAllBytes(file.toPath()));
-                contentTextArea.setText(content);
 
+    @FXML
+    private File openFile(TextField pathTextField, TextArea contentTextArea) {
+        File file = fileChooser.showOpenDialog(stage);
+        if (file != null) {
+            updateFileInfo(pathTextField, contentTextArea, file);
+        }
+        return file;
+    }
+
+    public void setMainApp(MainApp mainApp) {
+        this.mainApp = mainApp;
+    }
+
+    private void saveFile(TextField pathTextField, TextArea contentTextArea, File textFile) {
+        if (textFile != null) {
+            try {
+                FileWriter fw;
+                fw = new FileWriter(textFile);
+                fw.write(contentTextArea.getText());
+                fw.close();
+                
+                updateFileInfo(pathTextField, contentTextArea, textFile);
             } catch (IOException ex) {
                 Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
+    }
+
+    private void saveAsfile(TextField pathTextField, TextArea contentTextArea) {
+        File file = fileChooser.showSaveDialog(stage);
+        if (file != null) {
+            try {
+                FileWriter fw;
+                fw = new FileWriter(file);
+                fw.write(contentTextArea.getText());
+                fw.close();
+
+                updateFileInfo(pathTextField, contentTextArea, file);
+            } catch (IOException ex) {
+                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void updateFileInfo(TextField pathTextField, TextArea contentTextArea, File file) {
+        //System.out.println(file);
+        
+        try {
+            pathTextField.setText(file.getCanonicalPath());
+            String content = new String(Files.readAllBytes(file.toPath()));
+            contentTextArea.setText(content);
+
+        } catch (IOException ex) {
+            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
