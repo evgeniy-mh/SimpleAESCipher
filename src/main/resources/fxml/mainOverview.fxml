@@ -11,9 +11,9 @@
          <children>
             <HBox layoutX="5.0" layoutY="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
                <children>
-                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="5.0" layoutY="5.0" minWidth="-Infinity" text="Исходный файл:" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" HBox.hgrow="NEVER">
+                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="5.0" layoutY="5.0" minWidth="-Infinity" text="1. Исходный файл:" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" HBox.hgrow="NEVER">
                      <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        <Insets bottom="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Label>
                   <TextField fx:id="originalFilePath" editable="false" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="420.0" promptText="Путь" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
@@ -27,7 +27,7 @@
                      </HBox.margin></Button>
                </children>
             </HBox>
-            <TextArea fx:id="originalFileTextArea" layoutX="14.0" layoutY="30.0" prefHeight="100.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="35.0" VBox.vgrow="ALWAYS">
+            <TextArea fx:id="originalFileTextArea" editable="false" layoutX="14.0" layoutY="30.0" prefHeight="100.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="35.0" VBox.vgrow="ALWAYS">
                <VBox.margin>
                   <Insets top="5.0" />
                </VBox.margin>
@@ -52,9 +52,9 @@
             </HBox>
             <HBox>
                <children>
-                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="5.0" layoutY="5.0" minWidth="-Infinity" text="Файл результата" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" HBox.hgrow="NEVER">
+                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="5.0" layoutY="5.0" minWidth="-Infinity" text="2. Файл результата" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" HBox.hgrow="NEVER">
                      <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        <Insets bottom="5.0" right="5.0" top="5.0" />
                      </padding>
                      <HBox.margin>
                         <Insets />
@@ -96,7 +96,7 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </Label>
-                  <TextField layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="420.0" promptText="Введите ключ" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
+                  <TextField fx:id="keyTextField" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="420.0" promptText="Введите ключ" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
@@ -110,11 +110,11 @@
       </VBox>
       <HBox layoutX="200.0" layoutY="416.0" prefWidth="200.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
          <children>
-            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Зашифровать" HBox.hgrow="ALWAYS">
+            <Button fx:id="encryptButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Зашифровать (1-&gt;2)" HBox.hgrow="ALWAYS">
                <HBox.margin>
                   <Insets right="5.0" />
                </HBox.margin></Button>
-            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Расшифровать" HBox.hgrow="ALWAYS" />
+            <Button fx:id="decryptButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Расшифровать (2-&gt;1)" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
    </children>
