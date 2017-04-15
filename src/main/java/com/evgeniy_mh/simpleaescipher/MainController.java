@@ -35,6 +35,18 @@ public class MainController {
     Button saveOriginalFile;
     @FXML
     Button saveAsOriginalFile;
+    
+    private File resultFile;
+    @FXML
+    TextField resultFilePath;
+    @FXML
+    TextArea resultFileTextArea;
+    @FXML
+    Button createResultFile;
+    @FXML
+    Button openResultFile;
+    @FXML
+    Button saveAsResultFile;
 
     public MainController() {
     }
@@ -59,6 +71,20 @@ public class MainController {
 
         saveAsOriginalFile.setOnAction((event) -> {
             saveAsfile(originalFilePath, originalFileTextArea);
+        });
+        
+        createResultFile.setOnAction((event)->{
+            File f=createNewFile(resultFilePath, resultFileTextArea);
+            if(f!=null) resultFile=f;
+        });
+        
+        openResultFile.setOnAction((event)->{
+            File f=openFile(resultFilePath, resultFileTextArea);
+            if(f!=null) resultFile=f;
+        });
+        
+        saveAsResultFile.setOnAction((event)->{
+            saveAsfile(resultFilePath, resultFileTextArea);
         });
 
     }
