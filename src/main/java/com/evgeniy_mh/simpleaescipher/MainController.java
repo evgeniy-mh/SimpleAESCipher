@@ -86,7 +86,7 @@ public class MainController {
                 originalFileBytes = readBytesFromFile(f);
                 updateFileInfo(originalFilePath, originalFileTextArea, f);
             }
-            mAESEncryptor.debugPrintByteArray("opened file: ", originalFileBytes);
+            
         });
 
         openOriginalFile.setOnAction((event) -> {
@@ -98,7 +98,7 @@ public class MainController {
 
                 clearKey();
             }
-            mAESEncryptor.debugPrintByteArray("opened file: ", originalFileBytes);
+            
         });
 
         saveOriginalFile.setOnAction((event) -> {
@@ -110,7 +110,7 @@ public class MainController {
             saveFile(originalFile, originalFileBytes);
             updateFileInfo(originalFilePath, originalFileTextArea, originalFile);
 
-            mAESEncryptor.debugPrintByteArray("saved file: ", originalFileBytes);
+            
         });
 
         saveAsOriginalFile.setOnAction((event) -> {            
@@ -133,7 +133,7 @@ public class MainController {
                 resultFileBytes = readBytesFromFile(f);
                 updateFileInfo(resultFilePath, resultFileTextArea, f);
             }
-            mAESEncryptor.debugPrintByteArray("opened file: ", originalFileBytes);
+            
         });
 
         openResultFile.setOnAction((event) -> {
@@ -145,7 +145,7 @@ public class MainController {
 
                 clearKey();
             }
-            mAESEncryptor.debugPrintByteArray("opened file: ", resultFileBytes);
+            
         });
 
         saveAsResultFile.setOnAction((event) -> {
@@ -162,7 +162,7 @@ public class MainController {
 
                 keyBytes = readBytesFromFile(keyFile);
 
-                mAESEncryptor.debugPrintByteArray("keybytes=", keyBytes);
+                
             }
         });
 
@@ -254,8 +254,13 @@ public class MainController {
         if(file!=null)
         try {
             pathTextField.setText(file.getCanonicalPath());
-            String content = new String(Files.readAllBytes(file.toPath()));
-            contentTextArea.setText(content);
+            
+            //if(file.length()<5000){
+                String content = new String(Files.readAllBytes(file.toPath()));
+                contentTextArea.setText(content);
+            //}else{
+           //     contentTextArea.sett
+            //}
 
         } catch (IOException ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
