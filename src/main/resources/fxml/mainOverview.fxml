@@ -7,7 +7,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.evgeniy_mh.simpleaescipher.MainController">
    <children>
-      <VBox layoutX="5.0" layoutY="5.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+      <VBox layoutX="5.0" layoutY="5.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
          <children>
             <HBox layoutX="5.0" layoutY="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
                <children>
@@ -27,7 +27,7 @@
                      </HBox.margin></Button>
                </children>
             </HBox>
-            <TextArea fx:id="originalFileTextArea" editable="false" layoutX="14.0" layoutY="30.0" prefHeight="100.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="35.0" VBox.vgrow="ALWAYS">
+            <TextArea fx:id="originalFileTextArea" layoutX="14.0" layoutY="30.0" prefHeight="100.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="35.0" VBox.vgrow="ALWAYS">
                <VBox.margin>
                   <Insets top="5.0" />
                </VBox.margin>
@@ -106,6 +106,18 @@
                   <Insets top="5.0" />
                </VBox.margin>
             </HBox>
+            <AnchorPane>
+               <children>
+                  <Button fx:id="openKeyFile" mnemonicParsing="false" text="Открыть файл ключа" AnchorPane.rightAnchor="5.0" VBox.vgrow="NEVER">
+                     <VBox.margin>
+                        <Insets top="5.0" />
+                     </VBox.margin>
+                  </Button>
+               </children>
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </AnchorPane>
          </children>
       </VBox>
       <HBox layoutX="200.0" layoutY="416.0" prefWidth="200.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
