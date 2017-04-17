@@ -1,12 +1,11 @@
 package com.evgeniy_mh.simpleaescipher;
 
 import com.evgeniy_mh.simpleaescipher.AESEngine.AESEncryptor;
-import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -26,7 +25,6 @@ public class MainController {
     private Stage stage;
 
     private FileChooser fileChooser = new FileChooser();
-    private Desktop desktop = Desktop.getDesktop();
     private MainApp mainApp;
 
     private File originalFile;
@@ -70,7 +68,9 @@ public class MainController {
     Button decryptButton;
 
     AESEncryptor mAESEncryptor;
-    private boolean canChangeOriginalFile = false;
+    private boolean canChangeOriginalFile = true;
+    
+    private final int MAX_FILE_TO_OPEN_SIZE=5000;
 
     public MainController() {
     }
@@ -104,11 +104,7 @@ public class MainController {
 
         saveOriginalFile.setOnAction((event) -> {
             if (canChangeOriginalFile) {
-                try {
-                    originalFileBytes = originalFileTextArea.getText().getBytes("UTF-8");
-                } catch (UnsupportedEncodingException ex) {
-                    Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                originalFileBytes = originalFileTextArea.getText().getBytes(StandardCharsets.UTF_8);
                 saveFile(originalFile, originalFileBytes);
                 updateFileInfo(originalFilePath, originalFileTextArea, originalFile);
             }
@@ -116,17 +112,13 @@ public class MainController {
         });
 
         saveAsOriginalFile.setOnAction((event) -> {
-            byte[] bytesToSave = null;
+            byte[] bytesToSave;
             if(canChangeOriginalFile){
-            try {
                 if (!originalFileTextArea.getText().isEmpty()) {
-                    bytesToSave = originalFileTextArea.getText().getBytes("UTF-8");
+                    bytesToSave = originalFileTextArea.getText().getBytes(StandardCharsets.UTF_8);
                 } else {
-                    bytesToSave = "".getBytes("UTF-8");
+                    bytesToSave = "".getBytes(StandardCharsets.UTF_8);
                 }
-            } catch (UnsupportedEncodingException ex) {
-                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
-            }
             }else bytesToSave=originalFileBytes;
             
             
@@ -179,11 +171,9 @@ public class MainController {
                 alert.setHeaderText("Вы желаете ввести ключ самостоятельно?");
 
                 Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == ButtonType.OK) {
+                if (result.get() == ButtonType.OK) 
                     clearKey();
-                } else {
-                    // CANCEL or closed
-                }
+                
             }
         });
 
@@ -252,7 +242,7 @@ public class MainController {
             try {
                 pathTextField.setText(file.getCanonicalPath());
 
-                if (file.length() < 5000) {
+                if (file.length() < MAX_FILE_TO_OPEN_SIZE) {
                     canChangeOriginalFile = true;
                     saveOriginalFile.setDisable(false);
                     originalFileTextArea.setEditable(true);
@@ -268,7 +258,7 @@ public class MainController {
             } catch (IOException ex) {
                 Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
+        } else contentTextArea.setText("");
     }
 
     private byte[] readBytesFromFile(File file) {
@@ -347,16 +337,11 @@ public class MainController {
     private byte[] getKey() { //возвр byte[]
         //return keyTextField.getText();
         if (keyTextField.isEditable()) {
-            try {
-                return keyTextField.getText().getBytes("UTF-8");
-            } catch (UnsupportedEncodingException ex) {
-                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            return keyTextField.getText().getBytes(StandardCharsets.UTF_8);
         } else {
             keyBytes = readBytesFromFile(keyFile);
             return keyBytes;
-        }
-        return null;
+        }        
     }
 
 }
