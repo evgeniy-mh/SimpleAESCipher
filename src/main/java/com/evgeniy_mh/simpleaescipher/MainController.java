@@ -1,6 +1,7 @@
 package com.evgeniy_mh.simpleaescipher;
 
 import com.evgeniy_mh.simpleaescipher.AESEngine.AESEncryptor;
+import com.evgeniy_mh.simpleaescipher.AESEngine.Nonce;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -179,6 +180,7 @@ public class MainController {
 
         encryptButton.setOnAction((event) -> {
             encrypt();
+            Nonce.getInstance().IncNonce();
         });
 
         decryptButton.setOnAction((event) -> {

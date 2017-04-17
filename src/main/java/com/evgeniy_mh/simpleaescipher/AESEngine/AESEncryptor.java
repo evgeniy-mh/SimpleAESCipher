@@ -17,6 +17,8 @@ public class AESEncryptor {
 
     public byte[] encrypt(byte[] message, byte[] key){
         
+        System.out.println("Nonce="+getNonce());
+        
         byte[] nonce=ByteBuffer.allocate(8).putInt(getNonce()).array();
         byte[] counter=ByteBuffer.allocate(8).putInt(0).array();        
         byte[] nonceAndCounter=new byte[AES.BLOCK_SIZE]; //используется в раундах
@@ -118,7 +120,7 @@ public class AESEncryptor {
     }
     
     int getNonce(){
-        return 2147483647; //получать из файла
+        return Nonce.getInstance().getNonce();
     }
     
     static public void debugPrintByteArray(String mes,byte[] array){
