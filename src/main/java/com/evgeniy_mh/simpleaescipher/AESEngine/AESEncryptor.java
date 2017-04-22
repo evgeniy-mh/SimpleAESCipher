@@ -15,7 +15,7 @@ public class AESEncryptor {
         mAES=new AES();
     }
 
-    public byte[] encrypt(byte[] message, byte[] key){
+    /*public byte[] encrypt(byte[] message, byte[] key){
         
         System.out.println("Nonce="+getNonce());
         
@@ -60,7 +60,7 @@ public class AESEncryptor {
         res[res.length-1]=(byte)n;
         System.arraycopy(nonceAndCounterInfo, 0, res, 0, 8); //дбавление 8 байт которые в начало сообщения которые несут инфу о nonce и counter
         return res;
-    }
+    }*/
     
     public byte[] decrypt(byte[] message, byte[] key){
         int nToDeleteBytes=message[message.length-1];
