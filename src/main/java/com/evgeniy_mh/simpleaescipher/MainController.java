@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Optional;
@@ -80,7 +81,12 @@ public class MainController {
     public void initialize() {
         mAESEncryptor = new AESEncryptor();
         fileChooser = new FileChooser();
-
+        try {
+            fileChooser.setInitialDirectory(new File(MainApp.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParentFile());
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         createOriginalFile.setOnAction((event) -> {
             File f = createNewFile("Сохраните новый исходный файл");
             if (f != null) {
@@ -330,14 +336,12 @@ public class MainController {
 
     private void clearKey() {
         keyTextField.clear();
-        //keyTextField.setDisable(false);
         keyTextField.setEditable(true);
         keyBytes = null;
         keyFile = null;
     }
 
-    private byte[] getKey() { //возвр byte[]
-        //return keyTextField.getText();
+    private byte[] getKey() {
         if (keyTextField.isEditable()) {
             return keyTextField.getText().getBytes(StandardCharsets.UTF_8);
         } else {
