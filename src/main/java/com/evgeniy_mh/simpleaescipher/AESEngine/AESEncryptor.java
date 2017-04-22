@@ -15,9 +15,8 @@ public class AESEncryptor {
         mAES=new AES();
     }
 
-    /*public byte[] encrypt(byte[] message, byte[] key){
+    public byte[] encrypt(byte[] message, byte[] key){        
         
-        System.out.println("Nonce="+getNonce());
         
         byte[] nonce=ByteBuffer.allocate(8).putInt(getNonce()).array();
         byte[] counter=ByteBuffer.allocate(8).putInt(0).array();        
@@ -27,24 +26,32 @@ public class AESEncryptor {
         System.arraycopy(counter, 0, nonceAndCounterInfo, 4, 4);
         
         int n=0; //сколько байт будет добавлено   
-        if(message.length%AES.BLOCK_SIZE!=0){ 
-            n=AES.BLOCK_SIZE-message.length%AES.BLOCK_SIZE; //сколько байт будет добавлено
-            message=PKCS7(message);        
-        }
-        if(key.length%AES.BLOCK_SIZE!=0) key=PKCS7(key);
         
+        if(message.length%AES.BLOCK_SIZE!=0){ 
+            n=countDeltaBlocks(message); //сколько байт будет добавлено
+            message=PKCS7(message);        
+        }     
+        if(key.length%AES.BLOCK_SIZE!=0) key=PKCS7(key);
         mAES.makeKey(key, 128, AES.DIR_BOTH);
-
-        byte[] res=new byte[8+message.length+1];
+        
+        byte[] res;
+        if(n==0) res=new byte[8+message.length+16]; //если сообщение было кратно размеру блока то в конце добавляется блок байтов со значением 16
+        else res=new byte[8+message.length];
+        
         int nBlocks=countBlocks(message); //сколько блоков открытого текста
-
+        if(n==0) nBlocks++;
+        
         byte[] temp;
         for(int i=0; i<nBlocks;i++) {
 
-            temp=Arrays.copyOfRange(message,i*16,(i+1)*16); //p_i
+            if(n==0 && (i+1)==nBlocks){ //если сообщение было кратно размеру блока то в конце добавляется блок байтов со значением 16
+                temp=new byte[16];
+                for(int j=0;j<16;j++) temp[j]=16;
+            }else temp=Arrays.copyOfRange(message,i*16,(i+1)*16); //p_i            
+            
             counter=ByteBuffer.allocate(8).putInt(i).array();
             System.arraycopy(nonce, 0, nonceAndCounter, 4, 8);
-            System.arraycopy(counter, 0, nonceAndCounter, 12, 4);
+            System.arraycopy(counter, 0, nonceAndCounter, 12, 4);//nonceAndCounter: 0000nnnn|0000cccc
             
             byte[] k=new byte[AES.BLOCK_SIZE]; // k_i
             mAES.encrypt(nonceAndCounter,k);
@@ -57,27 +64,22 @@ public class AESEncryptor {
                 res[j]=c[m];
             }
         }
-        res[res.length-1]=(byte)n;
-        System.arraycopy(nonceAndCounterInfo, 0, res, 0, 8); //дбавление 8 байт которые в начало сообщения которые несут инфу о nonce и counter
+        System.arraycopy(nonceAndCounterInfo, 0, res, 0, 8); //добавление 8 байт которые в начало сообщения которые несут инфу о nonce и counter
         return res;
-    }*/
+    }
     
-    public byte[] decrypt(byte[] message, byte[] key){
-        int nToDeleteBytes=message[message.length-1];
-        System.out.println("то сколько удалить(после дешифр):"+ nToDeleteBytes);
-        
+    public byte[] decrypt(byte[] message, byte[] key){        
         byte[] nonce=new byte[8];  
         System.arraycopy(message, 0, nonce, 0, 4);
         byte[] counter=new byte[8];       
-        System.arraycopy(message, 4, counter, 0, 4);        
-        
+        System.arraycopy(message, 4, counter, 0, 4);                
         
         byte[] nonceAndCounter=new byte[AES.BLOCK_SIZE];     
         
         if(key.length%AES.BLOCK_SIZE!=0) key=PKCS7(key);
         mAES.makeKey(key, 128, AES.DIR_BOTH);
 
-        byte[] resAllBlocks=new byte[message.length];
+        byte[] resAllBlocks=new byte[message.length-8];
         int n=countBlocks(message); //сколько блоков шифро текста
 
         byte[] temp;
@@ -100,16 +102,18 @@ public class AESEncryptor {
                 resAllBlocks[j]=c[m];
             }
         }      
-        byte[] res=Arrays.copyOfRange(resAllBlocks, 0, resAllBlocks.length-nToDeleteBytes-1-8);        
+        
+        int nToDeleteBytes=resAllBlocks[resAllBlocks.length-1];    
+        byte[] res=Arrays.copyOfRange(resAllBlocks, 0, resAllBlocks.length-nToDeleteBytes);        
         return res;
     }
 
     private byte[] PKCS7(byte[] b){
-        int n=AES.BLOCK_SIZE-b.length%AES.BLOCK_SIZE; //сколько байт нужно добавить и какое у них будет значение
+        int n=countDeltaBlocks(b); //сколько байт нужно добавить и какое у них будет значение        
         
         byte[] bPadded=new byte[b.length+n];
         
-        for(int i=0;i<bPadded.length;i++){
+        for(int i=0;i<bPadded.length;i++){ //! нужно оптимизировать(если n==0)
             if(i<b.length){
                 bPadded[i]=b[i];
             }else{
@@ -130,7 +134,11 @@ public class AESEncryptor {
         System.out.println();
     }
 
-    public int countBlocks(byte[] b){
+    private int countDeltaBlocks(byte[] b){ //подсчет скольких байт не хватает до полного блока
+        return AES.BLOCK_SIZE-b.length%AES.BLOCK_SIZE;
+    }
+    
+    public int countBlocks(byte[] b){ //подсчет целых блоков
         return b.length/AES.BLOCK_SIZE;
     }
 
