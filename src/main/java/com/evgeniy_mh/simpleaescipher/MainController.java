@@ -279,11 +279,13 @@ public class MainController {
     }
 
     private void encrypt() {
-        if (getKey().length != 0 && originalFileBytes != null) {
+        if (getKey().length != 0 /*&& originalFileBytes != null*/) {
             //resultFileBytes = mAESEncryptor.encrypt(originalFileBytes, getKey());
             mAESEncryptor.encrypt(originalFile,resultFile,getKey());
             
-            if (resultFile != null) {
+            updateFileInfo(resultFilePath, resultFileTextArea, resultFile);
+            
+            /*if (resultFile != null) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Результирующий файл будет перезаписан!");
                 alert.setHeaderText("Внимание, это перезапишет результирующий файл.");
@@ -293,7 +295,7 @@ public class MainController {
             } else {
                 resultFile = saveAsfile(resultFileBytes, "Сохраните новый файл результата");
             }
-            updateFileInfo(resultFilePath, resultFileTextArea, resultFile);
+            updateFileInfo(resultFilePath, resultFileTextArea, resultFile);*/
         } else {
             Alert alert = new Alert(AlertType.WARNING);
             if (getKey().length == 0) {
