@@ -311,9 +311,11 @@ public class MainController {
     }
 
     private void decrypt() {
-        if (getKey().length != 0 && resultFileBytes != null) {
-            originalFileBytes = mAESEncryptor.decrypt(resultFileBytes, getKey());
-            if (originalFile != null) {
+        if (getKey().length != 0 /*&& resultFileBytes != null*/) {
+            //originalFileBytes = mAESEncryptor.decrypt(resultFileBytes, getKey());
+            mAESEncryptor.decrypt(resultFile,originalFile, getKey());
+            
+            /*if (originalFile != null) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Оригинальный файл будет перезаписан!");
                 alert.setHeaderText("Внимание, это перезапишет оригинальный файл.");
@@ -322,7 +324,7 @@ public class MainController {
                 if(result.get() == ButtonType.OK) saveFile(originalFile, originalFileBytes);
             } else {
                 originalFile = saveAsfile(originalFileBytes, "Сохраните новый исходный файл");
-            }
+            }*/
             updateFileInfo(originalFilePath, originalFileTextArea, originalFile);
         } else {
             Alert alert = new Alert(AlertType.WARNING);

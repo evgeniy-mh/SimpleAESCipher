@@ -75,7 +75,7 @@ public class AESEncryptor {
                 OUTraf.write(c);
                 
             }
-            debugPrintByteArray("OUTraf", readBytesFromFile(out));
+            //debugPrintByteArray("OUTraf", readBytesFromFile(out));
             OUTraf.close();
             INraf.close();
         } catch (FileNotFoundException ex) {
@@ -84,49 +84,72 @@ public class AESEncryptor {
             Logger.getLogger(AESEncryptor.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
-    public byte[] decrypt(byte[] message, byte[] key) {
+    
+    public void decrypt(File in, File out, byte[] key) {
+        byte[] nonceAndCounterInfo = new byte[8]; //8 байт которые добавл в начало сообщения и несут инфу о nonce и counter //nonceAndCounterInfo: nnnncccc
+        try {
+            nonceAndCounterInfo=readBytesFromFile(in, 0, 8);
+        } catch (IOException ex) {
+            Logger.getLogger(AESEncryptor.class.getName()).log(Level.SEVERE, null, ex);
+        }
         byte[] nonce = new byte[8];
-        System.arraycopy(message, 0, nonce, 0, 4);
         byte[] counter = new byte[8];
-        System.arraycopy(message, 4, counter, 0, 4);
+        System.arraycopy(nonceAndCounterInfo, 0, nonce, 0, 4);
+        System.arraycopy(nonceAndCounterInfo, 4, counter, 0, 4);
+        
+        //debugPrintByteArray("nonce=", nonce);
+        //debugPrintByteArray("counter=", counter);
 
         byte[] nonceAndCounter = new byte[AES.BLOCK_SIZE];
 
         if (key.length % AES.BLOCK_SIZE != 0) {
             key = PKCS7(key);
         }
-        mAES.makeKey(key, 128, AES.DIR_BOTH);
+        mAES.makeKey(key, 128, AES.DIR_BOTH);    
+        try {
+            RandomAccessFile OUTraf = new RandomAccessFile(out, "rw");
+            OUTraf.setLength(in.length()-8);
+            RandomAccessFile INraf = new RandomAccessFile(in, "r");
+            
+            int nBlocks = countBlocks(in); //сколько блоков шифро текста
+            int nToDeleteBytes=0; //сколько байт нужно удалить с конца сообщения
+            
+            byte[] temp=new byte[AES.BLOCK_SIZE];
+            for (int i = 0; i < nBlocks; i++) {             
+                INraf.seek(i * 16 + 8); //утсновка указателя для считывания файла
+                INraf.read(temp, 0, AES.BLOCK_SIZE); //считывание блока в temp
 
-        byte[] resAllBlocks = new byte[message.length - 8];
-        int n = countBlocks(message); //сколько блоков шифро текста
+                counter = ByteBuffer.allocate(8).putInt(i).array();
+                System.arraycopy(nonce, 0, nonceAndCounter, 4, 8);
+                System.arraycopy(counter, 0, nonceAndCounter, 12, 4);
 
-        byte[] temp;
-        for (int i = 0; i < n; i++) {
+                byte[] k = new byte[AES.BLOCK_SIZE]; // k_i
 
-            temp = Arrays.copyOfRange(message, i * 16 + 8, (i + 1) * 16 + 8); //p_i
-            counter = ByteBuffer.allocate(8).putInt(i).array();
-            System.arraycopy(nonce, 0, nonceAndCounter, 4, 8);
-            System.arraycopy(counter, 0, nonceAndCounter, 12, 4);
+                mAES.encrypt(nonceAndCounter, k);
 
-            byte[] k = new byte[AES.BLOCK_SIZE]; // k_i
-
-            mAES.encrypt(nonceAndCounter, k);
-
-            byte[] c = new byte[AES.BLOCK_SIZE]; //c_i
-            for (int j = 0; j < AES.BLOCK_SIZE; j++) { //xor p_i и k_i
-                c[j] = (byte) (temp[j] ^ k[j]);
+                byte[] c = new byte[AES.BLOCK_SIZE]; //c_i
+                for (int j = 0; j < AES.BLOCK_SIZE; j++) { //xor p_i и k_i
+                    c[j] = (byte) (temp[j] ^ k[j]);
+                }
+                OUTraf.write(c);
+                
+                if((i+1)==nBlocks){
+                    if(c[AES.BLOCK_SIZE-1]>0 && c[AES.BLOCK_SIZE-1]<=16) nToDeleteBytes=c[AES.BLOCK_SIZE-1]; //на случай дешифрования с неправильным ключем
+                }
             }
-            for (int j = i * 16, m = 0; j < (i + 1) * 16; j++, m++) { //копирование бит блока в рез. массив
-                resAllBlocks[j] = c[m];
-            }
+
+            System.out.println("to delete "+nToDeleteBytes);
+            OUTraf.setLength(OUTraf.length()-nToDeleteBytes);
+            
+            OUTraf.close();
+            INraf.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(AESEncryptor.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(AESEncryptor.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        int nToDeleteBytes = resAllBlocks[resAllBlocks.length - 1]; 
-        if(nToDeleteBytes<=0 || nToDeleteBytes>16) nToDeleteBytes=0; //на случай дешифрования с неправильным ключем
         
-        byte[] res = Arrays.copyOfRange(resAllBlocks, 0, resAllBlocks.length - nToDeleteBytes);
-        return res;
+        
     }
 
     private byte[] PKCS7(byte[] b) {
@@ -165,11 +188,9 @@ public class AESEncryptor {
     
     private void appendToFile(File f,byte[] b) throws FileNotFoundException, IOException{ //добавить блок байт в конец файла
         RandomAccessFile raf=new RandomAccessFile(f,"rw");
-        //System.out.println("file pointer="+raf.getFilePointer());
         raf.seek(raf.length());
         raf.setLength(raf.length()+b.length);
-        raf.write(b);        
-        //System.out.println("file pointer="+raf.getFilePointer());        
+        raf.write(b);             
         raf.close();
     }
 
