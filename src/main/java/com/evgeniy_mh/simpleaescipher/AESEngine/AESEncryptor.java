@@ -1,7 +1,15 @@
 package com.evgeniy_mh.simpleaescipher.AESEngine;
 
+import com.evgeniy_mh.simpleaescipher.MainController;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by evgeniy on 08.04.17.
@@ -14,7 +22,7 @@ public class AESEncryptor {
         mAES = new AES();
     }
 
-    public byte[] encrypt(byte[] message, byte[] key) {
+    /*public byte[] encrypt(byte[] message, byte[] key) {
 
         byte[] nonce = ByteBuffer.allocate(8).putInt(getNonce()).array();
         byte[] counter = ByteBuffer.allocate(8).putInt(0).array();
@@ -74,6 +82,33 @@ public class AESEncryptor {
         }
         System.arraycopy(nonceAndCounterInfo, 0, res, 0, 8); //добавление 8 байт которые в начало сообщения которые несут инфу о nonce и counter
         return res;
+    }*/
+    
+    public void encrypt(File in,File out, byte[] key){
+        
+        byte[] nonce = ByteBuffer.allocate(8).putInt(getNonce()).array();
+        byte[] counter = ByteBuffer.allocate(8).putInt(0).array();
+        byte[] nonceAndCounter = new byte[AES.BLOCK_SIZE]; //используется в раундах //nonceAndCounter: 0000nnnn|0000cccc
+        byte[] nonceAndCounterInfo = new byte[8]; //8 байт которые добавл в начало сообщения и несут инфу о nonce и counter //nonceAndCounterInfo: nnnncccc
+        System.arraycopy(nonce, 0, nonceAndCounterInfo, 0, 4);
+        System.arraycopy(counter, 0, nonceAndCounterInfo, 4, 4);
+        
+        int n = 0; //сколько байт будет добавлено   
+
+        //ebugPrintByteArray("before pkcs", readBytesFromFile(in));        
+        //n = countDeltaBlocks(in); //сколько байт будет добавлено
+        PKCS(in);  
+        //System.out.println("n="+n);
+        //debugPrintByteArray("after pkcs", readBytesFromFile(in));
+        if (key.length % AES.BLOCK_SIZE != 0) {
+            key = PKCS7(key);
+        }
+        mAES.makeKey(key, 128, AES.DIR_BOTH);
+        
+        
+        
+        
+        
     }
 
     public byte[] decrypt(byte[] message, byte[] key) {
@@ -136,8 +171,32 @@ public class AESEncryptor {
             return b;
         }
     }
+    
+    private void PKCS(File f){        
+            int n = countDeltaBlocks(f); //сколько байт нужно добавить и какое у них будет значение
+            if(n==0) n=16;
+            
+                try {
+                    byte[] appendBytes=new byte[n];
+                    for(int i=0;i<n;i++) appendBytes[i]=(byte)n;
+                    appendToFile(f, appendBytes);
+                } catch (IOException ex) {
+                    Logger.getLogger(AESEncryptor.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            
+    }
+    
+    private void appendToFile(File f,byte[] b) throws FileNotFoundException, IOException{
+        RandomAccessFile raf=new RandomAccessFile(f,"rw");
+        //System.out.println("file pointer="+raf.getFilePointer());
+        raf.seek(raf.length());
+        raf.setLength(raf.length()+b.length);
+        raf.write(b);        
+        //System.out.println("file pointer="+raf.getFilePointer());        
+        raf.close();
+    }
 
-    int getNonce() {test
+    int getNonce() {
         return Nonce.getInstance().getNonce();
     }
 
@@ -152,9 +211,22 @@ public class AESEncryptor {
     private int countDeltaBlocks(byte[] b) { //подсчет скольких байт не хватает до полного блока
         return AES.BLOCK_SIZE - b.length % AES.BLOCK_SIZE;
     }
+    
+    private int countDeltaBlocks(File f) { //подсчет скольких байт не хватает в файле до полного блока
+        return (int) (AES.BLOCK_SIZE - f.length() % AES.BLOCK_SIZE);
+    }
 
     public int countBlocks(byte[] b) { //подсчет целых блоков
         return b.length / AES.BLOCK_SIZE;
+    }
+    
+    private byte[] readBytesFromFile(File file) {
+        try {
+            return Files.readAllBytes(file.toPath());
+        } catch (IOException ex) {
+            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
 
 }

@@ -280,7 +280,9 @@ public class MainController {
 
     private void encrypt() {
         if (getKey().length != 0 && originalFileBytes != null) {
-            resultFileBytes = mAESEncryptor.encrypt(originalFileBytes, getKey());
+            //resultFileBytes = mAESEncryptor.encrypt(originalFileBytes, getKey());
+            mAESEncryptor.encrypt(originalFile,resultFile,getKey());
+            
             if (resultFile != null) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Результирующий файл будет перезаписан!");
