@@ -137,7 +137,7 @@ public class AESEncryptor {
         }
     }
 
-    int getNonce() {
+    int getNonce() {test
         return Nonce.getInstance().getNonce();
     }
 
