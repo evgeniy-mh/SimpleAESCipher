@@ -279,8 +279,8 @@ public class MainController {
     }
 
     private void encrypt() {
-        if (getKey().length != 0 /*&& originalFileBytes != null*/) {
-            //resultFileBytes = mAESEncryptor.encrypt(originalFileBytes, getKey());
+        if (getKey().length != 0 && originalFile!=null) {
+                       
             mAESEncryptor.encrypt(originalFile,resultFile,getKey());
             
             updateFileInfo(resultFilePath, resultFileTextArea, resultFile);

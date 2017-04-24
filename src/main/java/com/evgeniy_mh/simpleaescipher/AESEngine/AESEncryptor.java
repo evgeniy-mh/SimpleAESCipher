@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,14 +29,7 @@ public class AESEncryptor {
         byte[] nonceAndCounterInfo = new byte[8]; //8 байт которые добавл в начало сообщения и несут инфу о nonce и counter //nonceAndCounterInfo: nnnncccc
         System.arraycopy(nonce, 0, nonceAndCounterInfo, 0, 4);
         System.arraycopy(counter, 0, nonceAndCounterInfo, 4, 4);
-
-        //int n = 0; //сколько байт будет добавлено
-
-        //debugPrintByteArray("before pkcs", readBytesFromFile(in));
-        //n = countDeltaBlocks(in); //сколько байт будет добавлено
-        PKCS(in);
-        //System.out.println("n="+n);
-        //debugPrintByteArray("after pkcs", readBytesFromFile(in));
+        
         if (key.length % AES.BLOCK_SIZE != 0) {
             key = PKCS7(key);
         }
@@ -48,19 +40,28 @@ public class AESEncryptor {
             OUTraf.setLength(8+in.length());
             OUTraf.write(nonceAndCounterInfo);
             
-            //System.out.println("OUTraf.getFilePointer()="+OUTraf.getFilePointer());
-            //debugPrintByteArray("OUTraf", readBytesFromFile(out));
-            
             RandomAccessFile INraf = new RandomAccessFile(in, "r");
             
             int nBlocks = countBlocks(in); //сколько блоков открытого текста
             byte[] temp=new byte[AES.BLOCK_SIZE];
-            for (int i = 0; i < nBlocks; i++) {             
-                INraf.seek(i * 16); //утсновка указателя для считывания файла
-                INraf.read(temp, 0, AES.BLOCK_SIZE); //считывание блока в temp
-
-                //System.out.println("block "+i);
-                //debugPrintByteArray("temp=", temp);
+            for (int i = 0; i < nBlocks+1; i++) {             
+                INraf.seek(i * 16); //установка указателя для считывания файла                
+                
+                if((i+1)==nBlocks+1){ //последняя итерация
+                    int deltaToBlock=(int) (in.length()%AES.BLOCK_SIZE);                        
+                    if(deltaToBlock>0){
+                        temp=new byte[deltaToBlock];
+                        INraf.read(temp, 0, deltaToBlock);  //считывание неполного блока в temp 
+                        temp=PKCS7(temp);
+                    }else{
+                        temp=new byte[AES.BLOCK_SIZE];
+                        for(int t=0;t<AES.BLOCK_SIZE;t++) temp[t]=(byte)AES.BLOCK_SIZE;
+                    }
+                    
+                }else{
+                    INraf.read(temp, 0, AES.BLOCK_SIZE); //считывание блока в temp
+                }          
+                
                 counter = ByteBuffer.allocate(8).putInt(i).array();
                 System.arraycopy(nonce, 0, nonceAndCounter, 4, 8);
                 System.arraycopy(counter, 0, nonceAndCounter, 12, 4);//nonceAndCounter: 0000nnnn|0000cccc
@@ -72,10 +73,8 @@ public class AESEncryptor {
                 for (int j = 0; j < AES.BLOCK_SIZE; j++) { //xor p_i и k_i
                     c[j] = (byte) (temp[j] ^ k[j]);
                 }
-                OUTraf.write(c);
-                
+                OUTraf.write(c);                
             }
-            //debugPrintByteArray("OUTraf", readBytesFromFile(out));
             OUTraf.close();
             INraf.close();
         } catch (FileNotFoundException ex) {
@@ -96,9 +95,6 @@ public class AESEncryptor {
         byte[] counter = new byte[8];
         System.arraycopy(nonceAndCounterInfo, 0, nonce, 0, 4);
         System.arraycopy(nonceAndCounterInfo, 4, counter, 0, 4);
-        
-        //debugPrintByteArray("nonce=", nonce);
-        //debugPrintByteArray("counter=", counter);
 
         byte[] nonceAndCounter = new byte[AES.BLOCK_SIZE];
 
@@ -168,31 +164,6 @@ public class AESEncryptor {
             return b;
         }
     }
-    
-    private void PKCS(File f) {
-        int n = countDeltaBlocks(f); //сколько байт нужно добавить и какое у них будет значение
-        if (n == 0) {
-            n = 16; //если сообщение было кратно размеру блока то в конце добавляется блок байтов со значением 16
-        }
-        try {
-            byte[] appendBytes = new byte[n];
-            for (int i = 0; i < n; i++) {
-                appendBytes[i] = (byte) n;
-            }
-            appendToFile(f, appendBytes);
-        } catch (IOException ex) {
-            Logger.getLogger(AESEncryptor.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
-    
-    private void appendToFile(File f,byte[] b) throws FileNotFoundException, IOException{ //добавить блок байт в конец файла
-        RandomAccessFile raf=new RandomAccessFile(f,"rw");
-        raf.seek(raf.length());
-        raf.setLength(raf.length()+b.length);
-        raf.write(b);             
-        raf.close();
-    }
 
     int getNonce() {
         return Nonce.getInstance().getNonce();
@@ -210,25 +181,8 @@ public class AESEncryptor {
         return AES.BLOCK_SIZE - b.length % AES.BLOCK_SIZE;
     }
     
-    private int countDeltaBlocks(File f) { //подсчет скольких байт не хватает в файле до полного блока
-        return (int) (AES.BLOCK_SIZE - f.length() % AES.BLOCK_SIZE);
-    }
-
-    public int countBlocks(byte[] b) { //подсчет целых блоков
-        return b.length / AES.BLOCK_SIZE;
-    }
-    
     public int countBlocks(File f) { //подсчет целых блоков
         return (int) (f.length() / AES.BLOCK_SIZE);
-    }
-    
-    private byte[] readBytesFromFile(File file) {
-        try {
-            return Files.readAllBytes(file.toPath());
-        } catch (IOException ex) {
-            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
     }
     
     private byte[] readBytesFromFile(File f, int from,int to) throws FileNotFoundException, IOException{
