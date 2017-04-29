@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.fxml.FXML;
@@ -16,6 +17,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
@@ -63,6 +65,9 @@ public class MainController {
     Button encryptButton;
     @FXML
     Button decryptButton;
+    
+    @FXML
+    ProgressIndicator CipherProgressIndicator;
 
     private AESEncryptor mAESEncryptor;
     private boolean canChangeOriginalFile = true;
@@ -73,7 +78,8 @@ public class MainController {
 
     @FXML
     public void initialize() {
-        mAESEncryptor = new AESEncryptor();
+        mAESEncryptor = new AESEncryptor(CipherProgressIndicator);
+        
         fileChooser = new FileChooser();
         try {
             fileChooser.setInitialDirectory(new File(MainApp.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParentFile());
@@ -274,16 +280,10 @@ public class MainController {
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
-                try {
+                
                     mAESEncryptor.encrypt(originalFile, resultFile, getKey());
-                    updateFileInfo(resultFilePath, resultFileTextArea, resultFile);
-                } catch (IOException ex) {
-                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-                    errorAlert.setTitle("IOException");
-                    errorAlert.setContentText(ex.getMessage());
-                    errorAlert.show();
-                    Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                    CipherProgressIndicator.setProgress(0);
+                    updateFileInfo(resultFilePath, resultFileTextArea, resultFile);     
             }
         } else {
             Alert alert = new Alert(AlertType.WARNING);
@@ -348,6 +348,15 @@ public class MainController {
         } else {
             return readBytesFromFile(keyFile);
         }
+    }
+    
+    public static void showWin(Throwable e){
+        System.out.println("from main contr Thread.UncaughtExceptionHandler");
+                System.out.println("e:"+e);
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                    errorAlert.setTitle("IOException");
+                    errorAlert.setContentText(e.getMessage());
+                    errorAlert.showAndWait();
     }
 
 }

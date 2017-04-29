@@ -1,10 +1,15 @@
 package com.evgeniy_mh.simpleaescipher.AESEngine;
 
+import com.evgeniy_mh.simpleaescipher.MainController;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.util.concurrent.Callable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.scene.control.ProgressIndicator;
 
 /**
  * Created by evgeniy on 08.04.17.
@@ -12,9 +17,11 @@ import java.nio.ByteBuffer;
 public class AESEncryptor {
 
     private AES mAES;
+    private ProgressIndicator progressIndicator;
 
-    public AESEncryptor() {
+    public AESEncryptor(ProgressIndicator progressIndicator) {
         mAES = new AES();
+        this.progressIndicator=progressIndicator;
     }
 
     /**
@@ -25,61 +32,97 @@ public class AESEncryptor {
      * @param key Ключ шифрования
      * @throws java.io.IOException
      */
-    public void encrypt(File in, File out, byte[] key) throws IOException {
-        byte[] nonce = ByteBuffer.allocate(8).putInt(getNonce()).array();
-        byte[] counter = ByteBuffer.allocate(8).putInt(0).array();
-        byte[] nonceAndCounter = new byte[AES.BLOCK_SIZE]; //используется в раундах //nonceAndCounter: 0000nnnn|0000cccc
-        byte[] nonceAndCounterInfo = new byte[8]; //8 байт которые добавл в начало сообщения и несут инфу о nonce и counter //nonceAndCounterInfo: nnnncccc
-        System.arraycopy(nonce, 0, nonceAndCounterInfo, 0, 4);
-        System.arraycopy(counter, 0, nonceAndCounterInfo, 4, 4);
-
-        if (key.length % AES.BLOCK_SIZE != 0) {
-            key = PKCS7(key);
-        }
-        mAES.makeKey(key, 128, AES.DIR_BOTH);
-
-        RandomAccessFile OUTraf = new RandomAccessFile(out, "rw");
-        OUTraf.setLength(8 + in.length());
-        OUTraf.write(nonceAndCounterInfo);
-
-        RandomAccessFile INraf = new RandomAccessFile(in, "r");
-
-        int nBlocks = countBlocks(in); //сколько блоков открытого текста
-        byte[] temp = new byte[AES.BLOCK_SIZE];
-        for (int i = 0; i < nBlocks + 1; i++) {
-            INraf.seek(i * 16); //установка указателя для считывания файла                
-
-            if ((i + 1) == nBlocks + 1) { //последняя итерация
-                int deltaToBlock = (int) (in.length() % AES.BLOCK_SIZE);
-                if (deltaToBlock > 0) {
-                    temp = new byte[deltaToBlock];
-                    INraf.read(temp, 0, deltaToBlock);  //считывание неполного блока в temp 
-                    temp = PKCS7(temp);
-                } else {
-                    temp = new byte[AES.BLOCK_SIZE];
-                    for (int t = 0; t < AES.BLOCK_SIZE; t++) {
-                        temp[t] = (byte) AES.BLOCK_SIZE;
-                    }
+    public void encrypt(final File in,final File out,final byte[] key){
+        
+        Thread task=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                byte[] nonce = ByteBuffer.allocate(8).putInt(getNonce()).array();
+                byte[] counter = ByteBuffer.allocate(8).putInt(0).array();
+                byte[] nonceAndCounter = new byte[AES.BLOCK_SIZE]; //используется в раундах //nonceAndCounter: 0000nnnn|0000cccc
+                byte[] nonceAndCounterInfo = new byte[8]; //8 байт которые добавл в начало сообщения и несут инфу о nonce и counter //nonceAndCounterInfo: nnnncccc
+                System.arraycopy(nonce, 0, nonceAndCounterInfo, 0, 4);
+                System.arraycopy(counter, 0, nonceAndCounterInfo, 4, 4);
+                
+                byte[] tempKey=key;
+                
+                if (key.length % AES.BLOCK_SIZE != 0) {
+                    tempKey = PKCS7(key);
                 }
-            } else {
-                INraf.read(temp, 0, AES.BLOCK_SIZE); //считывание блока в temp
+                mAES.makeKey(tempKey, 128, AES.DIR_BOTH);
+                try {
+                RandomAccessFile OUTraf = new RandomAccessFile(out, "rw");
+                OUTraf.setLength(8 + in.length());
+                
+                    OUTraf.write(nonceAndCounterInfo);
+                
+                
+                RandomAccessFile INraf = new RandomAccessFile(in, "r");
+                
+                int nBlocks = countBlocks(in); //сколько блоков открытого текста
+                byte[] temp = new byte[AES.BLOCK_SIZE];
+                
+                for (int i = 0; i < nBlocks + 1; i++) {
+                    INraf.seek(i * 16); //установка указателя для считывания файла
+                    
+                    if ((i + 1) == nBlocks + 1) { //последняя итерация
+                        int deltaToBlock = (int) (in.length() % AES.BLOCK_SIZE);
+                        if (deltaToBlock > 0) {
+                            temp = new byte[deltaToBlock];
+                            INraf.read(temp, 0, deltaToBlock);  //считывание неполного блока в temp
+                            temp = PKCS7(temp);
+                        } else {
+                            temp = new byte[AES.BLOCK_SIZE];
+                            for (int t = 0; t < AES.BLOCK_SIZE; t++) {
+                                temp[t] = (byte) AES.BLOCK_SIZE;
+                            }
+                        }
+                    } else {
+                        INraf.read(temp, 0, AES.BLOCK_SIZE); //считывание блока в temp
+                    }
+                    counter = ByteBuffer.allocate(8).putInt(i).array();
+                    System.arraycopy(nonce, 0, nonceAndCounter, 4, 8);
+                    System.arraycopy(counter, 0, nonceAndCounter, 12, 4);//nonceAndCounter: 0000nnnn|0000cccc
+                    
+                    byte[] k = new byte[AES.BLOCK_SIZE]; // k_i
+                    mAES.encrypt(nonceAndCounter, k);
+                    
+                    byte[] c = new byte[AES.BLOCK_SIZE]; //c_i
+                    for (int j = 0; j < AES.BLOCK_SIZE; j++) { //xor p_i и k_i
+                        c[j] = (byte) (temp[j] ^ k[j]);
+                    }
+                    OUTraf.write(c);                    
+                    progressIndicator.setProgress((double)i/nBlocks);                    
+                }
+                OUTraf.close();
+                INraf.close();
+                
+                throw new IOException();
+                
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
-            counter = ByteBuffer.allocate(8).putInt(i).array();
-            System.arraycopy(nonce, 0, nonceAndCounter, 4, 8);
-            System.arraycopy(counter, 0, nonceAndCounter, 12, 4);//nonceAndCounter: 0000nnnn|0000cccc
-
-            byte[] k = new byte[AES.BLOCK_SIZE]; // k_i
-            mAES.encrypt(nonceAndCounter, k);
-
-            byte[] c = new byte[AES.BLOCK_SIZE]; //c_i
-            for (int j = 0; j < AES.BLOCK_SIZE; j++) { //xor p_i и k_i
-                c[j] = (byte) (temp[j] ^ k[j]);
+        });
+        /*task.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                System.out.println("UncaughtExceptionHandler:");
+                System.out.println(e);
             }
-            OUTraf.write(c);
-        }
-        OUTraf.close();
-        INraf.close();
+        });*/
+        
+        task.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                MainController.showWin(e);
+            }
+        });
+        
+        task.start();        
     }
+    
+    
 
     /**
      * Выполняет дешифрование файла
@@ -218,4 +261,12 @@ public class AESEncryptor {
         }
         System.out.println();
     }
+    
+    class Encrypt implements Runnable{   
+        @Override
+        public void run(){
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }    
+    };
+    
 }
