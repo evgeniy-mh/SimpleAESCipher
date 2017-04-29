@@ -5,6 +5,8 @@ import com.evgeniy_mh.simpleaescipher.AESEngine.Nonce;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -16,6 +18,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
@@ -63,6 +66,9 @@ public class MainController {
     Button encryptButton;
     @FXML
     Button decryptButton;
+    
+    @FXML
+    ProgressIndicator CipherProgressIndicator;
 
     private AESEncryptor mAESEncryptor;
     private boolean canChangeOriginalFile = true;
@@ -73,11 +79,13 @@ public class MainController {
 
     @FXML
     public void initialize() {
-        mAESEncryptor = new AESEncryptor();
+        mAESEncryptor = new AESEncryptor(CipherProgressIndicator);
+        
         fileChooser = new FileChooser();
         try {
             fileChooser.setInitialDirectory(new File(MainApp.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParentFile());
         } catch (URISyntaxException ex) {
+            showExceptionToUser(ex, "Exception in initialize(). fileChooser.setInitialDirectory failed.");
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -181,6 +189,7 @@ public class MainController {
             try {
                 file.createNewFile();
             } catch (IOException ex) {
+                showExceptionToUser(ex, "Exception in createNewFile");
                 Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -204,6 +213,7 @@ public class MainController {
                 fos.write(fileBytes);
                 fos.close();
             } catch (IOException ex) {
+                showExceptionToUser(ex, "Exception in saveFile");
                 Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -225,6 +235,7 @@ public class MainController {
             try {
                 Files.copy(fileToSave.toPath(), newFile.toPath());
             } catch (IOException ex) {
+                showExceptionToUser(ex, "Exception in saveAsFile");
                 Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -250,17 +261,19 @@ public class MainController {
                 }
 
             } catch (IOException ex) {
+                showExceptionToUser(ex, "Exception in updateFileInfo");
                 Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
             contentTextArea.setText("");
-        }
+        }        
     }
 
     private byte[] readBytesFromFile(File file) {
         try {
             return Files.readAllBytes(file.toPath());
         } catch (IOException ex) {
+            showExceptionToUser(ex, "Exception in readBytesFromFile");
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
@@ -274,16 +287,9 @@ public class MainController {
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
-                try {
-                    mAESEncryptor.encrypt(originalFile, resultFile, getKey());
-                    updateFileInfo(resultFilePath, resultFileTextArea, resultFile);
-                } catch (IOException ex) {
-                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-                    errorAlert.setTitle("IOException");
-                    errorAlert.setContentText(ex.getMessage());
-                    errorAlert.show();
-                    Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                
+                    mAESEncryptor.encrypt(originalFile, resultFile, getKey());                    
+                    updateFileInfo(resultFilePath, resultFileTextArea, resultFile);     
             }
         } else {
             Alert alert = new Alert(AlertType.WARNING);
@@ -309,16 +315,8 @@ public class MainController {
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
-                try {
                     mAESEncryptor.decrypt(resultFile, originalFile, getKey());
                     updateFileInfo(originalFilePath, originalFileTextArea, originalFile);
-                } catch (IOException ex) {
-                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-                    errorAlert.setTitle("IOException");
-                    errorAlert.setContentText(ex.getMessage());
-                    errorAlert.show();
-                    Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
-                }
             }
         } else {
             Alert alert = new Alert(AlertType.WARNING);
@@ -348,6 +346,15 @@ public class MainController {
         } else {
             return readBytesFromFile(keyFile);
         }
+    }
+    
+    public static void showExceptionToUser(Throwable e,String message) {  
+        Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+        errorAlert.setTitle("Exception!");    
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        errorAlert.setContentText(message+"\n"+sw.toString());
+        errorAlert.showAndWait();
     }
 
 }
