@@ -21,7 +21,7 @@ public class MainApp extends Application {
         stage.show();
 
         MainController mc = loader.getController();
-        mc.setMainApp(this);
+        mc.setMainApp(this);  
     }
 
     public static void main(String[] args) {
