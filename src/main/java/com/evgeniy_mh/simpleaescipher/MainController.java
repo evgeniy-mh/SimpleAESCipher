@@ -251,6 +251,11 @@ public class MainController {
                     canChangeOriginalFile = true;
                     saveOriginalFile.setDisable(false);
                     originalFileTextArea.setEditable(true);
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        showExceptionToUser(ex, "Exception in updateFileInfo");
+                    }
                     String content = new String(Files.readAllBytes(file.toPath()));
                     contentTextArea.setText(content);
                 } else {
@@ -271,7 +276,8 @@ public class MainController {
 
     private byte[] readBytesFromFile(File file) {
         try {
-            return Files.readAllBytes(file.toPath());
+            //return Files.readAllBytes(file.toPath());
+            return AESEncryptor.readBytesFromFile(file, 0, 128);
         } catch (IOException ex) {
             showExceptionToUser(ex, "Exception in readBytesFromFile");
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);

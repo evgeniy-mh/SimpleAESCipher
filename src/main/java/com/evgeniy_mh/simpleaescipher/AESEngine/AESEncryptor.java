@@ -212,7 +212,7 @@ public class AESEncryptor {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    private byte[] readBytesFromFile(File f, int from, int to) throws FileNotFoundException, IOException {
+    public static byte[] readBytesFromFile(File f, int from, int to) throws FileNotFoundException, IOException {
         RandomAccessFile raf = new RandomAccessFile(f, "r");
         raf.seek(from);
         byte[] res = new byte[to - from];
