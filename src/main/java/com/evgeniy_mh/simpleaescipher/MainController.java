@@ -274,10 +274,9 @@ public class MainController {
         }        
     }
 
-    private byte[] readBytesFromFile(File file) {
+    private byte[] readBytesFromFile(File file, int bytesToRead) {
         try {
-            //return Files.readAllBytes(file.toPath());
-            return AESEncryptor.readBytesFromFile(file, 0, 128);
+            return AESEncryptor.readBytesFromFile(file, 0, bytesToRead);
         } catch (IOException ex) {
             showExceptionToUser(ex, "Exception in readBytesFromFile");
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
@@ -350,7 +349,7 @@ public class MainController {
         if (keyTextField.isEditable()) {
             return keyTextField.getText().getBytes(StandardCharsets.UTF_8);
         } else {
-            return readBytesFromFile(keyFile);
+            return readBytesFromFile(keyFile,128);
         }
     }
     
