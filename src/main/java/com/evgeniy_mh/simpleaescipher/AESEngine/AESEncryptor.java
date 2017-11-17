@@ -21,8 +21,6 @@ public class AESEncryptor {
     public AESEncryptor(ProgressIndicator progressIndicator) {
         mAES = new AES();        
         this.progressIndicator=progressIndicator;
-        
-        HMAC h=new HMAC();
     }
 
     /**

@@ -43,6 +43,8 @@ public class HMAC {
 
     public void getHMAC(File in, File out, byte[] key) throws IOException {
 
+        prepareKey(key);
+
     }
 
     private byte[] prepareKey(byte[] key) {
@@ -55,6 +57,11 @@ public class HMAC {
             System.arraycopy(temp, 0, resultKey, 0, temp.length);
 
             for (int i = temp.length; i < BLOCK_SIZE; i++) {
+                resultKey[i] = 0;
+            }
+        }else { //if(key.length < BLOCK_SIZE)
+            System.arraycopy(key, 0, resultKey, 0, key.length);
+            for (int i = key.length; i < BLOCK_SIZE; i++) {
                 resultKey[i] = 0;
             }
         }

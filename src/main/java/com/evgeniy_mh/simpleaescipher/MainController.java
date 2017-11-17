@@ -1,6 +1,7 @@
 package com.evgeniy_mh.simpleaescipher;
 
 import com.evgeniy_mh.simpleaescipher.AESEngine.AESEncryptor;
+import com.evgeniy_mh.simpleaescipher.AESEngine.HMAC;
 import com.evgeniy_mh.simpleaescipher.AESEngine.Nonce;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -82,10 +83,14 @@ public class MainController {
     Button openKeyFileHMAC;
     @FXML
     TextField keyTextFieldHMAC;
+    @FXML
+    Button getHMACButton;
 
     private AESEncryptor mAESEncryptor;
     private boolean canChangeOriginalFile = true;
     private final int MAX_FILE_TO_SHOW_SIZE = 5000;
+    
+    private HMAC mHMACEncryptor;
 
     public MainController() {
     }
@@ -93,6 +98,8 @@ public class MainController {
     @FXML
     public void initialize() {
         mAESEncryptor = new AESEncryptor(CipherProgressIndicator);
+        mHMACEncryptor=new HMAC();
+        
 
         fileChooser = new FileChooser();
         try {
@@ -223,6 +230,14 @@ public class MainController {
                     keyTextFieldHMAC.setEditable(true);
                     keyFileHMAC = null;
                 }
+            }
+        });
+        
+        getHMACButton.setOnMouseClicked((event)->{
+            try {
+                mHMACEncryptor.getHMAC(originalHMACFile, null, getKeyHMAC());
+            } catch (IOException ex) {
+                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
     }
@@ -396,6 +411,14 @@ public class MainController {
             return keyTextField.getText().getBytes(StandardCharsets.UTF_8);
         } else {
             return readBytesFromFile(keyFile, 128);
+        }
+    }
+    
+    private byte[] getKeyHMAC() {
+        if (keyTextFieldHMAC.isEditable()) {
+            return keyTextFieldHMAC.getText().getBytes(StandardCharsets.UTF_8);
+        } else {
+            return readBytesFromFile(keyFileHMAC, 128);
         }
     }
 
