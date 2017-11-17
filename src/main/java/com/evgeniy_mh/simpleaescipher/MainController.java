@@ -30,6 +30,7 @@ public class MainController {
     private FileChooser fileChooser = new FileChooser();
     private MainApp mainApp;
 
+    //AES-CTR tab
     private File originalFile;
     @FXML
     TextField originalFilePath;
@@ -66,9 +67,21 @@ public class MainController {
     Button encryptButton;
     @FXML
     Button decryptButton;
-    
+
     @FXML
     ProgressIndicator CipherProgressIndicator;
+
+    //HMAC tab
+    private File originalHMACFile;
+    private File keyFileHMAC;
+    @FXML
+    TextField originalFilePathHMAC;
+    @FXML
+    Button openOriginalFileHMAC;
+    @FXML
+    Button openKeyFileHMAC;
+    @FXML
+    TextField keyTextFieldHMAC;
 
     private AESEncryptor mAESEncryptor;
     private boolean canChangeOriginalFile = true;
@@ -80,7 +93,7 @@ public class MainController {
     @FXML
     public void initialize() {
         mAESEncryptor = new AESEncryptor(CipherProgressIndicator);
-        
+
         fileChooser = new FileChooser();
         try {
             fileChooser.setInitialDirectory(new File(MainApp.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParentFile());
@@ -89,6 +102,7 @@ public class MainController {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        //AES-CTR tab
         createOriginalFile.setOnAction((event) -> {
             File f = createNewFile("Сохраните новый исходный файл");
             if (f != null) {
@@ -178,6 +192,38 @@ public class MainController {
 
         decryptButton.setOnAction((event) -> {
             decrypt();
+        });
+
+        //HMAC tab
+        openOriginalFileHMAC.setOnAction((event) -> {
+            File f = openFile();
+            if (f != null) {
+                originalHMACFile = f;
+                originalFilePathHMAC.setText(f.getPath());
+            }
+        });
+
+        openKeyFileHMAC.setOnAction((event) -> {
+            keyFileHMAC = openFile();
+            if (keyFileHMAC != null) {
+                keyTextFieldHMAC.setText(keyFileHMAC.getAbsolutePath());
+                keyTextFieldHMAC.setEditable(false);
+            }
+        });
+
+        keyTextFieldHMAC.setOnMouseClicked((event) -> {
+            if (!keyTextFieldHMAC.isEditable()) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Использовать поле ввода ключа?");
+                alert.setHeaderText("Вы желаете ввести ключ самостоятельно?");
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    keyTextFieldHMAC.clear();
+                    keyTextFieldHMAC.setEditable(true);
+                    keyFileHMAC = null;
+                }
+            }
         });
     }
 
@@ -271,7 +317,7 @@ public class MainController {
             }
         } else {
             contentTextArea.setText("");
-        }        
+        }
     }
 
     private byte[] readBytesFromFile(File file, int bytesToRead) {
@@ -292,9 +338,9 @@ public class MainController {
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
-                
-                    mAESEncryptor.encrypt(originalFile, resultFile, getKey());                    
-                    updateFileInfo(resultFilePath, resultFileTextArea, resultFile);     
+
+                mAESEncryptor.encrypt(originalFile, resultFile, getKey());
+                updateFileInfo(resultFilePath, resultFileTextArea, resultFile);
             }
         } else {
             Alert alert = new Alert(AlertType.WARNING);
@@ -320,8 +366,8 @@ public class MainController {
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
-                    mAESEncryptor.decrypt(resultFile, originalFile, getKey());
-                    updateFileInfo(originalFilePath, originalFileTextArea, originalFile);
+                mAESEncryptor.decrypt(resultFile, originalFile, getKey());
+                updateFileInfo(originalFilePath, originalFileTextArea, originalFile);
             }
         } else {
             Alert alert = new Alert(AlertType.WARNING);
@@ -349,16 +395,16 @@ public class MainController {
         if (keyTextField.isEditable()) {
             return keyTextField.getText().getBytes(StandardCharsets.UTF_8);
         } else {
-            return readBytesFromFile(keyFile,128);
+            return readBytesFromFile(keyFile, 128);
         }
     }
-    
-    public static void showExceptionToUser(Throwable e,String message) {  
+
+    public static void showExceptionToUser(Throwable e, String message) {
         Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-        errorAlert.setTitle("Exception!");    
+        errorAlert.setTitle("Exception!");
         StringWriter sw = new StringWriter();
         e.printStackTrace(new PrintWriter(sw));
-        errorAlert.setContentText(message+"\n"+sw.toString());
+        errorAlert.setContentText(message + "\n" + sw.toString());
         errorAlert.showAndWait();
     }
 
