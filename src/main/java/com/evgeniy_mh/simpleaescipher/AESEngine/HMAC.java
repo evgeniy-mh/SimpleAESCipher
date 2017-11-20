@@ -7,6 +7,9 @@ package com.evgeniy_mh.simpleaescipher.AESEngine;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
@@ -42,9 +45,26 @@ public class HMAC {
     }
 
     public void getHMAC(File in, File out, byte[] key) throws IOException {
+        key = prepareKey(key);
 
-        prepareKey(key);
+        byte[] ki = new byte[BLOCK_SIZE];
+        for (int i = 0; i < BLOCK_SIZE; i++) {
+            ki[i] = (byte) (key[i] ^ ipad[i]);
+        }
 
+        byte[] ko = new byte[BLOCK_SIZE];
+        for (int i = 0; i < BLOCK_SIZE; i++) {
+            ko[i] = (byte) (key[i] ^ opad[i]);
+        }
+
+        byte[] m = Files.readAllBytes(in.toPath());
+        byte[] temp = concat(ki, m);
+        temp = md5.digest(temp);
+        
+        temp=concat(ko, temp);
+        temp=md5.digest(temp);
+        
+        Files.write(out.toPath(), temp, StandardOpenOption.WRITE);
     }
 
     private byte[] prepareKey(byte[] key) {
@@ -59,7 +79,7 @@ public class HMAC {
             for (int i = temp.length; i < BLOCK_SIZE; i++) {
                 resultKey[i] = 0;
             }
-        }else { //if(key.length < BLOCK_SIZE)
+        } else { //if(key.length < BLOCK_SIZE)
             System.arraycopy(key, 0, resultKey, 0, key.length);
             for (int i = key.length; i < BLOCK_SIZE; i++) {
                 resultKey[i] = 0;
@@ -67,6 +87,14 @@ public class HMAC {
         }
 
         return resultKey;
+    }
+
+    private byte[] concat(byte[] a, byte[] b) {
+        byte[] result = new byte[a.length + b.length];
+        System.arraycopy(a, 0, result, 0, a.length);
+        System.arraycopy(b, 0, result, a.length, b.length);
+
+        return result;
     }
 
 }

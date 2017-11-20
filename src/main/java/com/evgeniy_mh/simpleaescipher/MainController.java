@@ -74,6 +74,7 @@ public class MainController {
 
     //HMAC tab
     private File originalHMACFile;
+    private File resultHMACFile;
     private File keyFileHMAC;
     @FXML
     TextField originalFilePathHMAC;
@@ -85,6 +86,11 @@ public class MainController {
     TextField keyTextFieldHMAC;
     @FXML
     Button getHMACButton;
+    @FXML
+    TextField resultFilePathHMAC;
+    @FXML
+    Button openResultFileHMAC;
+    
 
     private AESEncryptor mAESEncryptor;
     private boolean canChangeOriginalFile = true;
@@ -235,9 +241,17 @@ public class MainController {
         
         getHMACButton.setOnMouseClicked((event)->{
             try {
-                mHMACEncryptor.getHMAC(originalHMACFile, null, getKeyHMAC());
+                mHMACEncryptor.getHMAC(originalHMACFile, resultHMACFile, getKeyHMAC());
             } catch (IOException ex) {
                 Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        
+        openResultFileHMAC.setOnMouseClicked((event) ->{
+            File f = openFile();
+            if (f != null) {
+                resultHMACFile = f;
+                resultFilePathHMAC.setText(f.getPath());
             }
         });
     }
