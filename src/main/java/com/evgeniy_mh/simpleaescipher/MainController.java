@@ -1,7 +1,7 @@
 package com.evgeniy_mh.simpleaescipher;
 
 import com.evgeniy_mh.simpleaescipher.AESEngine.AESEncryptor;
-import com.evgeniy_mh.simpleaescipher.AESEngine.HMAC;
+import com.evgeniy_mh.simpleaescipher.AESEngine.HMACEncryptor;
 import com.evgeniy_mh.simpleaescipher.AESEngine.Nonce;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -96,7 +96,7 @@ public class MainController {
     private boolean canChangeOriginalFile = true;
     private final int MAX_FILE_TO_SHOW_SIZE = 5000;
     
-    private HMAC mHMACEncryptor;
+    private HMACEncryptor mHMACEncryptor;
 
     public MainController() {
     }
@@ -104,7 +104,7 @@ public class MainController {
     @FXML
     public void initialize() {
         mAESEncryptor = new AESEncryptor(CipherProgressIndicator);
-        mHMACEncryptor=new HMAC();
+        mHMACEncryptor=new HMACEncryptor();
         
 
         fileChooser = new FileChooser();

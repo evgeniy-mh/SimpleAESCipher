@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  *
  * @author evgeniy
  */
-public class HMAC {
+public class HMACEncryptor {
 
     private static final int BLOCK_SIZE = 64;
 
@@ -28,7 +28,7 @@ public class HMAC {
 
     private MessageDigest md5;
 
-    public HMAC() {
+    public HMACEncryptor() {
         ipad = new byte[BLOCK_SIZE];
         opad = new byte[BLOCK_SIZE];
         for (int i = 0; i < BLOCK_SIZE; i++) {
@@ -39,7 +39,7 @@ public class HMAC {
         try {
             md5 = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(HMAC.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(HMACEncryptor.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
