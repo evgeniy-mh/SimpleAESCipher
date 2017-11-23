@@ -252,7 +252,19 @@ public class MainController {
 
         getHMACButton.setOnMouseClicked((event) -> {
             try {
-                mHMACEncryptor.getHMAC(originalHMACFile, resultHMACFile, getKeyHMAC());
+                if (originalHMACFile != null && resultHMACFile != null) {
+                    mHMACEncryptor.getHMAC(originalHMACFile, resultHMACFile, getKeyHMAC());
+                } else {
+                    Alert alert = new Alert(AlertType.WARNING);
+                    if (originalHMACFile == null) {
+                        alert.setTitle("Вы не выбрали исходный файл");
+                        alert.setHeaderText("Пожалуйста, выберите исходный файл.");
+                    } else if (resultHMACFile == null) {
+                        alert.setTitle("Вы не выбрали файл результата");
+                        alert.setHeaderText("Пожалуйста, создайте или выберите файл чтобы сохранить результат HMAC.");
+                    }
+                    alert.showAndWait();
+                }
             } catch (IOException ex) {
                 Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -487,6 +499,7 @@ public class MainController {
                     while ((iA = finA.read()) != -1 && (iB = finB.read()) != -1) {
                         if (iA != iB) {
                             result = false;
+                            break;
                         }
                     }
                     return result;
