@@ -4,6 +4,8 @@ import com.evgeniy_mh.simpleaescipher.AESEngine.AESEncryptor;
 import com.evgeniy_mh.simpleaescipher.AESEngine.HMACEncryptor;
 import com.evgeniy_mh.simpleaescipher.AESEngine.Nonce;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -90,12 +92,22 @@ public class MainController {
     TextField resultFilePathHMAC;
     @FXML
     Button openResultFileHMAC;
-    
+    private File compareFileHMAC1, compareFileHMAC2;
+    @FXML
+    TextField compareFilePathHMAC1;
+    @FXML
+    Button openCompareFileHMAC1;
+    @FXML
+    TextField compareFilePathHMAC2;
+    @FXML
+    Button openCompareFileHMAC2;
+    @FXML
+    Button compareFilesHMAC;
 
     private AESEncryptor mAESEncryptor;
     private boolean canChangeOriginalFile = true;
     private final int MAX_FILE_TO_SHOW_SIZE = 5000;
-    
+
     private HMACEncryptor mHMACEncryptor;
 
     public MainController() {
@@ -104,8 +116,7 @@ public class MainController {
     @FXML
     public void initialize() {
         mAESEncryptor = new AESEncryptor(CipherProgressIndicator);
-        mHMACEncryptor=new HMACEncryptor();
-        
+        mHMACEncryptor = new HMACEncryptor();
 
         fileChooser = new FileChooser();
         try {
@@ -238,21 +249,51 @@ public class MainController {
                 }
             }
         });
-        
-        getHMACButton.setOnMouseClicked((event)->{
+
+        getHMACButton.setOnMouseClicked((event) -> {
             try {
                 mHMACEncryptor.getHMAC(originalHMACFile, resultHMACFile, getKeyHMAC());
             } catch (IOException ex) {
                 Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
-        
-        openResultFileHMAC.setOnMouseClicked((event) ->{
+
+        openResultFileHMAC.setOnMouseClicked((event) -> {
             File f = openFile();
             if (f != null) {
                 resultHMACFile = f;
                 resultFilePathHMAC.setText(f.getPath());
             }
+        });
+
+        openCompareFileHMAC1.setOnMouseClicked((event) -> {
+            File f = openFile();
+            if (f != null) {
+                compareFileHMAC1 = f;
+                compareFilePathHMAC1.setText(f.getPath());
+            }
+        });
+
+        openCompareFileHMAC2.setOnMouseClicked((event) -> {
+            File f = openFile();
+            if (f != null) {
+                compareFileHMAC2 = f;
+                compareFilePathHMAC2.setText(f.getPath());
+            }
+        });
+
+        compareFilesHMAC.setOnMouseClicked((event) -> {
+            boolean eq = compareFiles(compareFileHMAC1, compareFileHMAC2);
+
+            Alert alert = new Alert(AlertType.INFORMATION);
+            if (eq) {
+                alert.setTitle("Файлы одинаковы");
+                alert.setHeaderText("Файлы одинаковы");
+            } else {
+                alert.setTitle("Файлы различны");
+                alert.setHeaderText("Файлы различны");
+            }
+            alert.showAndWait();
         });
     }
 
@@ -427,13 +468,39 @@ public class MainController {
             return readBytesFromFile(keyFile, 128);
         }
     }
-    
+
     private byte[] getKeyHMAC() {
         if (keyTextFieldHMAC.isEditable()) {
             return keyTextFieldHMAC.getText().getBytes(StandardCharsets.UTF_8);
         } else {
             return readBytesFromFile(keyFileHMAC, 128);
         }
+    }
+
+    public boolean compareFiles(File A, File B) {
+        if (A != null && B != null) {
+            if (A.length() == B.length()) {
+                boolean result = true;
+                try (FileInputStream finA = new FileInputStream(A); FileInputStream finB = new FileInputStream(B);) {
+
+                    int iA = -1, iB = -1;
+                    while ((iA = finA.read()) != -1 && (iB = finB.read()) != -1) {
+                        if (iA != iB) {
+                            result = false;
+                        }
+                    }
+                    return result;
+                } catch (IOException ex) {
+                    showExceptionToUser(ex, "compareFiles(File A, File B)");
+                }
+            }
+        } else {
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Выберите два файла для сравнения");
+            alert.setHeaderText("Выберите два файла для сравнения!");
+            alert.showAndWait();
+        }
+        return false;
     }
 
     public static void showExceptionToUser(Throwable e, String message) {
