@@ -222,9 +222,77 @@
                                     </TextField>
                                  </children>
                               </HBox>
+                              <AnchorPane>
+                                 <children>
+                                    <Button fx:id="getHMACButton" mnemonicParsing="false" text="Подсчитать HMAC" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                       <VBox.margin>
+                                          <Insets top="5.0" />
+                                       </VBox.margin>
+                                    </Button>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin>
+                              </AnchorPane>
                            </children>
                         </VBox>
-                        <Button fx:id="getHMACButton" mnemonicParsing="false" text="Подсчитать HMAC" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
+                        <VBox layoutX="5.0" layoutY="492.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+                           <children>
+                              <Label text="Сравнить HMAC:" />
+                              <HBox prefHeight="25.0">
+                                 <children>
+                                    <Label alignment="CENTER" contentDisplay="CENTER" layoutX="5.0" layoutY="5.0" minWidth="-Infinity" text="Файл 1" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" HBox.hgrow="NEVER">
+                                       <padding>
+                                          <Insets bottom="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                    </Label>
+                                    <TextField fx:id="compareFileHMAC1" editable="false" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="300.0" promptText="Путь" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
+                                       <HBox.margin>
+                                          <Insets />
+                                       </HBox.margin>
+                                    </TextField>
+                                    <Button fx:id="openCompareFileHMAC1" layoutX="273.0" layoutY="5.0" mnemonicParsing="false" text="Открыть" AnchorPane.rightAnchor="5.0" HBox.hgrow="NEVER">
+                                       <HBox.margin>
+                                          <Insets left="5.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <HBox prefHeight="25.0">
+                                 <children>
+                                    <Label alignment="CENTER" contentDisplay="CENTER" layoutX="5.0" layoutY="5.0" minWidth="-Infinity" text="Файл 2" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" HBox.hgrow="NEVER">
+                                       <padding>
+                                          <Insets bottom="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                    </Label>
+                                    <TextField fx:id="compareFileHMAC2" editable="false" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="300.0" promptText="Путь" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
+                                       <HBox.margin>
+                                          <Insets />
+                                       </HBox.margin>
+                                    </TextField>
+                                    <Button fx:id="openCompareFileHMAC2" layoutX="273.0" layoutY="5.0" mnemonicParsing="false" text="Открыть" AnchorPane.rightAnchor="5.0" HBox.hgrow="NEVER">
+                                       <HBox.margin>
+                                          <Insets left="5.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <AnchorPane>
+                                 <children>
+                                    <Button fx:id="CompareFilesHMAC" mnemonicParsing="false" text="Button" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </AnchorPane>
+                           </children>
+                        </VBox>
                      </children>
                   </AnchorPane>
             </content>

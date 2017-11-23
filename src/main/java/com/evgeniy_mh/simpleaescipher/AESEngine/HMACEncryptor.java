@@ -47,21 +47,21 @@ public class HMACEncryptor {
     public void getHMAC(File in, File out, byte[] key) throws IOException {
         key = prepareKey(key);
 
-        byte[] ki = new byte[BLOCK_SIZE];
+        byte[] Si = new byte[BLOCK_SIZE];
         for (int i = 0; i < BLOCK_SIZE; i++) {
-            ki[i] = (byte) (key[i] ^ ipad[i]);
+            Si[i] = (byte) (key[i] ^ ipad[i]);
         }
 
-        byte[] ko = new byte[BLOCK_SIZE];
+        byte[] So = new byte[BLOCK_SIZE];
         for (int i = 0; i < BLOCK_SIZE; i++) {
-            ko[i] = (byte) (key[i] ^ opad[i]);
+            So[i] = (byte) (key[i] ^ opad[i]);
         }
 
         byte[] m = Files.readAllBytes(in.toPath());
-        byte[] temp = concat(ki, m);
+        byte[] temp = concat(Si, m);
         temp = md5.digest(temp);
         
-        temp=concat(ko, temp);
+        temp=concat(So, temp);
         temp=md5.digest(temp);
         
         Files.write(out.toPath(), temp, StandardOpenOption.WRITE);
@@ -95,6 +95,15 @@ public class HMACEncryptor {
         System.arraycopy(b, 0, result, a.length, b.length);
 
         return result;
+    }
+    
+    /**
+     * Подсчет количества целых блоков
+     * @param f Файл с данными
+     * @return Количество блоков
+     */
+    public int countBlocks(File f) { 
+        return (int) (f.length() / BLOCK_SIZE);
     }
 
 }
