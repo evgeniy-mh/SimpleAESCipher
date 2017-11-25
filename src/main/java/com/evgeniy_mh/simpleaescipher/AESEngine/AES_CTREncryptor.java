@@ -13,12 +13,12 @@ import javafx.scene.control.ProgressIndicator;
 /**
  * Created by evgeniy on 08.04.17.
  */
-public class AESEncryptor {
+public class AES_CTREncryptor {
 
     private AES mAES;
     private ProgressIndicator progressIndicator;
 
-    public AESEncryptor(ProgressIndicator progressIndicator) {
+    public AES_CTREncryptor(ProgressIndicator progressIndicator) {
         mAES = new AES();        
         this.progressIndicator=progressIndicator;
     }
@@ -54,7 +54,7 @@ public class AESEncryptor {
 
                     RandomAccessFile INraf = new RandomAccessFile(in, "r");
 
-                    int nBlocks = countBlocks(in); //сколько блоков открытого текста
+                    int nBlocks = CommonTools.countBlocks(in,AES.BLOCK_SIZE); //сколько блоков открытого текста
                     byte[] temp = new byte[AES.BLOCK_SIZE];
 
                     for (int i = 0; i < nBlocks + 1; i++) {
@@ -133,7 +133,7 @@ public class AESEncryptor {
                     OUTraf.setLength(in.length() - 8);
                     RandomAccessFile INraf = new RandomAccessFile(in, "r");
 
-                    int nBlocks = countBlocks(in); //сколько блоков шифро текста
+                    int nBlocks = CommonTools.countBlocks(in,AES.BLOCK_SIZE); //сколько блоков шифро текста
                     int nToDeleteBytes = 0; //сколько байт нужно удалить с конца сообщения
 
                     byte[] temp = new byte[AES.BLOCK_SIZE];
@@ -185,7 +185,7 @@ public class AESEncryptor {
      * @param b-массив байт для которого будет выполнено дополнение PKCS7
      * @return Дополненный массив байт
      */
-    private byte[] PKCS7(byte[] b) {
+    public static byte[] PKCS7(byte[] b) {
         int n = countDeltaBlocks(b); //сколько байт нужно добавить и какое у них будет значение 
         if (n != 0) {
             byte[] bPadded = new byte[b.length + n];
@@ -235,18 +235,9 @@ public class AESEncryptor {
      *
      * @param b Массив байт
      */
-    private int countDeltaBlocks(byte[] b) {
+    private static int countDeltaBlocks(byte[] b) {
         return AES.BLOCK_SIZE - b.length % AES.BLOCK_SIZE;
-    }
-
-    /**
-     * Подсчет количества целых блоков
-     * @param f Файл с данными
-     * @return Количество блоков
-     */
-    public int countBlocks(File f) { 
-        return (int) (f.length() / AES.BLOCK_SIZE);
-    }
+    }    
 
     /**
      * Вывод в консоль массива байт

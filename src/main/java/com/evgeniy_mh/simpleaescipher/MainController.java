@@ -1,11 +1,11 @@
 package com.evgeniy_mh.simpleaescipher;
 
-import com.evgeniy_mh.simpleaescipher.AESEngine.AESEncryptor;
+import com.evgeniy_mh.simpleaescipher.AESEngine.AES_CTREncryptor;
+import com.evgeniy_mh.simpleaescipher.AESEngine.ECBCEncryptor;
 import com.evgeniy_mh.simpleaescipher.AESEngine.HMACEncryptor;
 import com.evgeniy_mh.simpleaescipher.AESEngine.Nonce;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -103,20 +103,52 @@ public class MainController {
     Button openCompareFileHMAC2;
     @FXML
     Button compareFilesHMAC;
+    
+    //ECBC tab
+    private File originalECBCFile;
+    private File resultECBCFile;
+    private File keyFileECBC;
+    @FXML
+    TextField originalFilePathECBC;
+    @FXML
+    Button openOriginalFileECBC;
+    @FXML
+    Button openKeyFileECBC;
+    @FXML
+    TextField keyTextFieldECBC;
+    @FXML
+    Button getECBCButton;
+    @FXML
+    TextField resultFilePathECBC;
+    @FXML
+    Button openResultFileECBC;
+    private File compareFileECBC1, compareFileECBC2;
+    @FXML
+    TextField compareFilePathECBC1;
+    @FXML
+    Button openCompareFileECBC1;
+    @FXML
+    TextField compareFilePathECBC2;
+    @FXML
+    Button openCompareFileECBC2;
+    @FXML
+    Button compareFilesECBC;
 
-    private AESEncryptor mAESEncryptor;
+    private AES_CTREncryptor mAESEncryptor;
     private boolean canChangeOriginalFile = true;
     private final int MAX_FILE_TO_SHOW_SIZE = 5000;
 
     private HMACEncryptor mHMACEncryptor;
+    private ECBCEncryptor mECBCEncryptor;
 
     public MainController() {
     }
 
     @FXML
     public void initialize() {
-        mAESEncryptor = new AESEncryptor(CipherProgressIndicator);
+        mAESEncryptor = new AES_CTREncryptor(CipherProgressIndicator);
         mHMACEncryptor = new HMACEncryptor();
+        mECBCEncryptor=new ECBCEncryptor();
 
         fileChooser = new FileChooser();
         try {
@@ -307,6 +339,96 @@ public class MainController {
             }
             alert.showAndWait();
         });
+        
+        //ECBC tab
+        openOriginalFileECBC.setOnAction((event) -> {
+            File f = openFile();
+            if (f != null) {
+                originalECBCFile = f;
+                originalFilePathECBC.setText(f.getPath());
+            }
+        });
+
+        openKeyFileECBC.setOnAction((event) -> {
+            keyFileECBC = openFile();
+            if (keyFileECBC != null) {
+                keyTextFieldECBC.setText(keyFileECBC.getAbsolutePath());
+                keyTextFieldECBC.setEditable(false);
+            }
+        });
+
+        keyTextFieldECBC.setOnMouseClicked((event) -> {
+            if (!keyTextFieldECBC.isEditable()) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Использовать поле ввода ключа?");
+                alert.setHeaderText("Вы желаете ввести ключ самостоятельно?");
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    keyTextFieldECBC.clear();
+                    keyTextFieldECBC.setEditable(true);
+                    keyFileECBC = null;
+                }
+            }
+        });
+
+        getECBCButton.setOnMouseClicked((event) -> {
+            try {
+                if (originalECBCFile != null && resultECBCFile != null) {
+                    mECBCEncryptor.getECBC(originalECBCFile, resultECBCFile, getKeyECBC());
+                } else {
+                    Alert alert = new Alert(AlertType.WARNING);
+                    if (originalECBCFile == null) {
+                        alert.setTitle("Вы не выбрали исходный файл");
+                        alert.setHeaderText("Пожалуйста, выберите исходный файл.");
+                    } else if (resultECBCFile == null) {
+                        alert.setTitle("Вы не выбрали файл результата");
+                        alert.setHeaderText("Пожалуйста, создайте или выберите файл чтобы сохранить результат ECBC.");
+                    }
+                    alert.showAndWait();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+
+        openResultFileECBC.setOnMouseClicked((event) -> {
+            File f = openFile();
+            if (f != null) {
+                resultECBCFile = f;
+                resultFilePathECBC.setText(f.getPath());
+            }
+        });
+
+        openCompareFileECBC1.setOnMouseClicked((event) -> {
+            File f = openFile();
+            if (f != null) {
+                compareFileECBC1 = f;
+                compareFilePathECBC1.setText(f.getPath());
+            }
+        });
+
+        openCompareFileECBC2.setOnMouseClicked((event) -> {
+            File f = openFile();
+            if (f != null) {
+                compareFileECBC2 = f;
+                compareFilePathECBC2.setText(f.getPath());
+            }
+        });
+
+        compareFilesECBC.setOnMouseClicked((event) -> {
+            boolean eq = compareFiles(compareFileECBC1, compareFileECBC2);
+
+            Alert alert = new Alert(AlertType.INFORMATION);
+            if (eq) {
+                alert.setTitle("Файлы одинаковы");
+                alert.setHeaderText("Файлы одинаковы");
+            } else {
+                alert.setTitle("Файлы различны");
+                alert.setHeaderText("Файлы различны");
+            }
+            alert.showAndWait();
+        });
     }
 
     @FXML
@@ -404,7 +526,7 @@ public class MainController {
 
     private byte[] readBytesFromFile(File file, int bytesToRead) {
         try {
-            return AESEncryptor.readBytesFromFile(file, 0, bytesToRead);
+            return AES_CTREncryptor.readBytesFromFile(file, 0, bytesToRead);
         } catch (IOException ex) {
             showExceptionToUser(ex, "Exception in readBytesFromFile");
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
@@ -486,6 +608,14 @@ public class MainController {
             return keyTextFieldHMAC.getText().getBytes(StandardCharsets.UTF_8);
         } else {
             return readBytesFromFile(keyFileHMAC, 128);
+        }
+    }
+    
+    private byte[] getKeyECBC() {
+        if (keyTextFieldECBC.isEditable()) {
+            return keyTextFieldECBC.getText().getBytes(StandardCharsets.UTF_8);
+        } else {
+            return readBytesFromFile(keyFileECBC, 128);
         }
     }
 
