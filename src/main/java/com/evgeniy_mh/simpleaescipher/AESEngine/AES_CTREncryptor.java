@@ -114,7 +114,7 @@ public class AES_CTREncryptor {
             @Override
             protected Void call() throws IOException {
                 byte[] nonceAndCounterInfo = new byte[8]; //8 байт которые добавл в начало сообщения и несут инфу о nonce и counter //nonceAndCounterInfo: nnnncccc        
-                nonceAndCounterInfo = readBytesFromFile(in, 0, 8);
+                nonceAndCounterInfo = CommonTools.readBytesFromFile(in, 0, 8);
 
                 byte[] nonce = new byte[8];
                 byte[] counter = new byte[8];
@@ -200,27 +200,7 @@ public class AES_CTREncryptor {
         } else {
             return b;
         }
-    }
-
-    /**
-     * Считывание необходимого количества байт из файла
-     *
-     * @param f Файл для считывания
-     * @param from Начальная позиция для считывания из файла(Номер байта)
-     * @param to Конечная позиция для считывания из файла(Номер байта)
-     * @return Массив байт которые были считаны из файла
-     * @throws FileNotFoundException
-     * @throws IOException
-     */
-    public static byte[] readBytesFromFile(File f, int from, int to) throws FileNotFoundException, IOException {
-        RandomAccessFile raf = new RandomAccessFile(f, "r");
-        raf.seek(from);
-        byte[] res = new byte[to - from];
-        raf.read(res, 0, to - from);
-
-        raf.close();
-        return res;
-    }
+    }    
 
     /**
      * Получить Nonce
@@ -237,21 +217,7 @@ public class AES_CTREncryptor {
      */
     private static int countDeltaBlocks(byte[] b) {
         return AES.BLOCK_SIZE - b.length % AES.BLOCK_SIZE;
-    }    
-
-    /**
-     * Вывод в консоль массива байт
-     *
-     * @param mes Сообщение для вывода
-     * @param array Массив байт содержимое которого нужно вывести
-     */
-    static public void debugPrintByteArray(String mes, byte[] array) {
-        System.out.println(mes);
-        for (int i = 0; i < array.length; i++) {
-            System.out.print(String.format("0x%08X", array[i]) + " ");
-        }
-        System.out.println();
-    }
+    }        
     
     /**
      * Отправка сообщения о исключении в Application Thread

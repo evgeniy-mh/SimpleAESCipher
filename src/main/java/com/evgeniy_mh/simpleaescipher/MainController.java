@@ -1,6 +1,7 @@
 package com.evgeniy_mh.simpleaescipher;
 
 import com.evgeniy_mh.simpleaescipher.AESEngine.AES_CTREncryptor;
+import com.evgeniy_mh.simpleaescipher.AESEngine.CommonTools;
 import com.evgeniy_mh.simpleaescipher.AESEngine.ECBCEncryptor;
 import com.evgeniy_mh.simpleaescipher.AESEngine.HMACEncryptor;
 import com.evgeniy_mh.simpleaescipher.AESEngine.Nonce;
@@ -526,7 +527,7 @@ public class MainController {
 
     private byte[] readBytesFromFile(File file, int bytesToRead) {
         try {
-            return AES_CTREncryptor.readBytesFromFile(file, 0, bytesToRead);
+            return CommonTools.readBytesFromFile(file, 0, bytesToRead);
         } catch (IOException ex) {
             showExceptionToUser(ex, "Exception in readBytesFromFile");
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);

@@ -57,10 +57,10 @@ public class HMACEncryptor {
         }
 
         byte[] m = Files.readAllBytes(in.toPath());
-        byte[] temp = concat(Si, m);
+        byte[] temp = CommonTools.concat(Si, m);
         temp = md5.digest(temp);
         
-        temp=concat(So, temp);
+        temp=CommonTools.concat(So, temp);
         temp=md5.digest(temp);
         
         Files.write(out.toPath(), temp, StandardOpenOption.WRITE);
@@ -86,23 +86,5 @@ public class HMACEncryptor {
         }
 
         return resultKey;
-    }
-
-    private byte[] concat(byte[] a, byte[] b) {
-        byte[] result = new byte[a.length + b.length];
-        System.arraycopy(a, 0, result, 0, a.length);
-        System.arraycopy(b, 0, result, a.length, b.length);
-
-        return result;
-    }
-    
-    /**
-     * Подсчет количества целых блоков
-     * @param f Файл с данными
-     * @return Количество блоков
-     */
-    public int countBlocks(File f) { 
-        return (int) (f.length() / BLOCK_SIZE);
-    }
-
+    }    
 }
