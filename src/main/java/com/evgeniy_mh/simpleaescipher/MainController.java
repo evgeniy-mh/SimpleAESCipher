@@ -37,42 +37,42 @@ public class MainController {
     private MainApp mainApp;
 
     //AES-CTR tab
-    private File originalFile;
+    private File originalFileAES;
     @FXML
-    TextField originalFilePath;
+    TextField originalFilePathAES;
     @FXML
-    TextArea originalFileTextArea;
+    TextArea originalFileTextAreaAES;
     @FXML
-    Button createOriginalFile;
+    Button createOriginalFileAES;
     @FXML
-    Button openOriginalFile;
+    Button openOriginalFileAES;
     @FXML
-    Button saveOriginalFile;
+    Button saveOriginalFileAES;
     @FXML
-    Button saveAsOriginalFile;
+    Button saveAsOriginalFileAES;
 
-    private File resultFile;
+    private File resultFileAES;
     @FXML
-    TextField resultFilePath;
+    TextField resultFilePathAES;
     @FXML
-    TextArea resultFileTextArea;
+    TextArea resultFileTextAreaAES;
     @FXML
-    Button createResultFile;
+    Button createResultFileAES;
     @FXML
-    Button openResultFile;
+    Button openResultFileAES;
     @FXML
-    Button saveAsResultFile;
+    Button saveAsResultFileAES;
 
-    private File keyFile;
+    private File keyFileAES;
 
     @FXML
-    TextField keyTextField;
+    TextField keyTextFieldAES;
     @FXML
-    Button openKeyFile;
+    Button openKeyFileAES;
     @FXML
-    Button encryptButton;
+    Button encryptButtonAES;
     @FXML
-    Button decryptButton;
+    Button decryptButtonAES;
 
     @FXML
     ProgressIndicator CipherProgressIndicator;
@@ -165,77 +165,77 @@ public class MainController {
         }
 
         //AES-CTR tab
-        createOriginalFile.setOnAction((event) -> {
+        createOriginalFileAES.setOnAction((event) -> {
             File f = createNewFile("Сохраните новый исходный файл");
             if (f != null) {
-                originalFile = f;
-                updateFileInfo(originalFilePath, originalFileTextArea, f);
+                originalFileAES = f;
+                updateFileInfo(originalFilePathAES, originalFileTextAreaAES, f);
             }
         });
 
-        openOriginalFile.setOnAction((event) -> {
+        openOriginalFileAES.setOnAction((event) -> {
             File f = openFile();
             if (f != null) {
-                originalFile = f;
-                updateFileInfo(originalFilePath, originalFileTextArea, f);
+                originalFileAES = f;
+                updateFileInfo(originalFilePathAES, originalFileTextAreaAES, f);
                 clearKey();
             }
         });
 
-        saveOriginalFile.setOnAction((event) -> {
+        saveOriginalFileAES.setOnAction((event) -> {
             if (canChangeOriginalFile) {
-                saveFile(originalFile, originalFileTextArea.getText().getBytes(StandardCharsets.UTF_8));
-                updateFileInfo(originalFilePath, originalFileTextArea, originalFile);
+                saveFile(originalFileAES, originalFileTextAreaAES.getText().getBytes(StandardCharsets.UTF_8));
+                updateFileInfo(originalFilePathAES, originalFileTextAreaAES, originalFileAES);
             }
         });
 
-        saveAsOriginalFile.setOnAction((event) -> {
+        saveAsOriginalFileAES.setOnAction((event) -> {
             if (canChangeOriginalFile) {
                 byte[] bytesToSave;
-                if (!originalFileTextArea.getText().isEmpty()) {
-                    bytesToSave = originalFileTextArea.getText().getBytes(StandardCharsets.UTF_8);
+                if (!originalFileTextAreaAES.getText().isEmpty()) {
+                    bytesToSave = originalFileTextAreaAES.getText().getBytes(StandardCharsets.UTF_8);
                 } else {
                     bytesToSave = "".getBytes(StandardCharsets.UTF_8);
                 }
                 saveAsFile(bytesToSave, "Сохраните новый исходный файл");
             } else {
-                saveAsFile(originalFile, "Сохраните новый исходный файл");
+                saveAsFile(originalFileAES, "Сохраните новый исходный файл");
             }
-            updateFileInfo(originalFilePath, originalFileTextArea, originalFile);
+            updateFileInfo(originalFilePathAES, originalFileTextAreaAES, originalFileAES);
         });
 
-        createResultFile.setOnAction((event) -> {
+        createResultFileAES.setOnAction((event) -> {
             File f = createNewFile("Сохраните новый файл результата");
             if (f != null) {
-                resultFile = f;
-                updateFileInfo(resultFilePath, resultFileTextArea, f);
+                resultFileAES = f;
+                updateFileInfo(resultFilePathAES, resultFileTextAreaAES, f);
             }
         });
 
-        openResultFile.setOnAction((event) -> {
+        openResultFileAES.setOnAction((event) -> {
             File f = openFile();
             if (f != null) {
-                resultFile = f;
-                updateFileInfo(resultFilePath, resultFileTextArea, f);
+                resultFileAES = f;
+                updateFileInfo(resultFilePathAES, resultFileTextAreaAES, f);
 
                 clearKey();
             }
         });
 
-        saveAsResultFile.setOnAction((event) -> {
-            saveAsFile(resultFile, "Сохраните новый файл результата");
+        saveAsResultFileAES.setOnAction((event) -> {
+            saveAsFile(resultFileAES, "Сохраните новый файл результата");
         });
 
-        openKeyFile.setOnAction((event) -> {
-            keyFile = openFile();
-            if (keyFile != null) {
-                keyTextField.setText(keyFile.getAbsolutePath());
-                keyTextField.setEditable(false);
+        openKeyFileAES.setOnAction((event) -> {
+            keyFileAES = openFile();
+            if (keyFileAES != null) {
+                keyTextFieldAES.setText(keyFileAES.getAbsolutePath());
+                keyTextFieldAES.setEditable(false);
             }
         });
 
-        keyTextField.setOnMouseClicked((event) -> {
-            if (!keyTextField.isEditable()) {
+        keyTextFieldAES.setOnMouseClicked((event) -> {
+            if (!keyTextFieldAES.isEditable()) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Использовать поле ввода ключа?");
                 alert.setHeaderText("Вы желаете ввести ключ самостоятельно?");
@@ -247,12 +247,12 @@ public class MainController {
             }
         });
 
-        encryptButton.setOnAction((event) -> {
+        encryptButtonAES.setOnAction((event) -> {
             encrypt();
             Nonce.getInstance().IncNonce();
         });
 
-        decryptButton.setOnAction((event) -> {
+        decryptButtonAES.setOnAction((event) -> {
             decrypt();
         });
 
@@ -380,7 +380,7 @@ public class MainController {
         getECBCButton.setOnMouseClicked((event) -> {
             try {
                 if (originalECBCFile != null && resultECBCFile != null) {
-                    mECBCEncryptor.getECBC(originalECBCFile, resultECBCFile, getKeyECBC());
+                    mECBCEncryptor.getECBC(originalECBCFile, resultECBCFile, getKey(keyTextFieldECBC,keyFileECBC));
                 } else {
                     Alert alert = new Alert(AlertType.WARNING);
                     if (originalECBCFile == null) {
@@ -504,8 +504,8 @@ public class MainController {
 
                 if (file.length() < MAX_FILE_TO_SHOW_SIZE) {
                     canChangeOriginalFile = true;
-                    saveOriginalFile.setDisable(false);
-                    originalFileTextArea.setEditable(true);
+                    saveOriginalFileAES.setDisable(false);
+                    originalFileTextAreaAES.setEditable(true);
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException ex) {
@@ -515,8 +515,8 @@ public class MainController {
                     contentTextArea.setText(content);
                 } else {
                     canChangeOriginalFile = false;
-                    saveOriginalFile.setDisable(true);
-                    originalFileTextArea.setEditable(false);
+                    saveOriginalFileAES.setDisable(true);
+                    originalFileTextAreaAES.setEditable(false);
                     contentTextArea.setText("Файл слишком большой для отображения.");
                 }
 
@@ -540,7 +540,7 @@ public class MainController {
     }
 
     private void encrypt() {
-        if (originalFile != null && resultFile != null && getKey().length != 0) {
+        if (originalFileAES != null && resultFileAES != null && getKey(keyTextFieldAES,keyFileAES).length != 0) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Результирующий файл будет перезаписан!");
             alert.setHeaderText("Внимание, это перезапишет результирующий файл(2).");
@@ -548,13 +548,13 @@ public class MainController {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
 
-                Task AESTask = mAESEncryptor.encrypt(originalFile, resultFile, getKey());
+                Task AESTask = mAESEncryptor.encrypt(originalFileAES, resultFileAES, getKey(keyTextFieldAES,keyFileAES));
                 AESTask.setOnSucceeded(value -> {
-                    updateFileInfo(resultFilePath, resultFileTextArea, resultFile);
+                    updateFileInfo(resultFilePathAES, resultFileTextAreaAES, resultFileAES);
 
                     if (CreateHMACCheckBox.isSelected()) {
                         File hmacFile = createNewFile("Создайте файл для сохранения HMAC");
-                        Task HMACTask = mHMACEncryptor.getHMAC(resultFile, hmacFile, getKey());
+                        Task HMACTask = mHMACEncryptor.getHMAC(resultFileAES, hmacFile, getKey(keyTextFieldAES,keyFileAES));
                         HMACTask.setOnSucceeded(value2 -> {
                             Alert alertHMACDone = new Alert(Alert.AlertType.INFORMATION);
                             alertHMACDone.setTitle("HMAC файл создан");
@@ -569,13 +569,13 @@ public class MainController {
             }
         } else {
             Alert alert = new Alert(AlertType.WARNING);
-            if (originalFile == null) {
+            if (originalFileAES == null) {
                 alert.setTitle("Вы не выбрали исходный файл");
                 alert.setHeaderText("Пожалуйста, создайте или выберите исходный файл(1).");
-            } else if (resultFile == null) {
+            } else if (resultFileAES == null) {
                 alert.setTitle("Вы не выбрали файл результата ");
                 alert.setHeaderText("Пожалуйста, создайте или выберите файл результата шифрования(2).");
-            } else if (getKey().length == 0) {
+            } else if (getKey(keyTextFieldAES,keyFileAES).length == 0) {
                 alert.setTitle("Вы не ввели ключ");
                 alert.setHeaderText("Пожалуйста, введите ключ или выберите файл с ключем.");
             }
@@ -584,25 +584,25 @@ public class MainController {
     }
 
     private void decrypt() {
-        if (originalFile != null && resultFile != null && getKey().length != 0) {
+        if (originalFileAES != null && resultFileAES != null && getKey(keyTextFieldAES,keyFileAES).length != 0) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Оригинальный файл будет перезаписан!");
             alert.setHeaderText("Внимание, это перезапишет исходный файл(1).");
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
-                mAESEncryptor.decrypt(resultFile, originalFile, getKey());
-                updateFileInfo(originalFilePath, originalFileTextArea, originalFile);
+                mAESEncryptor.decrypt(resultFileAES, originalFileAES, getKey(keyTextFieldAES,keyFileAES));
+                updateFileInfo(originalFilePathAES, originalFileTextAreaAES, originalFileAES);
             }
         } else {
             Alert alert = new Alert(AlertType.WARNING);
-            if (originalFile == null) {
+            if (originalFileAES == null) {
                 alert.setTitle("Вы не выбрали исходный файл");
                 alert.setHeaderText("Пожалуйста, создайте или выберите исходный файл.");
-            } else if (resultFile == null) {
+            } else if (resultFileAES == null) {
                 alert.setTitle("Вы не выбрали файл результата");
                 alert.setHeaderText("Пожалуйста, создайте или выберите файл результата расшифрования.");
-            } else if (getKey().length == 0) {
+            } else if (getKey(keyTextFieldAES,keyFileAES).length == 0) {
                 alert.setTitle("Вы не ввели ключ");
                 alert.setHeaderText("Пожалуйста, введите ключ или выберите файл с ключем.");
             }
@@ -631,12 +631,12 @@ public class MainController {
         }
     }*/
     private void clearKey() {
-        keyTextField.clear();
-        keyTextField.setEditable(true);
-        keyFile = null;
+        keyTextFieldAES.clear();
+        keyTextFieldAES.setEditable(true);
+        keyFileAES = null;
     }
 
-    private byte[] getKey() {
+    /*private byte[] getKey() {
         if (keyTextField.isEditable()) {
             return keyTextField.getText().getBytes(StandardCharsets.UTF_8);
         } else {
@@ -657,6 +657,13 @@ public class MainController {
             return keyTextFieldECBC.getText().getBytes(StandardCharsets.UTF_8);
         } else {
             return readBytesFromFile(keyFileECBC, 128);
+        }
+    }*/
+    private byte[] getKey(TextField keyTextField, File keyFile) {
+        if (keyTextField.isEditable()) {
+            return keyTextField.getText().getBytes(StandardCharsets.UTF_8);
+        } else {
+            return readBytesFromFile(keyFile, 128);
         }
     }
 

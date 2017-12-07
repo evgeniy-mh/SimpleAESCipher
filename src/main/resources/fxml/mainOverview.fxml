@@ -22,36 +22,36 @@
                                           <Insets bottom="5.0" right="5.0" top="5.0" />
                                        </padding>
                                     </Label>
-                                    <TextField fx:id="originalFilePath" editable="false" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="420.0" promptText="Путь" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
+                                    <TextField fx:id="originalFilePathAES" editable="false" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="420.0" promptText="Путь" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
                                        <HBox.margin>
                                           <Insets />
                                        </HBox.margin>
                                     </TextField>
-                                    <Button fx:id="openOriginalFile" layoutX="273.0" layoutY="5.0" minWidth="-Infinity" mnemonicParsing="false" text="Открыть" AnchorPane.rightAnchor="5.0" HBox.hgrow="NEVER">
+                                    <Button fx:id="openOriginalFileAES" layoutX="273.0" layoutY="5.0" minWidth="-Infinity" mnemonicParsing="false" text="Открыть" AnchorPane.rightAnchor="5.0" HBox.hgrow="NEVER">
                                        <HBox.margin>
                                           <Insets left="5.0" />
                                        </HBox.margin>
                                     </Button>
                                  </children>
                               </HBox>
-                              <TextArea fx:id="originalFileTextArea" layoutX="14.0" layoutY="30.0" prefHeight="100.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="35.0" VBox.vgrow="ALWAYS">
+                              <TextArea fx:id="originalFileTextAreaAES" layoutX="14.0" layoutY="30.0" prefHeight="100.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="35.0" VBox.vgrow="ALWAYS">
                                  <VBox.margin>
                                     <Insets top="5.0" />
                                  </VBox.margin>
                               </TextArea>
                               <HBox>
                                  <children>
-                                    <Button fx:id="createOriginalFile" minWidth="-Infinity" mnemonicParsing="false" text="Создать">
+                                    <Button fx:id="createOriginalFileAES" minWidth="-Infinity" mnemonicParsing="false" text="Создать">
                                        <HBox.margin>
                                           <Insets right="5.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button fx:id="saveOriginalFile" minWidth="-Infinity" mnemonicParsing="false" text="Сохранить">
+                                    <Button fx:id="saveOriginalFileAES" minWidth="-Infinity" mnemonicParsing="false" text="Сохранить">
                                        <HBox.margin>
                                           <Insets right="5.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button fx:id="saveAsOriginalFile" minWidth="-Infinity" mnemonicParsing="false" text="Сохранить как" />
+                                    <Button fx:id="saveAsOriginalFileAES" minWidth="-Infinity" mnemonicParsing="false" text="Сохранить как" />
                                  </children>
                                  <VBox.margin>
                                     <Insets top="5.0" />
@@ -67,30 +67,30 @@
                                           <Insets />
                                        </HBox.margin>
                                     </Label>
-                                    <TextField fx:id="resultFilePath" editable="false" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="420.0" promptText="Путь" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
+                                    <TextField fx:id="resultFilePathAES" editable="false" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="420.0" promptText="Путь" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
                                        <HBox.margin>
                                           <Insets right="5.0" />
                                        </HBox.margin>
                                     </TextField>
-                                    <Button fx:id="openResultFile" layoutX="273.0" layoutY="5.0" minWidth="-Infinity" mnemonicParsing="false" text="Открыть" AnchorPane.rightAnchor="5.0" HBox.hgrow="NEVER" />
+                                    <Button fx:id="openResultFileAES" layoutX="273.0" layoutY="5.0" minWidth="-Infinity" mnemonicParsing="false" text="Открыть" AnchorPane.rightAnchor="5.0" HBox.hgrow="NEVER" />
                                  </children>
                                  <padding>
                                     <Insets top="10.0" />
                                  </padding>
                               </HBox>
-                              <TextArea fx:id="resultFileTextArea" editable="false" prefHeight="100.0" VBox.vgrow="ALWAYS">
+                              <TextArea fx:id="resultFileTextAreaAES" editable="false" prefHeight="100.0" VBox.vgrow="ALWAYS">
                                  <VBox.margin>
                                     <Insets top="5.0" />
                                  </VBox.margin>
                               </TextArea>
                               <HBox>
                                  <children>
-                                    <Button fx:id="createResultFile" minWidth="-Infinity" mnemonicParsing="false" text="Создать">
+                                    <Button fx:id="createResultFileAES" minWidth="-Infinity" mnemonicParsing="false" text="Создать">
                                        <HBox.margin>
                                           <Insets right="5.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button fx:id="saveAsResultFile" minWidth="-Infinity" mnemonicParsing="false" text="Сохранить как" />
+                                    <Button fx:id="saveAsResultFileAES" minWidth="-Infinity" mnemonicParsing="false" text="Сохранить как" />
                                  </children>
                                  <VBox.margin>
                                     <Insets top="5.0" />
@@ -103,7 +103,7 @@
                                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                        </padding>
                                     </Label>
-                                    <TextField fx:id="keyTextField" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="420.0" promptText="Введите ключ" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
+                                    <TextField fx:id="keyTextFieldAES" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="420.0" promptText="Введите ключ" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
                                        <HBox.margin>
                                           <Insets />
                                        </HBox.margin>
@@ -115,7 +115,7 @@
                               </HBox>
                               <AnchorPane>
                                  <children>
-                                    <Button fx:id="openKeyFile" mnemonicParsing="false" text="Открыть файл ключа" AnchorPane.rightAnchor="5.0" VBox.vgrow="NEVER">
+                                    <Button fx:id="openKeyFileAES" mnemonicParsing="false" text="Открыть файл ключа" AnchorPane.rightAnchor="5.0" VBox.vgrow="NEVER">
                                        <VBox.margin>
                                           <Insets top="5.0" />
                                        </VBox.margin>
@@ -161,12 +161,12 @@
                               </VBox>
                               <HBox prefWidth="200.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
                                  <children>
-                                    <Button fx:id="encryptButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Зашифровать (1-&gt;2)" HBox.hgrow="ALWAYS">
+                                    <Button fx:id="encryptButtonAES" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Зашифровать (1-&gt;2)" HBox.hgrow="ALWAYS">
                                        <HBox.margin>
                                           <Insets right="5.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button fx:id="decryptButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Расшифровать (2-&gt;1)" HBox.hgrow="ALWAYS" />
+                                    <Button fx:id="decryptButtonAES" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Расшифровать (2-&gt;1)" HBox.hgrow="ALWAYS" />
                                  </children>
                                  <padding>
                                     <Insets top="5.0" />
