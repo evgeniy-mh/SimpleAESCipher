@@ -17,11 +17,13 @@ import java.nio.file.Files;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -104,7 +106,7 @@ public class MainController {
     Button openCompareFileHMAC2;
     @FXML
     Button compareFilesHMAC;
-    
+
     //ECBC tab
     private File originalECBCFile;
     private File resultECBCFile;
@@ -135,6 +137,9 @@ public class MainController {
     @FXML
     Button compareFilesECBC;
 
+    @FXML
+    CheckBox CreateHMACCheckBox;
+
     private AES_CTREncryptor mAESEncryptor;
     private boolean canChangeOriginalFile = true;
     private final int MAX_FILE_TO_SHOW_SIZE = 5000;
@@ -149,7 +154,7 @@ public class MainController {
     public void initialize() {
         mAESEncryptor = new AES_CTREncryptor(CipherProgressIndicator);
         mHMACEncryptor = new HMACEncryptor();
-        mECBCEncryptor=new ECBCEncryptor();
+        mECBCEncryptor = new ECBCEncryptor();
 
         fileChooser = new FileChooser();
         try {
@@ -283,7 +288,7 @@ public class MainController {
             }
         });
 
-        getHMACButton.setOnMouseClicked((event) -> {
+        /*getHMACButton.setOnMouseClicked((event) -> {
             try {
                 if (originalHMACFile != null && resultHMACFile != null) {
                     mHMACEncryptor.getHMAC(originalHMACFile, resultHMACFile, getKeyHMAC());
@@ -301,8 +306,7 @@ public class MainController {
             } catch (IOException ex) {
                 Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             }
-        });
-
+        });*/
         openResultFileHMAC.setOnMouseClicked((event) -> {
             File f = openFile();
             if (f != null) {
@@ -340,7 +344,7 @@ public class MainController {
             }
             alert.showAndWait();
         });
-        
+
         //ECBC tab
         openOriginalFileECBC.setOnAction((event) -> {
             File f = openFile();
@@ -544,8 +548,24 @@ public class MainController {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
 
-                mAESEncryptor.encrypt(originalFile, resultFile, getKey());
-                updateFileInfo(resultFilePath, resultFileTextArea, resultFile);
+                Task AESTask = mAESEncryptor.encrypt(originalFile, resultFile, getKey());
+                AESTask.setOnSucceeded(value -> {
+                    updateFileInfo(resultFilePath, resultFileTextArea, resultFile);
+
+                    if (CreateHMACCheckBox.isSelected()) {
+                        File hmacFile = createNewFile("Создайте файл для сохранения HMAC");
+                        Task HMACTask = mHMACEncryptor.getHMAC(resultFile, hmacFile, getKey());
+                        HMACTask.setOnSucceeded(value2 -> {
+                            Alert alertHMACDone = new Alert(Alert.AlertType.INFORMATION);
+                            alertHMACDone.setTitle("HMAC файл создан");
+                            alertHMACDone.setHeaderText("HMAC файл создан, путь файла: " + hmacFile.getPath());
+                            alertHMACDone.show();
+                        });
+                        HMACTask.run();
+                    }
+                });
+                Thread AESThread = new Thread(AESTask);
+                AESThread.start();
             }
         } else {
             Alert alert = new Alert(AlertType.WARNING);
@@ -590,6 +610,26 @@ public class MainController {
         }
     }
 
+    /*private void getHMAC(File in, File out, byte[] key) {
+        try {
+            /*if (originalHMACFile != null && resultHMACFile != null) {
+            mHMACEncryptor.getHMAC(originalHMACFile, resultHMACFile, getKeyHMAC());
+            } else {
+            Alert alert = new Alert(AlertType.WARNING);
+            if (originalHMACFile == null) {
+            alert.setTitle("Вы не выбрали исходный файл");
+            alert.setHeaderText("Пожалуйста, выберите исходный файл.");
+            } else if (resultHMACFile == null) {
+            alert.setTitle("Вы не выбрали файл результата");
+            alert.setHeaderText("Пожалуйста, создайте или выберите файл чтобы сохранить результат HMAC.");
+            }
+            alert.showAndWait();
+            }
+            mHMACEncryptor.getHMAC(in, out, key);
+        } catch (IOException ex) {
+            showExceptionToUser(ex, "getHMAC(File in, File out, byte[] key)");
+        }
+    }*/
     private void clearKey() {
         keyTextField.clear();
         keyTextField.setEditable(true);
@@ -611,7 +651,7 @@ public class MainController {
             return readBytesFromFile(keyFileHMAC, 128);
         }
     }
-    
+
     private byte[] getKeyECBC() {
         if (keyTextFieldECBC.isEditable()) {
             return keyTextFieldECBC.getText().getBytes(StandardCharsets.UTF_8);
@@ -620,6 +660,13 @@ public class MainController {
         }
     }
 
+    /*private byte[] getKey(TextField field, File keyInputFile){
+        if (keyTextFieldECBC.isEditable()) {
+            return keyTextFieldECBC.getText().getBytes(StandardCharsets.UTF_8);
+        } else {
+            return readBytesFromFile(keyFileECBC, 128);
+        }
+    }*/
     public boolean compareFiles(File A, File B) {
         if (A != null && B != null) {
             if (A.length() == B.length()) {

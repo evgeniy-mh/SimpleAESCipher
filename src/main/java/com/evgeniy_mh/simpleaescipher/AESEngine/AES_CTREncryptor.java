@@ -30,8 +30,8 @@ public class AES_CTREncryptor {
      * @param out Файл для сохранения результата шифрования (будет перезаписан)
      * @param key Ключ шифрования
      */
-    public void encrypt(File in, File out, final byte[] key) {
-        Task t = new Task<Void>() {
+    public Task encrypt(File in, File out, final byte[] key) {
+        return new Task<Void>() {
             @Override
             protected Void call() throws IOException {
                 byte[] nonce = ByteBuffer.allocate(8).putInt(getNonce()).array();
@@ -92,13 +92,12 @@ public class AES_CTREncryptor {
                     OUTraf.close();
                     INraf.close();
                 } catch (IOException e) {
-                    reportExceptionToMainThread(e,"Exception in encrypt thread!");
+                    CommonTools.reportExceptionToMainThread(e,"Exception in encrypt thread!");
                 }
                 progressIndicator.setProgress(0.0);
                 return null;
             }
         };
-        new Thread(t).start();
     } 
 
     /**
@@ -167,7 +166,7 @@ public class AES_CTREncryptor {
                     OUTraf.close();
                     INraf.close();
                 } catch (IOException e) {
-                    reportExceptionToMainThread(e, "Exception in decrypt thread!");
+                    CommonTools.reportExceptionToMainThread(e, "Exception in decrypt thread!");
                 }
                 progressIndicator.setProgress(0.0);
                 return null;
@@ -217,17 +216,5 @@ public class AES_CTREncryptor {
      */
     private static int countDeltaBlocks(byte[] b) {
         return AES.BLOCK_SIZE - b.length % AES.BLOCK_SIZE;
-    }        
-    
-    /**
-     * Отправка сообщения о исключении в Application Thread
-     * @param t
-     * @param message Дополнительное сообщение для пользователя
-     */
-    public void reportExceptionToMainThread(final Throwable t, final String message) {
-        Platform.runLater(() -> {
-            MainController.showExceptionToUser(t,message);
-        });
-    }
-    
+    }   
 }

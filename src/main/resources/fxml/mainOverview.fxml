@@ -5,7 +5,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="605.0" prefWidth="657.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.evgeniy_mh.simpleaescipher.MainController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="657.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.evgeniy_mh.simpleaescipher.MainController">
    <children>
       <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <tabs>
@@ -13,7 +13,7 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <VBox AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+                        <VBox AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
                            <children>
                               <HBox layoutX="5.0" layoutY="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
                                  <children>
@@ -132,16 +132,48 @@
                               </ProgressBar>
                            </children>
                         </VBox>
-                        <HBox prefWidth="200.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+                        <VBox layoutX="5.0" layoutY="637.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
                            <children>
-                              <Button fx:id="encryptButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Зашифровать (1-&gt;2)" HBox.hgrow="ALWAYS">
-                                 <HBox.margin>
-                                    <Insets right="5.0" />
-                                 </HBox.margin>
-                              </Button>
-                              <Button fx:id="decryptButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Расшифровать (2-&gt;1)" HBox.hgrow="ALWAYS" />
+                              <CheckBox fx:id="CreateHMACCheckBox" mnemonicParsing="false" text="Создать HMAC" />
+                              <VBox>
+                                 <children>
+                                    <CheckBox mnemonicParsing="false" text="Создать ECBC">
+                                       <VBox.margin>
+                                          <Insets top="2.0" />
+                                       </VBox.margin>
+                                    </CheckBox>
+                                    <HBox>
+                                       <children>
+                                          <Label alignment="CENTER" contentDisplay="CENTER" layoutX="5.0" layoutY="5.0" minWidth="-Infinity" text="Ключ 2:" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" HBox.hgrow="NEVER">
+                                             <padding>
+                                                <Insets bottom="5.0" right="5.0" top="5.0" />
+                                             </padding>
+                                          </Label>
+                                          <TextField fx:id="keyTextField1" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="420.0" promptText="Введите ключ 2 для ECBC" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </TextField>
+                                          <Button fx:id="openKeyFile1" mnemonicParsing="false" text="Открыть файл ключа" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                              <HBox prefWidth="200.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+                                 <children>
+                                    <Button fx:id="encryptButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Зашифровать (1-&gt;2)" HBox.hgrow="ALWAYS">
+                                       <HBox.margin>
+                                          <Insets right="5.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button fx:id="decryptButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Расшифровать (2-&gt;1)" HBox.hgrow="ALWAYS" />
+                                 </children>
+                                 <padding>
+                                    <Insets top="5.0" />
+                                 </padding>
+                              </HBox>
                            </children>
-                        </HBox>
+                        </VBox>
                      </children>
                   </AnchorPane>
             </content>
@@ -347,21 +379,9 @@
                                     <Insets top="10.0" />
                                  </VBox.margin>
                               </HBox>
-                              <AnchorPane>
-                                 <children>
-                                    <Button fx:id="openKeyFileECBC" mnemonicParsing="false" text="Открыть файл ключа" AnchorPane.rightAnchor="5.0" VBox.vgrow="NEVER">
-                                       <VBox.margin>
-                                          <Insets top="5.0" />
-                                       </VBox.margin>
-                                    </Button>
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets top="10.0" />
-                                 </VBox.margin>
-                              </AnchorPane>
                               <HBox>
                                  <children>
-                                    <Label alignment="CENTER" contentDisplay="CENTER" layoutX="5.0" layoutY="5.0" minWidth="-Infinity" text="Ключ:" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" HBox.hgrow="NEVER">
+                                    <Label alignment="CENTER" contentDisplay="CENTER" layoutX="5.0" layoutY="5.0" minWidth="-Infinity" text="Ключ 1:" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" HBox.hgrow="NEVER">
                                        <padding>
                                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                        </padding>
@@ -372,7 +392,22 @@
                                        </HBox.margin>
                                     </TextField>
                                  </children>
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin>
                               </HBox>
+                              <AnchorPane>
+                                 <children>
+                                    <Button fx:id="openKeyFileECBC" mnemonicParsing="false" text="Открыть файл ключа" AnchorPane.rightAnchor="0.0" VBox.vgrow="NEVER">
+                                       <VBox.margin>
+                                          <Insets top="5.0" />
+                                       </VBox.margin>
+                                    </Button>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </AnchorPane>
                               <AnchorPane>
                                  <children>
                                     <Button fx:id="getECBCButton" mnemonicParsing="false" text="Подсчитать ECBC" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">

@@ -13,6 +13,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.concurrent.Task;
 
 /**
  *
@@ -43,29 +44,39 @@ public class HMACEncryptor {
 
     }
 
-    public void getHMAC(File in, File out, byte[] key) throws IOException {
-        key = prepareKey(key);
+    public Task getHMAC(File in, File out, byte[] key) {
+        return new Task<Void>() {
+            @Override
+            protected Void call() {
+                try {       
+                    byte[] tempkey = prepareKey(key);
 
-        byte[] Si = new byte[BLOCK_SIZE];
-        for (int i = 0; i < BLOCK_SIZE; i++) {
-            Si[i] = (byte) (key[i] ^ ipad[i]);
-        }
+                    byte[] Si = new byte[BLOCK_SIZE];
+                    for (int i = 0; i < BLOCK_SIZE; i++) {
+                        Si[i] = (byte) (tempkey[i] ^ ipad[i]);
+                    }
 
-        byte[] So = new byte[BLOCK_SIZE];
-        for (int i = 0; i < BLOCK_SIZE; i++) {
-            So[i] = (byte) (key[i] ^ opad[i]);
-        }
+                    byte[] So = new byte[BLOCK_SIZE];
+                    for (int i = 0; i < BLOCK_SIZE; i++) {
+                        So[i] = (byte) (tempkey[i] ^ opad[i]);
+                    }
 
-        byte[] m = Files.readAllBytes(in.toPath());
-        byte[] temp = CommonTools.concat(Si, m);
-        temp = md5.digest(temp);
-        
-        temp=CommonTools.concat(So, temp);
-        temp=md5.digest(temp);
-        
-        Files.write(out.toPath(), temp, StandardOpenOption.WRITE);
+                    byte[] m = Files.readAllBytes(in.toPath());
+                    byte[] temp = CommonTools.concat(Si, m);
+                    temp = md5.digest(temp);
+
+                    temp = CommonTools.concat(So, temp);
+                    temp = md5.digest(temp);
+
+                    Files.write(out.toPath(), temp, StandardOpenOption.WRITE);
+                } catch (IOException ex) {
+                    CommonTools.reportExceptionToMainThread(ex,"Exception in encrypt thread, HMAC task!");
+                }
+                return null;
+            }
+        };
     }
-
+    
     private byte[] prepareKey(byte[] key) {
         byte[] resultKey = new byte[BLOCK_SIZE];
 
@@ -86,5 +97,5 @@ public class HMACEncryptor {
         }
 
         return resultKey;
-    }    
+    }
 }

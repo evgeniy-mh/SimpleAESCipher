@@ -5,10 +5,12 @@
  */
 package com.evgeniy_mh.simpleaescipher.AESEngine;
 
+import com.evgeniy_mh.simpleaescipher.MainController;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import javafx.application.Platform;
 
 /**
  *
@@ -70,5 +72,16 @@ public class CommonTools {
         System.arraycopy(b, 0, result, a.length, b.length);
 
         return result;
+    }
+    
+    /**
+     * Отправка сообщения о исключении в Application Thread
+     * @param t
+     * @param message Дополнительное сообщение для пользователя
+     */
+    public static void reportExceptionToMainThread(final Throwable t, final String message) {
+        Platform.runLater(() -> {
+            MainController.showExceptionToUser(t,message);
+        });
     }
 }
