@@ -280,7 +280,7 @@
                      <children>
                         <AnchorPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                            <children>
-                              <Button fx:id="getECBCButton" mnemonicParsing="false" text="Проверить ECBC" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+                              <Button fx:id="checkECBCButton_ECBCTab" mnemonicParsing="false" text="Проверить ECBC" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
                                  <VBox.margin>
                                     <Insets top="5.0" />
                                  </VBox.margin>
@@ -296,12 +296,12 @@
                                           <Insets bottom="5.0" right="5.0" top="5.0" />
                                        </padding>
                                     </Label>
-                                    <TextField fx:id="originalFilePathECBC" editable="false" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="300.0" promptText="Путь" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
+                                    <TextField fx:id="originalFileAESPath_ECBCTab" editable="false" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="300.0" promptText="Путь" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
                                        <HBox.margin>
                                           <Insets />
                                        </HBox.margin>
                                     </TextField>
-                                    <Button fx:id="openOriginalFileECBC" layoutX="273.0" layoutY="5.0" mnemonicParsing="false" text="Открыть" AnchorPane.rightAnchor="5.0" HBox.hgrow="NEVER">
+                                    <Button fx:id="openOriginalFileAESPath_ECBCTab" layoutX="273.0" layoutY="5.0" mnemonicParsing="false" text="Открыть" AnchorPane.rightAnchor="5.0" HBox.hgrow="NEVER">
                                        <HBox.margin>
                                           <Insets left="5.0" />
                                        </HBox.margin>
@@ -318,12 +318,12 @@
                                           <Insets bottom="5.0" right="5.0" top="5.0" />
                                        </padding>
                                     </Label>
-                                    <TextField fx:id="resultFilePathECBC" editable="false" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="300.0" promptText="Путь" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
+                                    <TextField fx:id="originalFileECBCPath_ECBCTab" editable="false" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="300.0" promptText="Путь" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
                                        <HBox.margin>
                                           <Insets />
                                        </HBox.margin>
                                     </TextField>
-                                    <Button fx:id="openResultFileECBC" layoutX="273.0" layoutY="5.0" mnemonicParsing="false" text="Открыть" AnchorPane.rightAnchor="5.0" HBox.hgrow="NEVER">
+                                    <Button fx:id="openOriginalFileECBCPath_ECBCTab" layoutX="273.0" layoutY="5.0" mnemonicParsing="false" text="Открыть" AnchorPane.rightAnchor="5.0" HBox.hgrow="NEVER">
                                        <HBox.margin>
                                           <Insets left="5.0" />
                                        </HBox.margin>
@@ -340,7 +340,7 @@
                               </Separator>
                               <AnchorPane>
                                  <children>
-                                    <Button fx:id="openKeyFileECBC" mnemonicParsing="false" text="Открыть файл ключа" AnchorPane.rightAnchor="0.0" VBox.vgrow="NEVER">
+                                    <Button fx:id="openKeyFileECBC_ECBCTab" mnemonicParsing="false" text="Открыть файл ключа" AnchorPane.rightAnchor="0.0" VBox.vgrow="NEVER">
                                        <VBox.margin>
                                           <Insets top="5.0" />
                                        </VBox.margin>
@@ -357,7 +357,7 @@
                                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                        </padding>
                                     </Label>
-                                    <TextField fx:id="keyTextFieldECBC" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="420.0" promptText="Введите ключ" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
+                                    <TextField fx:id="keyTextFieldECBC_ECBCTab" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="420.0" promptText="Введите ключ" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
                                        <HBox.margin>
                                           <Insets />
                                        </HBox.margin>
@@ -369,7 +369,7 @@
                               </HBox>
                               <AnchorPane layoutX="10.0" layoutY="123.0">
                                  <children>
-                                    <Button fx:id="openKeyFileECBC1" mnemonicParsing="false" text="Открыть файл доп. ключа ECBC:" AnchorPane.rightAnchor="0.0" VBox.vgrow="NEVER">
+                                    <Button fx:id="openKey2FileECBC_ECBCTab" mnemonicParsing="false" text="Открыть файл доп. ключа ECBC:" AnchorPane.rightAnchor="0.0" VBox.vgrow="NEVER">
                                        <VBox.margin>
                                           <Insets top="5.0" />
                                        </VBox.margin>
@@ -386,7 +386,7 @@
                                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                        </padding>
                                     </Label>
-                                    <TextField fx:id="keyTextFieldECBC1" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="420.0" promptText="Введите ключ" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
+                                    <TextField fx:id="key2TextFieldECBC_ECBCTab" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="420.0" promptText="Введите ключ" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
                                        <HBox.margin>
                                           <Insets />
                                        </HBox.margin>

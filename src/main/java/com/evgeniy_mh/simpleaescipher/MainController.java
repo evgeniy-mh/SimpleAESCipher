@@ -109,6 +109,30 @@ public class MainController {
     Button checkHMACButton_HMACTab;
 
     //ECBC tab
+    File originalFileAES_ECBCTab;
+    File originalFileECBC_ECBCTab;
+    File keyFileECBC_ECBCTab;
+    File key2FileECBC_ECBCTab;
+
+    @FXML
+    TextField originalFileAESPath_ECBCTab;
+    @FXML
+    Button openOriginalFileAESPath_ECBCTab;
+    @FXML
+    TextField originalFileECBCPath_ECBCTab;
+    @FXML
+    Button openOriginalFileECBCPath_ECBCTab;
+    @FXML
+    Button openKeyFileECBC_ECBCTab;
+    @FXML
+    TextField keyTextFieldECBC_ECBCTab;
+    @FXML
+    Button openKey2FileECBC_ECBCTab;
+    @FXML
+    TextField key2TextFieldECBC_ECBCTab;
+    @FXML
+    Button checkECBCButton_ECBCTab;    
+    
     /*private File originalECBCFile;
     private File resultECBCFile;
     private File keyFileECBC;
