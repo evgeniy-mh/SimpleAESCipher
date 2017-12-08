@@ -89,34 +89,24 @@ public class MainController {
     ProgressIndicator CipherProgressIndicator;
 
     //HMAC tab
-    private File originalHMACFile;
-    private File resultHMACFile;
-    private File keyFileHMAC;
+    File originalFileAES_HMACTab;
+    File originalFileHMAC;
+    File keyFileHMAC;
+
     @FXML
-    TextField originalFilePathHMAC;
+    TextField originalFileAESPath;
     @FXML
-    Button openOriginalFileHMAC;
+    Button openOriginalFileAESPath;
+    @FXML
+    TextField originalFileHMACPath;
+    @FXML
+    Button openOriginalFileHMACPath;
     @FXML
     Button openKeyFileHMAC;
     @FXML
     TextField keyTextFieldHMAC;
     @FXML
-    Button getHMACButton;
-    @FXML
-    TextField resultFilePathHMAC;
-    @FXML
-    Button openResultFileHMAC;
-    private File compareFileHMAC1, compareFileHMAC2;
-    @FXML
-    TextField compareFilePathHMAC1;
-    @FXML
-    Button openCompareFileHMAC1;
-    @FXML
-    TextField compareFilePathHMAC2;
-    @FXML
-    Button openCompareFileHMAC2;
-    @FXML
-    Button compareFilesHMAC;
+    Button checkHMACButton;
 
     //ECBC tab
     private File originalECBCFile;
@@ -278,11 +268,19 @@ public class MainController {
         });
 
         //HMAC tab
-        openOriginalFileHMAC.setOnAction((event) -> {
+        openOriginalFileAESPath.setOnAction((event) -> {
             File f = openFile();
             if (f != null) {
-                originalHMACFile = f;
-                originalFilePathHMAC.setText(f.getPath());
+                originalFileAES_HMACTab = f;
+                originalFileAESPath.setText(f.getPath());
+            }
+        });
+
+        openOriginalFileHMACPath.setOnAction((event) -> {
+            File f = openFile();
+            if (f != null) {
+                originalFileHMAC = f;
+                originalFileHMACPath.setText(f.getPath());
             }
         });
 
@@ -309,61 +307,8 @@ public class MainController {
             }
         });
 
-        /*getHMACButton.setOnMouseClicked((event) -> {
-            try {
-                if (originalHMACFile != null && resultHMACFile != null) {
-                    mHMACEncryptor.getHMAC(originalHMACFile, resultHMACFile, getKeyHMAC());
-                } else {
-                    Alert alert = new Alert(AlertType.WARNING);
-                    if (originalHMACFile == null) {
-                        alert.setTitle("Вы не выбрали исходный файл");
-                        alert.setHeaderText("Пожалуйста, выберите исходный файл.");
-                    } else if (resultHMACFile == null) {
-                        alert.setTitle("Вы не выбрали файл результата");
-                        alert.setHeaderText("Пожалуйста, создайте или выберите файл чтобы сохранить результат HMAC.");
-                    }
-                    alert.showAndWait();
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        });*/
-        openResultFileHMAC.setOnMouseClicked((event) -> {
-            File f = openFile();
-            if (f != null) {
-                resultHMACFile = f;
-                resultFilePathHMAC.setText(f.getPath());
-            }
-        });
-
-        openCompareFileHMAC1.setOnMouseClicked((event) -> {
-            File f = openFile();
-            if (f != null) {
-                compareFileHMAC1 = f;
-                compareFilePathHMAC1.setText(f.getPath());
-            }
-        });
-
-        openCompareFileHMAC2.setOnMouseClicked((event) -> {
-            File f = openFile();
-            if (f != null) {
-                compareFileHMAC2 = f;
-                compareFilePathHMAC2.setText(f.getPath());
-            }
-        });
-
-        compareFilesHMAC.setOnMouseClicked((event) -> {
-            boolean eq = compareFiles(compareFileHMAC1, compareFileHMAC2);
-
-            Alert alert = new Alert(AlertType.INFORMATION);
-            if (eq) {
-                alert.setTitle("Файлы одинаковы");
-                alert.setHeaderText("Файлы одинаковы");
-            } else {
-                alert.setTitle("Файлы различны");
-                alert.setHeaderText("Файлы различны");
-            }
-            alert.showAndWait();
+        checkHMACButton.setOnAction((event) -> {
+            checkHMAC();
         });
 
         //ECBC tab
@@ -563,7 +508,7 @@ public class MainController {
         if (originalFileAES != null && resultFileAES != null && getKey(keyTextFieldAES, keyFileAES).length != 0) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Результирующий файл будет перезаписан!");
-            alert.setHeaderText("Внимание, это перезапишет результирующий файл(2).");
+            alert.setHeaderText("Внимание, это перезапишет результирующий файл " + resultFileAES.getPath());
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
@@ -619,7 +564,7 @@ public class MainController {
         if (originalFileAES != null && resultFileAES != null && getKey(keyTextFieldAES, keyFileAES).length != 0) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Оригинальный файл будет перезаписан!");
-            alert.setHeaderText("Внимание, это перезапишет исходный файл(1).");
+            alert.setHeaderText("Внимание, это перезапишет исходный файл " + originalFileAES.getPath());
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
@@ -642,6 +587,49 @@ public class MainController {
         }
     }
 
+    private void checkHMAC() {
+        if (originalFileAES_HMACTab != null && originalFileHMAC != null && getKey(keyTextFieldHMAC, keyFileHMAC).length != 0) {
+            try {
+                File tempHMAC = new File(originalFileHMAC.getAbsolutePath() + "_temp");
+                tempHMAC.createNewFile();
+
+                Task HMACTask = mHMACEncryptor.getHMAC(originalFileAES_HMACTab, tempHMAC, getKey(keyTextFieldHMAC, keyFileHMAC));
+                HMACTask.setOnSucceeded(value -> {
+                    boolean eq = compareFiles(originalFileHMAC, tempHMAC);
+                    Alert alert = new Alert(AlertType.INFORMATION);
+                    if (eq) {
+                        alert.setTitle("Проверка HMAC пройдена");
+                        alert.setHeaderText("Проверка HMAC пройдена");
+                    } else {
+                        alert.setAlertType(AlertType.WARNING);
+                        alert.setTitle("Проверка НЕ HMAC пройдена!");
+                        alert.setHeaderText("Проверка НЕ HMAC пройдена!");
+                    }
+                    alert.showAndWait();
+                    tempHMAC.delete();
+                });
+                Thread HMACThread = new Thread(HMACTask);
+                HMACThread.start();
+
+            } catch (IOException ex) {
+                showExceptionToUser(ex, "checkHMAC()");
+            }
+        } else {
+            Alert alert = new Alert(AlertType.WARNING);
+            if (originalFileAES_HMACTab == null) {
+                alert.setTitle("Вы не выбрали исходный зашифрованный AES файл");
+                alert.setHeaderText("Пожалуйста, выберите исходный зашифрованный AES файл.");
+            } else if (originalFileHMAC == null) {
+                alert.setTitle("Вы не выбрали файл HMAC");
+                alert.setHeaderText("Пожалуйста, выберите файл HMAC.");
+            } else if (getKey(keyTextFieldHMAC, keyFileHMAC).length == 0) {
+                alert.setTitle("Вы не выбрали или не ввели ключ HMAC");
+                alert.setHeaderText("Пожалуйста, выберите или введите ключ HMAC.");
+            }
+            alert.showAndWait();
+        }
+    }
+
     private void clearKey() {
         keyTextFieldAES.clear();
         keyTextFieldAES.setEditable(true);
@@ -656,7 +644,7 @@ public class MainController {
         }
     }
 
-    public boolean compareFiles(File A, File B) {
+    public static boolean compareFiles(File A, File B) {
         if (A != null && B != null) {
             if (A.length() == B.length()) {
                 boolean result = true;
