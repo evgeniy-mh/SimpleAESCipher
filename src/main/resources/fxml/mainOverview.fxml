@@ -122,7 +122,7 @@
                                     </Button>
                                  </children>
                                  <VBox.margin>
-                                    <Insets top="5.0" />
+                                    <Insets />
                                  </VBox.margin>
                               </AnchorPane>
                               <ProgressBar fx:id="CipherProgressIndicator" maxWidth="1.7976931348623157E308" minWidth="100.0" progress="0.0" VBox.vgrow="NEVER">
@@ -184,7 +184,7 @@
                      <children>
                         <AnchorPane AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                            <children>
-                              <Button fx:id="checkHMACButton" mnemonicParsing="false" text="Проверить HMAC" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+                              <Button fx:id="checkHMACButton_HMACTab" mnemonicParsing="false" text="Проверить HMAC" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
                                  <VBox.margin>
                                     <Insets top="5.0" />
                                  </VBox.margin>
@@ -200,12 +200,12 @@
                                           <Insets bottom="5.0" right="5.0" top="5.0" />
                                        </padding>
                                     </Label>
-                                    <TextField fx:id="originalFileAESPath" editable="false" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="300.0" promptText="Путь" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
+                                    <TextField fx:id="originalFileAESPath_HMACTab" editable="false" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="300.0" promptText="Путь" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
                                        <HBox.margin>
                                           <Insets />
                                        </HBox.margin>
                                     </TextField>
-                                    <Button fx:id="openOriginalFileAESPath" layoutX="273.0" layoutY="5.0" mnemonicParsing="false" text="Открыть" AnchorPane.rightAnchor="5.0" HBox.hgrow="NEVER">
+                                    <Button fx:id="openOriginalFileAESPath_HMACTab" layoutX="273.0" layoutY="5.0" mnemonicParsing="false" text="Открыть" AnchorPane.rightAnchor="5.0" HBox.hgrow="NEVER">
                                        <HBox.margin>
                                           <Insets left="5.0" />
                                        </HBox.margin>
@@ -222,12 +222,12 @@
                                           <Insets bottom="5.0" right="5.0" top="5.0" />
                                        </padding>
                                     </Label>
-                                    <TextField fx:id="originalFileHMACPath" editable="false" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="300.0" promptText="Путь" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
+                                    <TextField fx:id="originalFileHMACPath_HMACTab" editable="false" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="300.0" promptText="Путь" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
                                        <HBox.margin>
                                           <Insets />
                                        </HBox.margin>
                                     </TextField>
-                                    <Button fx:id="openOriginalFileHMACPath" layoutX="273.0" layoutY="5.0" mnemonicParsing="false" text="Открыть" AnchorPane.rightAnchor="5.0" HBox.hgrow="NEVER">
+                                    <Button fx:id="openOriginalFileHMACPath_HMACTab" layoutX="273.0" layoutY="5.0" mnemonicParsing="false" text="Открыть" AnchorPane.rightAnchor="5.0" HBox.hgrow="NEVER">
                                        <HBox.margin>
                                           <Insets left="5.0" />
                                        </HBox.margin>
@@ -244,7 +244,7 @@
                               </Separator>
                               <AnchorPane>
                                  <children>
-                                    <Button fx:id="openKeyFileHMAC" mnemonicParsing="false" text="Открыть файл ключа" AnchorPane.rightAnchor="5.0" VBox.vgrow="NEVER">
+                                    <Button fx:id="openKeyFileHMAC_HMACTab" mnemonicParsing="false" text="Открыть файл ключа" AnchorPane.rightAnchor="0.0" VBox.vgrow="NEVER">
                                        <VBox.margin>
                                           <Insets top="5.0" />
                                        </VBox.margin>
@@ -261,7 +261,7 @@
                                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                        </padding>
                                     </Label>
-                                    <TextField fx:id="keyTextFieldHMAC" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="420.0" promptText="Введите ключ" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
+                                    <TextField fx:id="keyTextFieldHMAC_HMACTab" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="420.0" promptText="Введите ключ" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
                                        <HBox.margin>
                                           <Insets />
                                        </HBox.margin>
@@ -274,15 +274,24 @@
                   </AnchorPane>
             </content>
           </Tab>
-            <Tab text="ECBC">
+            <Tab text="Проверка ECBC">
               <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
+                        <AnchorPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                           <children>
+                              <Button fx:id="getECBCButton" mnemonicParsing="false" text="Проверить ECBC" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                              </Button>
+                           </children>
+                        </AnchorPane>
                         <VBox layoutX="14.0" layoutY="2.0" prefHeight="25.0" prefWidth="544.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
                            <children>
                               <HBox prefHeight="25.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
                                  <children>
-                                    <Label alignment="CENTER" contentDisplay="CENTER" layoutX="5.0" layoutY="5.0" minWidth="-Infinity" text="1. Зашифрованный файл" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" HBox.hgrow="NEVER">
+                                    <Label alignment="CENTER" contentDisplay="CENTER" layoutX="5.0" layoutY="5.0" minWidth="-Infinity" text="1. Зашифрованный AES файл" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" HBox.hgrow="NEVER">
                                        <padding>
                                           <Insets bottom="5.0" right="5.0" top="5.0" />
                                        </padding>
@@ -304,7 +313,7 @@
                               </HBox>
                               <HBox layoutX="10.0" layoutY="10.0" prefHeight="25.0">
                                  <children>
-                                    <Label alignment="CENTER" contentDisplay="CENTER" layoutX="5.0" layoutY="5.0" minWidth="-Infinity" text="2. Файл результата ECBC" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" HBox.hgrow="NEVER">
+                                    <Label alignment="CENTER" contentDisplay="CENTER" layoutX="5.0" layoutY="5.0" minWidth="-Infinity" text="2. Файл ECBC" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" HBox.hgrow="NEVER">
                                        <padding>
                                           <Insets bottom="5.0" right="5.0" top="5.0" />
                                        </padding>
@@ -324,9 +333,26 @@
                                     <Insets top="10.0" />
                                  </VBox.margin>
                               </HBox>
+                              <Separator prefWidth="200.0">
+                                 <VBox.margin>
+                                    <Insets bottom="20.0" top="20.0" />
+                                 </VBox.margin>
+                              </Separator>
+                              <AnchorPane>
+                                 <children>
+                                    <Button fx:id="openKeyFileECBC" mnemonicParsing="false" text="Открыть файл ключа" AnchorPane.rightAnchor="0.0" VBox.vgrow="NEVER">
+                                       <VBox.margin>
+                                          <Insets top="5.0" />
+                                       </VBox.margin>
+                                    </Button>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin>
+                              </AnchorPane>
                               <HBox>
                                  <children>
-                                    <Label alignment="CENTER" contentDisplay="CENTER" layoutX="5.0" layoutY="5.0" minWidth="-Infinity" text="Ключ 1:" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" HBox.hgrow="NEVER">
+                                    <Label alignment="CENTER" contentDisplay="CENTER" layoutX="5.0" layoutY="5.0" minWidth="-Infinity" text="Ключ:" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" HBox.hgrow="NEVER">
                                        <padding>
                                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                        </padding>
@@ -338,24 +364,12 @@
                                     </TextField>
                                  </children>
                                  <VBox.margin>
-                                    <Insets top="10.0" />
-                                 </VBox.margin>
-                              </HBox>
-                              <AnchorPane>
-                                 <children>
-                                    <Button fx:id="openKeyFileECBC" mnemonicParsing="false" text="Открыть файл ключа" AnchorPane.rightAnchor="0.0" VBox.vgrow="NEVER">
-                                       <VBox.margin>
-                                          <Insets top="5.0" />
-                                       </VBox.margin>
-                                    </Button>
-                                 </children>
-                                 <VBox.margin>
                                     <Insets />
                                  </VBox.margin>
-                              </AnchorPane>
-                              <AnchorPane>
+                              </HBox>
+                              <AnchorPane layoutX="10.0" layoutY="123.0">
                                  <children>
-                                    <Button fx:id="getECBCButton" mnemonicParsing="false" text="Подсчитать ECBC" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                    <Button fx:id="openKeyFileECBC1" mnemonicParsing="false" text="Открыть файл доп. ключа ECBC:" AnchorPane.rightAnchor="0.0" VBox.vgrow="NEVER">
                                        <VBox.margin>
                                           <Insets top="5.0" />
                                        </VBox.margin>
@@ -365,63 +379,20 @@
                                     <Insets top="10.0" />
                                  </VBox.margin>
                               </AnchorPane>
-                           </children>
-                        </VBox>
-                        <VBox layoutX="5.0" layoutY="492.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
-                           <children>
-                              <Label text="Сравнить ECBC:" />
-                              <HBox prefHeight="25.0">
+                              <HBox layoutX="10.0" layoutY="148.0">
                                  <children>
-                                    <Label alignment="CENTER" contentDisplay="CENTER" layoutX="5.0" layoutY="5.0" minWidth="-Infinity" text="Файл 1" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" HBox.hgrow="NEVER">
+                                    <Label alignment="CENTER" contentDisplay="CENTER" layoutX="5.0" layoutY="5.0" minWidth="-Infinity" text="Доп. ключ ECBC:" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" HBox.hgrow="NEVER">
                                        <padding>
-                                          <Insets bottom="5.0" right="5.0" top="5.0" />
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                        </padding>
                                     </Label>
-                                    <TextField fx:id="compareFilePathECBC1" editable="false" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="300.0" promptText="Путь" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
+                                    <TextField fx:id="keyTextFieldECBC1" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="420.0" promptText="Введите ключ" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
                                        <HBox.margin>
                                           <Insets />
                                        </HBox.margin>
                                     </TextField>
-                                    <Button fx:id="openCompareFileECBC1" layoutX="273.0" layoutY="5.0" mnemonicParsing="false" text="Открыть" AnchorPane.rightAnchor="5.0" HBox.hgrow="NEVER">
-                                       <HBox.margin>
-                                          <Insets left="5.0" />
-                                       </HBox.margin>
-                                    </Button>
                                  </children>
-                                 <VBox.margin>
-                                    <Insets top="5.0" />
-                                 </VBox.margin>
                               </HBox>
-                              <HBox prefHeight="25.0">
-                                 <children>
-                                    <Label alignment="CENTER" contentDisplay="CENTER" layoutX="5.0" layoutY="5.0" minWidth="-Infinity" text="Файл 2" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" HBox.hgrow="NEVER">
-                                       <padding>
-                                          <Insets bottom="5.0" right="5.0" top="5.0" />
-                                       </padding>
-                                    </Label>
-                                    <TextField fx:id="compareFilePathECBC2" editable="false" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="300.0" promptText="Путь" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
-                                       <HBox.margin>
-                                          <Insets />
-                                       </HBox.margin>
-                                    </TextField>
-                                    <Button fx:id="openCompareFileECBC2" layoutX="273.0" layoutY="5.0" mnemonicParsing="false" text="Открыть" AnchorPane.rightAnchor="5.0" HBox.hgrow="NEVER">
-                                       <HBox.margin>
-                                          <Insets left="5.0" />
-                                       </HBox.margin>
-                                    </Button>
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets top="5.0" />
-                                 </VBox.margin>
-                              </HBox>
-                              <AnchorPane>
-                                 <children>
-                                    <Button fx:id="compareFilesECBC" mnemonicParsing="false" text="Сравнить файлы" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets top="5.0" />
-                                 </VBox.margin>
-                              </AnchorPane>
                            </children>
                         </VBox>
                      </children>

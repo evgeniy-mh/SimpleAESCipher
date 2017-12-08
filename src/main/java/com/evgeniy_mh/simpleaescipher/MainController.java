@@ -90,26 +90,26 @@ public class MainController {
 
     //HMAC tab
     File originalFileAES_HMACTab;
-    File originalFileHMAC;
-    File keyFileHMAC;
+    File originalFileHMAC_HMACTab;
+    File keyFileHMAC_HMACTab;
 
     @FXML
-    TextField originalFileAESPath;
+    TextField originalFileAESPath_HMACTab;
     @FXML
-    Button openOriginalFileAESPath;
+    Button openOriginalFileAESPath_HMACTab;
     @FXML
-    TextField originalFileHMACPath;
+    TextField originalFileHMACPath_HMACTab;
     @FXML
-    Button openOriginalFileHMACPath;
+    Button openOriginalFileHMACPath_HMACTab;
     @FXML
-    Button openKeyFileHMAC;
+    Button openKeyFileHMAC_HMACTab;
     @FXML
-    TextField keyTextFieldHMAC;
+    TextField keyTextFieldHMAC_HMACTab;
     @FXML
-    Button checkHMACButton;
+    Button checkHMACButton_HMACTab;
 
     //ECBC tab
-    private File originalECBCFile;
+    /*private File originalECBCFile;
     private File resultECBCFile;
     private File keyFileECBC;
     @FXML
@@ -136,7 +136,7 @@ public class MainController {
     @FXML
     Button openCompareFileECBC2;
     @FXML
-    Button compareFilesECBC;
+    Button compareFilesECBC;*/
 
     private AES_CTREncryptor mAESEncryptor;
     private boolean canChangeOriginalFile = true;
@@ -268,51 +268,51 @@ public class MainController {
         });
 
         //HMAC tab
-        openOriginalFileAESPath.setOnAction((event) -> {
+        openOriginalFileAESPath_HMACTab.setOnAction((event) -> {
             File f = openFile();
             if (f != null) {
                 originalFileAES_HMACTab = f;
-                originalFileAESPath.setText(f.getPath());
+                originalFileAESPath_HMACTab.setText(f.getPath());
             }
         });
 
-        openOriginalFileHMACPath.setOnAction((event) -> {
+        openOriginalFileHMACPath_HMACTab.setOnAction((event) -> {
             File f = openFile();
             if (f != null) {
-                originalFileHMAC = f;
-                originalFileHMACPath.setText(f.getPath());
+                originalFileHMAC_HMACTab = f;
+                originalFileHMACPath_HMACTab.setText(f.getPath());
             }
         });
 
-        openKeyFileHMAC.setOnAction((event) -> {
-            keyFileHMAC = openFile();
-            if (keyFileHMAC != null) {
-                keyTextFieldHMAC.setText(keyFileHMAC.getAbsolutePath());
-                keyTextFieldHMAC.setEditable(false);
+        openKeyFileHMAC_HMACTab.setOnAction((event) -> {
+            keyFileHMAC_HMACTab = openFile();
+            if (keyFileHMAC_HMACTab != null) {
+                keyTextFieldHMAC_HMACTab.setText(keyFileHMAC_HMACTab.getAbsolutePath());
+                keyTextFieldHMAC_HMACTab.setEditable(false);
             }
         });
 
-        keyTextFieldHMAC.setOnMouseClicked((event) -> {
-            if (!keyTextFieldHMAC.isEditable()) {
+        keyTextFieldHMAC_HMACTab.setOnMouseClicked((event) -> {
+            if (!keyTextFieldHMAC_HMACTab.isEditable()) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Использовать поле ввода ключа?");
                 alert.setHeaderText("Вы желаете ввести ключ самостоятельно?");
 
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
-                    keyTextFieldHMAC.clear();
-                    keyTextFieldHMAC.setEditable(true);
-                    keyFileHMAC = null;
+                    keyTextFieldHMAC_HMACTab.clear();
+                    keyTextFieldHMAC_HMACTab.setEditable(true);
+                    keyFileHMAC_HMACTab = null;
                 }
             }
         });
 
-        checkHMACButton.setOnAction((event) -> {
+        checkHMACButton_HMACTab.setOnAction((event) -> {
             checkHMAC();
         });
 
         //ECBC tab
-        openOriginalFileECBC.setOnAction((event) -> {
+        /*openOriginalFileECBC.setOnAction((event) -> {
             File f = openFile();
             if (f != null) {
                 originalECBCFile = f;
@@ -361,7 +361,7 @@ public class MainController {
             } catch (IOException ex) {
                 Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             }
-        });*/
+        });
         openResultFileECBC.setOnMouseClicked((event) -> {
             File f = openFile();
             if (f != null) {
@@ -398,7 +398,7 @@ public class MainController {
                 alert.setHeaderText("Файлы различны");
             }
             alert.showAndWait();
-        });
+        });*/
     }
 
     @FXML
@@ -588,14 +588,14 @@ public class MainController {
     }
 
     private void checkHMAC() {
-        if (originalFileAES_HMACTab != null && originalFileHMAC != null && getKey(keyTextFieldHMAC, keyFileHMAC).length != 0) {
+        if (originalFileAES_HMACTab != null && originalFileHMAC_HMACTab != null && getKey(keyTextFieldHMAC_HMACTab, keyFileHMAC_HMACTab).length != 0) {
             try {
-                File tempHMAC = new File(originalFileHMAC.getAbsolutePath() + "_temp");
+                File tempHMAC = new File(originalFileHMAC_HMACTab.getAbsolutePath() + "_temp");
                 tempHMAC.createNewFile();
 
-                Task HMACTask = mHMACEncryptor.getHMAC(originalFileAES_HMACTab, tempHMAC, getKey(keyTextFieldHMAC, keyFileHMAC));
+                Task HMACTask = mHMACEncryptor.getHMAC(originalFileAES_HMACTab, tempHMAC, getKey(keyTextFieldHMAC_HMACTab, keyFileHMAC_HMACTab));
                 HMACTask.setOnSucceeded(value -> {
-                    boolean eq = compareFiles(originalFileHMAC, tempHMAC);
+                    boolean eq = compareFiles(originalFileHMAC_HMACTab, tempHMAC);
                     Alert alert = new Alert(AlertType.INFORMATION);
                     if (eq) {
                         alert.setTitle("Проверка HMAC пройдена");
@@ -619,10 +619,10 @@ public class MainController {
             if (originalFileAES_HMACTab == null) {
                 alert.setTitle("Вы не выбрали исходный зашифрованный AES файл");
                 alert.setHeaderText("Пожалуйста, выберите исходный зашифрованный AES файл.");
-            } else if (originalFileHMAC == null) {
+            } else if (originalFileHMAC_HMACTab == null) {
                 alert.setTitle("Вы не выбрали файл HMAC");
                 alert.setHeaderText("Пожалуйста, выберите файл HMAC.");
-            } else if (getKey(keyTextFieldHMAC, keyFileHMAC).length == 0) {
+            } else if (getKey(keyTextFieldHMAC_HMACTab, keyFileHMAC_HMACTab).length == 0) {
                 alert.setTitle("Вы не выбрали или не ввели ключ HMAC");
                 alert.setHeaderText("Пожалуйста, выберите или введите ключ HMAC.");
             }
