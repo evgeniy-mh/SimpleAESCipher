@@ -137,7 +137,7 @@
                               <CheckBox fx:id="CreateHMACCheckBox" mnemonicParsing="false" text="Создать HMAC" />
                               <VBox>
                                  <children>
-                                    <CheckBox mnemonicParsing="false" text="Создать ECBC">
+                                    <CheckBox fx:id="CreateECBCCheckBox" mnemonicParsing="false" text="Создать ECBC">
                                        <VBox.margin>
                                           <Insets top="2.0" />
                                        </VBox.margin>
@@ -149,12 +149,12 @@
                                                 <Insets bottom="5.0" right="5.0" top="5.0" />
                                              </padding>
                                           </Label>
-                                          <TextField fx:id="keyTextField1" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="420.0" promptText="Введите ключ 2 для ECBC" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
+                                          <TextField fx:id="key2TextFieldECBC" disable="true" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="420.0" promptText="Введите ключ 2 для ECBC" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
                                              <HBox.margin>
                                                 <Insets />
                                              </HBox.margin>
                                           </TextField>
-                                          <Button fx:id="openKeyFile1" mnemonicParsing="false" text="Открыть файл ключа" />
+                                          <Button fx:id="openKey2FileECBC" disable="true" mnemonicParsing="false" text="Открыть файл ключа" />
                                        </children>
                                     </HBox>
                                  </children>

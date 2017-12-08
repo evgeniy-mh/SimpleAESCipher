@@ -64,6 +64,7 @@ public class MainController {
     Button saveAsResultFileAES;
 
     private File keyFileAES;
+    private File key2FileECBC;
 
     @FXML
     TextField keyTextFieldAES;
@@ -73,6 +74,16 @@ public class MainController {
     Button encryptButtonAES;
     @FXML
     Button decryptButtonAES;
+
+    @FXML
+    CheckBox CreateHMACCheckBox;
+
+    @FXML
+    CheckBox CreateECBCCheckBox;
+    @FXML
+    TextField key2TextFieldECBC;
+    @FXML
+    Button openKey2FileECBC;
 
     @FXML
     ProgressIndicator CipherProgressIndicator;
@@ -136,9 +147,6 @@ public class MainController {
     Button openCompareFileECBC2;
     @FXML
     Button compareFilesECBC;
-
-    @FXML
-    CheckBox CreateHMACCheckBox;
 
     private AES_CTREncryptor mAESEncryptor;
     private boolean canChangeOriginalFile = true;
@@ -254,6 +262,19 @@ public class MainController {
 
         decryptButtonAES.setOnAction((event) -> {
             decrypt();
+        });
+
+        CreateECBCCheckBox.setOnAction((event) -> {
+            key2TextFieldECBC.setDisable(!CreateECBCCheckBox.isSelected());
+            openKey2FileECBC.setDisable(!CreateECBCCheckBox.isSelected());
+        });
+
+        openKey2FileECBC.setOnAction((event) -> {
+            File f = openFile();
+            if (f != null) {
+                key2FileECBC = f;
+                key2TextFieldECBC.setText(f.getPath());
+            }
         });
 
         //HMAC tab
@@ -377,10 +398,10 @@ public class MainController {
             }
         });
 
-        getECBCButton.setOnMouseClicked((event) -> {
+        /*getECBCButton.setOnMouseClicked((event) -> {
             try {
                 if (originalECBCFile != null && resultECBCFile != null) {
-                    mECBCEncryptor.getECBC(originalECBCFile, resultECBCFile, getKey(keyTextFieldECBC,keyFileECBC));
+                    mECBCEncryptor.getECBC(originalECBCFile, resultECBCFile, getKey(keyTextFieldECBC, keyFileECBC));
                 } else {
                     Alert alert = new Alert(AlertType.WARNING);
                     if (originalECBCFile == null) {
@@ -395,8 +416,7 @@ public class MainController {
             } catch (IOException ex) {
                 Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             }
-        });
-
+        });*/
         openResultFileECBC.setOnMouseClicked((event) -> {
             File f = openFile();
             if (f != null) {
@@ -540,7 +560,7 @@ public class MainController {
     }
 
     private void encrypt() {
-        if (originalFileAES != null && resultFileAES != null && getKey(keyTextFieldAES,keyFileAES).length != 0) {
+        if (originalFileAES != null && resultFileAES != null && getKey(keyTextFieldAES, keyFileAES).length != 0) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Результирующий файл будет перезаписан!");
             alert.setHeaderText("Внимание, это перезапишет результирующий файл(2).");
@@ -548,20 +568,32 @@ public class MainController {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
 
-                Task AESTask = mAESEncryptor.encrypt(originalFileAES, resultFileAES, getKey(keyTextFieldAES,keyFileAES));
+                Task AESTask = mAESEncryptor.encrypt(originalFileAES, resultFileAES, getKey(keyTextFieldAES, keyFileAES));
                 AESTask.setOnSucceeded(value -> {
                     updateFileInfo(resultFilePathAES, resultFileTextAreaAES, resultFileAES);
 
                     if (CreateHMACCheckBox.isSelected()) {
-                        File hmacFile = createNewFile("Создайте файл для сохранения HMAC");
-                        Task HMACTask = mHMACEncryptor.getHMAC(resultFileAES, hmacFile, getKey(keyTextFieldAES,keyFileAES));
-                        HMACTask.setOnSucceeded(value2 -> {
+                        File hmacFile = createNewFile("Создайте или выберите файл для сохранения HMAC");
+                        Task HMACTask = mHMACEncryptor.getHMAC(resultFileAES, hmacFile, getKey(keyTextFieldAES, keyFileAES));
+                        HMACTask.setOnSucceeded(event -> {
                             Alert alertHMACDone = new Alert(Alert.AlertType.INFORMATION);
                             alertHMACDone.setTitle("HMAC файл создан");
                             alertHMACDone.setHeaderText("HMAC файл создан, путь файла: " + hmacFile.getPath());
                             alertHMACDone.show();
                         });
                         HMACTask.run();
+                    }
+
+                    if (CreateECBCCheckBox.isSelected()) {
+                        File ecbcFile = createNewFile("Создайте или выберите файл для сохранения ECBC");
+                        Task ECBCTasc = mECBCEncryptor.getECBC(resultFileAES, ecbcFile, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC));
+                        ECBCTasc.setOnSucceeded(event -> {
+                            Alert alertECBCDone = new Alert(Alert.AlertType.INFORMATION);
+                            alertECBCDone.setTitle("ECBC файл создан");
+                            alertECBCDone.setHeaderText("ECBC файл создан, путь файла: " + ecbcFile.getPath());
+                            alertECBCDone.show();
+                        });
+                        ECBCTasc.run();
                     }
                 });
                 Thread AESThread = new Thread(AESTask);
@@ -575,7 +607,7 @@ public class MainController {
             } else if (resultFileAES == null) {
                 alert.setTitle("Вы не выбрали файл результата ");
                 alert.setHeaderText("Пожалуйста, создайте или выберите файл результата шифрования(2).");
-            } else if (getKey(keyTextFieldAES,keyFileAES).length == 0) {
+            } else if (getKey(keyTextFieldAES, keyFileAES).length == 0) {
                 alert.setTitle("Вы не ввели ключ");
                 alert.setHeaderText("Пожалуйста, введите ключ или выберите файл с ключем.");
             }
@@ -584,14 +616,14 @@ public class MainController {
     }
 
     private void decrypt() {
-        if (originalFileAES != null && resultFileAES != null && getKey(keyTextFieldAES,keyFileAES).length != 0) {
+        if (originalFileAES != null && resultFileAES != null && getKey(keyTextFieldAES, keyFileAES).length != 0) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Оригинальный файл будет перезаписан!");
             alert.setHeaderText("Внимание, это перезапишет исходный файл(1).");
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
-                mAESEncryptor.decrypt(resultFileAES, originalFileAES, getKey(keyTextFieldAES,keyFileAES));
+                mAESEncryptor.decrypt(resultFileAES, originalFileAES, getKey(keyTextFieldAES, keyFileAES));
                 updateFileInfo(originalFilePathAES, originalFileTextAreaAES, originalFileAES);
             }
         } else {
@@ -602,7 +634,7 @@ public class MainController {
             } else if (resultFileAES == null) {
                 alert.setTitle("Вы не выбрали файл результата");
                 alert.setHeaderText("Пожалуйста, создайте или выберите файл результата расшифрования.");
-            } else if (getKey(keyTextFieldAES,keyFileAES).length == 0) {
+            } else if (getKey(keyTextFieldAES, keyFileAES).length == 0) {
                 alert.setTitle("Вы не ввели ключ");
                 alert.setHeaderText("Пожалуйста, введите ключ или выберите файл с ключем.");
             }
@@ -610,55 +642,12 @@ public class MainController {
         }
     }
 
-    /*private void getHMAC(File in, File out, byte[] key) {
-        try {
-            /*if (originalHMACFile != null && resultHMACFile != null) {
-            mHMACEncryptor.getHMAC(originalHMACFile, resultHMACFile, getKeyHMAC());
-            } else {
-            Alert alert = new Alert(AlertType.WARNING);
-            if (originalHMACFile == null) {
-            alert.setTitle("Вы не выбрали исходный файл");
-            alert.setHeaderText("Пожалуйста, выберите исходный файл.");
-            } else if (resultHMACFile == null) {
-            alert.setTitle("Вы не выбрали файл результата");
-            alert.setHeaderText("Пожалуйста, создайте или выберите файл чтобы сохранить результат HMAC.");
-            }
-            alert.showAndWait();
-            }
-            mHMACEncryptor.getHMAC(in, out, key);
-        } catch (IOException ex) {
-            showExceptionToUser(ex, "getHMAC(File in, File out, byte[] key)");
-        }
-    }*/
     private void clearKey() {
         keyTextFieldAES.clear();
         keyTextFieldAES.setEditable(true);
         keyFileAES = null;
     }
 
-    /*private byte[] getKey() {
-        if (keyTextField.isEditable()) {
-            return keyTextField.getText().getBytes(StandardCharsets.UTF_8);
-        } else {
-            return readBytesFromFile(keyFile, 128);
-        }
-    }
-
-    private byte[] getKeyHMAC() {
-        if (keyTextFieldHMAC.isEditable()) {
-            return keyTextFieldHMAC.getText().getBytes(StandardCharsets.UTF_8);
-        } else {
-            return readBytesFromFile(keyFileHMAC, 128);
-        }
-    }
-
-    private byte[] getKeyECBC() {
-        if (keyTextFieldECBC.isEditable()) {
-            return keyTextFieldECBC.getText().getBytes(StandardCharsets.UTF_8);
-        } else {
-            return readBytesFromFile(keyFileECBC, 128);
-        }
-    }*/
     private byte[] getKey(TextField keyTextField, File keyFile) {
         if (keyTextField.isEditable()) {
             return keyTextField.getText().getBytes(StandardCharsets.UTF_8);
@@ -667,13 +656,6 @@ public class MainController {
         }
     }
 
-    /*private byte[] getKey(TextField field, File keyInputFile){
-        if (keyTextFieldECBC.isEditable()) {
-            return keyTextFieldECBC.getText().getBytes(StandardCharsets.UTF_8);
-        } else {
-            return readBytesFromFile(keyFileECBC, 128);
-        }
-    }*/
     public boolean compareFiles(File A, File B) {
         if (A != null && B != null) {
             if (A.length() == B.length()) {
