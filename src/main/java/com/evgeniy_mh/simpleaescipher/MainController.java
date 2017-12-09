@@ -131,8 +131,8 @@ public class MainController {
     @FXML
     TextField key2TextFieldECBC_ECBCTab;
     @FXML
-    Button checkECBCButton_ECBCTab;    
-    
+    Button checkECBCButton_ECBCTab;
+
     /*private File originalECBCFile;
     private File resultECBCFile;
     private File keyFileECBC;
@@ -161,7 +161,6 @@ public class MainController {
     Button openCompareFileECBC2;
     @FXML
     Button compareFilesECBC;*/
-
     private AES_CTREncryptor mAESEncryptor;
     private boolean canChangeOriginalFile = true;
     private final int MAX_FILE_TO_SHOW_SIZE = 5000;
@@ -334,9 +333,79 @@ public class MainController {
         checkHMACButton_HMACTab.setOnAction((event) -> {
             checkHMAC();
         });
-
+        
         //ECBC tab
-        /*openOriginalFileECBC.setOnAction((event) -> {
+        openOriginalFileAESPath_ECBCTab.setOnAction((event) -> {
+            File f = openFile();
+            if (f != null) {
+                originalFileAES_ECBCTab = f;
+                originalFileAESPath_ECBCTab.setText(f.getPath());
+            }
+        });
+        
+        openOriginalFileECBCPath_ECBCTab.setOnAction((event) -> {
+            File f = openFile();
+            if (f != null) {
+                originalFileECBC_ECBCTab = f;
+                originalFileECBCPath_ECBCTab.setText(f.getPath());
+            }
+        });
+        
+        openKeyFileECBC_ECBCTab.setOnAction((event) -> {       
+            keyFileECBC_ECBCTab = openFile();
+            if (keyFileECBC_ECBCTab != null) {
+                keyTextFieldECBC_ECBCTab.setText(keyFileECBC_ECBCTab.getAbsolutePath());
+                keyTextFieldECBC_ECBCTab.setEditable(false);
+            }
+        });
+        
+        keyTextFieldECBC_ECBCTab.setOnMouseClicked((event) -> {
+            if (!keyTextFieldECBC_ECBCTab.isEditable()) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Использовать поле ввода ключа?");
+                alert.setHeaderText("Вы желаете ввести ключ самостоятельно?");
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    keyTextFieldECBC_ECBCTab.clear();
+                    keyTextFieldECBC_ECBCTab.setEditable(true);
+                    keyFileECBC_ECBCTab = null;
+                }
+            }
+        });
+        
+        openKey2FileECBC_ECBCTab.setOnAction((event) -> {
+            key2FileECBC_ECBCTab = openFile();
+            if (key2FileECBC_ECBCTab != null) {
+                key2TextFieldECBC_ECBCTab.setText(key2FileECBC_ECBCTab.getAbsolutePath());
+                key2TextFieldECBC_ECBCTab.setEditable(false);
+            }
+        });
+        
+        key2TextFieldECBC_ECBCTab.setOnMouseClicked((event) -> {
+            if (!key2TextFieldECBC_ECBCTab.isEditable()) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Использовать поле ввода ключа?");
+                alert.setHeaderText("Вы желаете ввести ключ самостоятельно?");
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    key2TextFieldECBC_ECBCTab.clear();
+                    key2TextFieldECBC_ECBCTab.setEditable(true);
+                    key2FileECBC_ECBCTab = null;
+                }
+            }
+        });
+        
+        checkECBCButton_ECBCTab.setOnAction((event) -> {
+        });
+
+        /*File originalFileAES_ECBCTab;
+        File originalFileECBC_ECBCTab;
+        File keyFileECBC_ECBCTab;
+        File key2FileECBC_ECBCTab;*/
+
+ /*openOriginalFileECBC.setOnAction((event) -> {
             File f = openFile();
             if (f != null) {
                 originalECBCFile = f;
