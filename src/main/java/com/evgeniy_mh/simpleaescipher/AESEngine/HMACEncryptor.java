@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.evgeniy_mh.simpleaescipher.AESEngine;
 
 import java.io.File;
@@ -11,8 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.concurrent.Task;
 
 /**
@@ -22,10 +15,8 @@ import javafx.concurrent.Task;
 public class HMACEncryptor {
 
     private static final int BLOCK_SIZE = 64;
-
     private static byte[] ipad;
     private static byte[] opad;
-
     private MessageDigest md5;
 
     public HMACEncryptor() {
@@ -39,11 +30,16 @@ public class HMACEncryptor {
         try {
             md5 = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(HMACEncryptor.class.getName()).log(Level.SEVERE, null, ex);
+            CommonTools.reportExceptionToMainThread(ex,"Exception in HMACEncryptor() !");
         }
-
     }
 
+    /**
+     * Создает Task для подсчета HMAC
+     * @param in Файл шифрованного текста
+     * @param out Файл для сохранения результата
+     * @param key Ключ шифрования
+     */
     public Task getHMAC(File in, File out, byte[] key) {
         return new Task<Void>() {
             @Override
@@ -77,6 +73,11 @@ public class HMACEncryptor {
         };
     }
     
+    /**
+     * Подготовка ключа по алгоритму HMAC
+     * @param key Ключ шифрования
+     * @return Подготовленный ключ шифрования
+     */
     private byte[] prepareKey(byte[] key) {
         byte[] resultKey = new byte[BLOCK_SIZE];
 
@@ -95,7 +96,6 @@ public class HMACEncryptor {
                 resultKey[i] = 0;
             }
         }
-
         return resultKey;
     }
 }

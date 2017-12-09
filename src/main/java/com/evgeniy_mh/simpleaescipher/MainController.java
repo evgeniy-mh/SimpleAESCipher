@@ -38,6 +38,10 @@ public class MainController {
 
     //AES-CTR tab
     private File originalFileAES;
+    private File resultFileAES;
+    private File keyFileAES;
+    private File key2FileECBC;
+    
     @FXML
     TextField originalFilePathAES;
     @FXML
@@ -49,9 +53,7 @@ public class MainController {
     @FXML
     Button saveOriginalFileAES;
     @FXML
-    Button saveAsOriginalFileAES;
-
-    private File resultFileAES;
+    Button saveAsOriginalFileAES;    
     @FXML
     TextField resultFilePathAES;
     @FXML
@@ -61,11 +63,7 @@ public class MainController {
     @FXML
     Button openResultFileAES;
     @FXML
-    Button saveAsResultFileAES;
-
-    private File keyFileAES;
-    private File key2FileECBC;
-
+    Button saveAsResultFileAES;    
     @FXML
     TextField keyTextFieldAES;
     @FXML
@@ -74,17 +72,14 @@ public class MainController {
     Button encryptButtonAES;
     @FXML
     Button decryptButtonAES;
-
     @FXML
     CheckBox CreateHMACCheckBox;
-
     @FXML
     CheckBox CreateECBCCheckBox;
     @FXML
     TextField key2TextFieldECBC;
     @FXML
     Button openKey2FileECBC;
-
     @FXML
     ProgressIndicator CipherProgressIndicator;
 
@@ -139,9 +134,6 @@ public class MainController {
 
     private HMACEncryptor mHMACEncryptor;
     private ECBCEncryptor mECBCEncryptor;
-
-    public MainController() {
-    }
 
     @FXML
     public void initialize() {

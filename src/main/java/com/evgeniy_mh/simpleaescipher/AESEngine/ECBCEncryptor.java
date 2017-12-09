@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.evgeniy_mh.simpleaescipher.AESEngine;
 
 import java.io.File;
@@ -24,6 +19,13 @@ public class ECBCEncryptor {
         mAES = new AES();
     }
 
+    /**
+     * Создает Task для подсчета ECBC
+     * @param in Файл шифрованного текста
+     * @param out Файл для сохранения результата
+     * @param key1 Ключ шифрования
+     * @param key2 Доп. ключ ECBC
+     */
     public Task getECBC(File in, File out, byte[] key1, byte[] key2) {
         return new Task<Void>() {
             @Override

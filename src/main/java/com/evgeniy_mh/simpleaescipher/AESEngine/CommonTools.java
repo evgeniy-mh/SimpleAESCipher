@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.evgeniy_mh.simpleaescipher.AESEngine;
 
 import com.evgeniy_mh.simpleaescipher.MainController;
@@ -49,6 +44,18 @@ public class CommonTools {
     }
     
     /**
+     * Выполняет конкатенацию двух массивов байт
+     * @return конкатенация массивов a и b
+     */
+    public static byte[] concat(byte[] a, byte[] b) {
+        byte[] result = new byte[a.length + b.length];
+        System.arraycopy(a, 0, result, 0, a.length);
+        System.arraycopy(b, 0, result, a.length, b.length);
+
+        return result;
+    }
+    
+    /**
      * Вывод в консоль массива байт
      *
      * @param mes Сообщение для вывода
@@ -60,18 +67,6 @@ public class CommonTools {
             System.out.print(String.format("0x%08X", array[i]) + " ");
         }
         System.out.println();
-    }
-    
-    /**
-     * Выполняет конкатенацию двух массивов байт
-     * @return конкатенация массивов a и b
-     */
-    public static byte[] concat(byte[] a, byte[] b) {
-        byte[] result = new byte[a.length + b.length];
-        System.arraycopy(a, 0, result, 0, a.length);
-        System.arraycopy(b, 0, result, a.length, b.length);
-
-        return result;
     }
     
     /**

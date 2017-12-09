@@ -1,12 +1,9 @@
 package com.evgeniy_mh.simpleaescipher.AESEngine;
 
-import com.evgeniy_mh.simpleaescipher.MainController;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
-import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.control.ProgressIndicator;
 
@@ -173,9 +170,7 @@ public class AES_CTREncryptor {
             }            
         };
         new Thread(t).start();
-    }
-    
-  
+    }  
 
     /**
      * Дополняет массив байт до размера кратного AES.BLOCK_SIZE по стандарту
