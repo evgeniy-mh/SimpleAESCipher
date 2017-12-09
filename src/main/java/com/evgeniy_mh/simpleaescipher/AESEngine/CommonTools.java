@@ -2,6 +2,7 @@ package com.evgeniy_mh.simpleaescipher.AESEngine;
 
 import com.evgeniy_mh.simpleaescipher.MainController;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -53,6 +54,34 @@ public class CommonTools {
         System.arraycopy(b, 0, result, a.length, b.length);
 
         return result;
+    }
+    
+    /**
+     * Выполняет сравнение двух файлов
+     * @param A Первый файл
+     * @param B Второй файл
+     * @return Результат сравнения
+     */
+    public static boolean compareFiles(File A, File B) {
+        if (A != null && B != null) {
+            if (A.length() == B.length()) {
+                boolean result = true;
+                try (FileInputStream finA = new FileInputStream(A); FileInputStream finB = new FileInputStream(B);) {
+
+                    int iA = -1, iB = -1;
+                    while ((iA = finA.read()) != -1 && (iB = finB.read()) != -1) {
+                        if (iA != iB) {
+                            result = false;
+                            break;
+                        }
+                    }
+                    return result;
+                } catch (IOException ex) {
+                    reportExceptionToMainThread(ex,"compareFiles(File A, File B)");
+                }
+            }
+        }
+        return false;
     }
     
     /**
