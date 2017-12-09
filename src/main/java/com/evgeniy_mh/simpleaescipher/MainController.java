@@ -133,34 +133,6 @@ public class MainController {
     @FXML
     Button checkECBCButton_ECBCTab;
 
-    /*private File originalECBCFile;
-    private File resultECBCFile;
-    private File keyFileECBC;
-    @FXML
-    TextField originalFilePathECBC;
-    @FXML
-    Button openOriginalFileECBC;
-    @FXML
-    Button openKeyFileECBC;
-    @FXML
-    TextField keyTextFieldECBC;
-    @FXML
-    Button getECBCButton;
-    @FXML
-    TextField resultFilePathECBC;
-    @FXML
-    Button openResultFileECBC;
-    private File compareFileECBC1, compareFileECBC2;
-    @FXML
-    TextField compareFilePathECBC1;
-    @FXML
-    Button openCompareFileECBC1;
-    @FXML
-    TextField compareFilePathECBC2;
-    @FXML
-    Button openCompareFileECBC2;
-    @FXML
-    Button compareFilesECBC;*/
     private AES_CTREncryptor mAESEncryptor;
     private boolean canChangeOriginalFile = true;
     private final int MAX_FILE_TO_SHOW_SIZE = 5000;
@@ -333,7 +305,7 @@ public class MainController {
         checkHMACButton_HMACTab.setOnAction((event) -> {
             checkHMAC();
         });
-        
+
         //ECBC tab
         openOriginalFileAESPath_ECBCTab.setOnAction((event) -> {
             File f = openFile();
@@ -342,7 +314,7 @@ public class MainController {
                 originalFileAESPath_ECBCTab.setText(f.getPath());
             }
         });
-        
+
         openOriginalFileECBCPath_ECBCTab.setOnAction((event) -> {
             File f = openFile();
             if (f != null) {
@@ -350,15 +322,15 @@ public class MainController {
                 originalFileECBCPath_ECBCTab.setText(f.getPath());
             }
         });
-        
-        openKeyFileECBC_ECBCTab.setOnAction((event) -> {       
+
+        openKeyFileECBC_ECBCTab.setOnAction((event) -> {
             keyFileECBC_ECBCTab = openFile();
             if (keyFileECBC_ECBCTab != null) {
                 keyTextFieldECBC_ECBCTab.setText(keyFileECBC_ECBCTab.getAbsolutePath());
                 keyTextFieldECBC_ECBCTab.setEditable(false);
             }
         });
-        
+
         keyTextFieldECBC_ECBCTab.setOnMouseClicked((event) -> {
             if (!keyTextFieldECBC_ECBCTab.isEditable()) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -373,7 +345,7 @@ public class MainController {
                 }
             }
         });
-        
+
         openKey2FileECBC_ECBCTab.setOnAction((event) -> {
             key2FileECBC_ECBCTab = openFile();
             if (key2FileECBC_ECBCTab != null) {
@@ -381,7 +353,7 @@ public class MainController {
                 key2TextFieldECBC_ECBCTab.setEditable(false);
             }
         });
-        
+
         key2TextFieldECBC_ECBCTab.setOnMouseClicked((event) -> {
             if (!key2TextFieldECBC_ECBCTab.isEditable()) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -396,102 +368,10 @@ public class MainController {
                 }
             }
         });
-        
+
         checkECBCButton_ECBCTab.setOnAction((event) -> {
+            checkECBC();
         });
-
-        /*File originalFileAES_ECBCTab;
-        File originalFileECBC_ECBCTab;
-        File keyFileECBC_ECBCTab;
-        File key2FileECBC_ECBCTab;*/
-
- /*openOriginalFileECBC.setOnAction((event) -> {
-            File f = openFile();
-            if (f != null) {
-                originalECBCFile = f;
-                originalFilePathECBC.setText(f.getPath());
-            }
-        });
-
-        openKeyFileECBC.setOnAction((event) -> {
-            keyFileECBC = openFile();
-            if (keyFileECBC != null) {
-                keyTextFieldECBC.setText(keyFileECBC.getAbsolutePath());
-                keyTextFieldECBC.setEditable(false);
-            }
-        });
-
-        keyTextFieldECBC.setOnMouseClicked((event) -> {
-            if (!keyTextFieldECBC.isEditable()) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Использовать поле ввода ключа?");
-                alert.setHeaderText("Вы желаете ввести ключ самостоятельно?");
-
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == ButtonType.OK) {
-                    keyTextFieldECBC.clear();
-                    keyTextFieldECBC.setEditable(true);
-                    keyFileECBC = null;
-                }
-            }
-        });
-
-        /*getECBCButton.setOnMouseClicked((event) -> {
-            try {
-                if (originalECBCFile != null && resultECBCFile != null) {
-                    mECBCEncryptor.getECBC(originalECBCFile, resultECBCFile, getKey(keyTextFieldECBC, keyFileECBC));
-                } else {
-                    Alert alert = new Alert(AlertType.WARNING);
-                    if (originalECBCFile == null) {
-                        alert.setTitle("Вы не выбрали исходный файл");
-                        alert.setHeaderText("Пожалуйста, выберите исходный файл.");
-                    } else if (resultECBCFile == null) {
-                        alert.setTitle("Вы не выбрали файл результата");
-                        alert.setHeaderText("Пожалуйста, создайте или выберите файл чтобы сохранить результат ECBC.");
-                    }
-                    alert.showAndWait();
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        });
-        openResultFileECBC.setOnMouseClicked((event) -> {
-            File f = openFile();
-            if (f != null) {
-                resultECBCFile = f;
-                resultFilePathECBC.setText(f.getPath());
-            }
-        });
-
-        openCompareFileECBC1.setOnMouseClicked((event) -> {
-            File f = openFile();
-            if (f != null) {
-                compareFileECBC1 = f;
-                compareFilePathECBC1.setText(f.getPath());
-            }
-        });
-
-        openCompareFileECBC2.setOnMouseClicked((event) -> {
-            File f = openFile();
-            if (f != null) {
-                compareFileECBC2 = f;
-                compareFilePathECBC2.setText(f.getPath());
-            }
-        });
-
-        compareFilesECBC.setOnMouseClicked((event) -> {
-            boolean eq = compareFiles(compareFileECBC1, compareFileECBC2);
-
-            Alert alert = new Alert(AlertType.INFORMATION);
-            if (eq) {
-                alert.setTitle("Файлы одинаковы");
-                alert.setHeaderText("Файлы одинаковы");
-            } else {
-                alert.setTitle("Файлы различны");
-                alert.setHeaderText("Файлы различны");
-            }
-            alert.showAndWait();
-        });*/
     }
 
     @FXML
@@ -695,8 +575,8 @@ public class MainController {
                         alert.setHeaderText("Проверка HMAC пройдена");
                     } else {
                         alert.setAlertType(AlertType.WARNING);
-                        alert.setTitle("Проверка НЕ HMAC пройдена!");
-                        alert.setHeaderText("Проверка НЕ HMAC пройдена!");
+                        alert.setTitle("Проверка HMAC НЕ пройдена!");
+                        alert.setHeaderText("Проверка HMAC НЕ пройдена!");
                     }
                     alert.showAndWait();
                     tempHMAC.delete();
@@ -722,6 +602,56 @@ public class MainController {
             alert.showAndWait();
         }
     }
+
+    private void checkECBC() {
+        Alert alert = new Alert(AlertType.WARNING);
+        if (originalFileAES_ECBCTab == null) {
+            alert.setTitle("Вы не выбрали исходный зашифрованный AES файл");
+            alert.setHeaderText("Пожалуйста, выберите исходный зашифрованный AES файл.");
+            alert.showAndWait();
+        } else if (originalFileECBC_ECBCTab == null) {
+            alert.setTitle("Вы не выбрали файл ECBC");
+            alert.setHeaderText("Пожалуйста, выберите файл ECBC.");
+            alert.showAndWait();
+        } else if (getKey(keyTextFieldECBC_ECBCTab, keyFileECBC_ECBCTab).length == 0) {
+            alert.setTitle("Вы не выбрали или не ввели ключ ECBC");
+            alert.setHeaderText("Пожалуйста, выберите или введите ключ ECBC.");
+            alert.showAndWait();
+        } else if (getKey(key2TextFieldECBC_ECBCTab, key2FileECBC_ECBCTab).length == 0) {
+            alert.setTitle("Вы не выбрали или не ввели дополнительный ключ ECBC");
+            alert.setHeaderText("Пожалуйста, выберите или введите дополнительный ключ ECBC.");
+            alert.showAndWait();
+        } else {
+            try {
+                File tempECBC = new File(originalFileECBC_ECBCTab.getAbsolutePath() + "_temp");
+                tempECBC.createNewFile();
+
+                Task ECBCTask = mECBCEncryptor.getECBC(originalFileAES_ECBCTab, tempECBC,
+                        getKey(keyTextFieldECBC_ECBCTab, keyFileECBC_ECBCTab),
+                        getKey(key2TextFieldECBC_ECBCTab, key2FileECBC_ECBCTab));
+
+                ECBCTask.setOnSucceeded(value -> {
+                    boolean eq = compareFiles(originalFileECBC_ECBCTab, tempECBC);
+                    Alert alert2 = new Alert(AlertType.INFORMATION);
+                    if (eq) {
+                        alert2.setTitle("Проверка ECBC пройдена");
+                        alert2.setHeaderText("Проверка ECBC пройдена");
+                    } else {
+                        alert2.setAlertType(AlertType.WARNING);
+                        alert2.setTitle("Проверка ECBC НЕ пройдена!");
+                        alert2.setHeaderText("Проверка ECBC НЕ пройдена!");
+                    }
+                    alert2.showAndWait();
+                    tempECBC.delete();
+                });
+                Thread ECBCThread = new Thread(ECBCTask);
+                ECBCThread.start();
+                
+            } catch (IOException ex) {
+                showExceptionToUser(ex, "checkECBC()");
+            }
+        }     
+    };
 
     private void clearKey() {
         keyTextFieldAES.clear();
