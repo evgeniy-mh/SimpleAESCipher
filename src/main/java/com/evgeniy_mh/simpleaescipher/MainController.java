@@ -14,6 +14,9 @@ import java.nio.file.Files;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -21,6 +24,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -79,6 +83,11 @@ public class MainController {
     Button openKey2FileECBC;
     @FXML
     ProgressIndicator CipherProgressIndicator;
+    
+    @FXML
+    ChoiceBox<ChoiceBoxItem> CCMChioceBox;
+    @FXML
+    ChoiceBox<ChoiceBoxItem> CCM_MACChioceBox;
 
     //HMAC tab
     File originalFileAES_HMACTab;
@@ -258,6 +267,29 @@ public class MainController {
                 key2TextFieldECBC.setText(f.getPath());
             }
         });
+        
+        
+        CCMChioceBox.setItems(FXCollections.observableArrayList(
+                new ChoiceBoxItem(0, "Не использовать CCM"),
+                new ChoiceBoxItem(1, "MAC-then-Encrypt"),
+                new ChoiceBoxItem(2, "Encrypt-then-MAC"),
+                new ChoiceBoxItem(3, "Encrypt-and-MAC")
+        ));        
+        CCMChioceBox.getSelectionModel().selectFirst();
+        
+        CCMChioceBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ChoiceBoxItem>(){
+            @Override
+            public void changed(ObservableValue<? extends ChoiceBoxItem> observable, ChoiceBoxItem oldValue, ChoiceBoxItem newValue) {
+                CCM_MACChioceBox.setDisable(newValue.id==0);                
+            }            
+        });
+        
+        CCM_MACChioceBox.setItems(FXCollections.observableArrayList(
+                new ChoiceBoxItem(0, "HMAC"),
+                new ChoiceBoxItem(1, "ECBC")
+        ));        
+        CCM_MACChioceBox.getSelectionModel().selectFirst();
+        CCM_MACChioceBox.setDisable(true);
     }
 
     private void initECBC_Tab(){
