@@ -149,8 +149,13 @@ public class MainController {
             showExceptionToUser(ex, "Exception in initialize(). fileChooser.setInitialDirectory failed.");
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        //AES-CTR tab
+        
+        initAESCTR_Tab();
+        initECBC_Tab();
+        initHMAC_Tab();
+    }
+    
+    private void initAESCTR_Tab(){        
         createOriginalFileAES.setOnAction((event) -> {
             File f = createNewFile("Сохраните новый исходный файл");
             if (f != null) {
@@ -254,52 +259,9 @@ public class MainController {
                 key2TextFieldECBC.setText(f.getPath());
             }
         });
+    }
 
-        //HMAC tab
-        openOriginalFileAESPath_HMACTab.setOnAction((event) -> {
-            File f = openFile();
-            if (f != null) {
-                originalFileAES_HMACTab = f;
-                originalFileAESPath_HMACTab.setText(f.getPath());
-            }
-        });
-
-        openOriginalFileHMACPath_HMACTab.setOnAction((event) -> {
-            File f = openFile();
-            if (f != null) {
-                originalFileHMAC_HMACTab = f;
-                originalFileHMACPath_HMACTab.setText(f.getPath());
-            }
-        });
-
-        openKeyFileHMAC_HMACTab.setOnAction((event) -> {
-            keyFileHMAC_HMACTab = openFile();
-            if (keyFileHMAC_HMACTab != null) {
-                keyTextFieldHMAC_HMACTab.setText(keyFileHMAC_HMACTab.getAbsolutePath());
-                keyTextFieldHMAC_HMACTab.setEditable(false);
-            }
-        });
-
-        keyTextFieldHMAC_HMACTab.setOnMouseClicked((event) -> {
-            if (!keyTextFieldHMAC_HMACTab.isEditable()) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Использовать поле ввода ключа?");
-                alert.setHeaderText("Вы желаете ввести ключ самостоятельно?");
-
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == ButtonType.OK) {
-                    keyTextFieldHMAC_HMACTab.clear();
-                    keyTextFieldHMAC_HMACTab.setEditable(true);
-                    keyFileHMAC_HMACTab = null;
-                }
-            }
-        });
-
-        checkHMACButton_HMACTab.setOnAction((event) -> {
-            checkHMAC();
-        });
-
-        //ECBC tab
+    private void initECBC_Tab(){
         openOriginalFileAESPath_ECBCTab.setOnAction((event) -> {
             File f = openFile();
             if (f != null) {
@@ -366,7 +328,52 @@ public class MainController {
             checkECBC();
         });
     }
+    
+    private void initHMAC_Tab(){
+        openOriginalFileAESPath_HMACTab.setOnAction((event) -> {
+            File f = openFile();
+            if (f != null) {
+                originalFileAES_HMACTab = f;
+                originalFileAESPath_HMACTab.setText(f.getPath());
+            }
+        });
 
+        openOriginalFileHMACPath_HMACTab.setOnAction((event) -> {
+            File f = openFile();
+            if (f != null) {
+                originalFileHMAC_HMACTab = f;
+                originalFileHMACPath_HMACTab.setText(f.getPath());
+            }
+        });
+
+        openKeyFileHMAC_HMACTab.setOnAction((event) -> {
+            keyFileHMAC_HMACTab = openFile();
+            if (keyFileHMAC_HMACTab != null) {
+                keyTextFieldHMAC_HMACTab.setText(keyFileHMAC_HMACTab.getAbsolutePath());
+                keyTextFieldHMAC_HMACTab.setEditable(false);
+            }
+        });
+
+        keyTextFieldHMAC_HMACTab.setOnMouseClicked((event) -> {
+            if (!keyTextFieldHMAC_HMACTab.isEditable()) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Использовать поле ввода ключа?");
+                alert.setHeaderText("Вы желаете ввести ключ самостоятельно?");
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    keyTextFieldHMAC_HMACTab.clear();
+                    keyTextFieldHMAC_HMACTab.setEditable(true);
+                    keyFileHMAC_HMACTab = null;
+                }
+            }
+        });
+
+        checkHMACButton_HMACTab.setOnAction((event) -> {
+            checkHMAC();
+        });
+    }
+    
     private void encryptAES() {
         if (originalFileAES != null && resultFileAES != null && getKey(keyTextFieldAES, keyFileAES).length != 0) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
