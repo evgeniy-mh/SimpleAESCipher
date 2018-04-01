@@ -420,7 +420,8 @@
                                     <Label text="1. Исходный файл:">
                                        <VBox.margin>
                                           <Insets bottom="5.0" />
-                                       </VBox.margin></Label>
+                                       </VBox.margin>
+                                    </Label>
                                     <HBox>
                                        <children>
                                           <TextField HBox.hgrow="ALWAYS" />
@@ -432,7 +433,7 @@
                                     </HBox>
                                     <Accordion>
                                       <panes>
-                                        <TitledPane animated="false" text="Содержимое">
+                                        <TitledPane animated="false" text="Содержимое файла">
                                           <content>
                                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                    <children>
@@ -442,7 +443,25 @@
                                           </content>
                                         </TitledPane>
                                       </panes>
+                                       <VBox.margin>
+                                          <Insets bottom="5.0" />
+                                       </VBox.margin>
                                     </Accordion>
+                                    <HBox spacing="5.0">
+                                       <children>
+                                          <Button fx:id="createOriginalFileAES1" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" text="Создать" HBox.hgrow="ALWAYS">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </Button>
+                                          <Button fx:id="saveOriginalFileAES1" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" text="Сохранить" HBox.hgrow="ALWAYS">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </Button>
+                                          <Button fx:id="saveAsOriginalFileAES1" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" text="Сохранить как" HBox.hgrow="ALWAYS" />
+                                       </children>
+                                    </HBox>
                                  </children>
                                  <GridPane.margin>
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -453,7 +472,8 @@
                                     <Label text="2. Файл результата:">
                                        <padding>
                                           <Insets bottom="5.0" />
-                                       </padding></Label>
+                                       </padding>
+                                    </Label>
                                     <HBox>
                                        <children>
                                           <TextField maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
@@ -465,7 +485,7 @@
                                     </HBox>
                                     <Accordion>
                                        <panes>
-                                          <TitledPane animated="false" text="Содержимое">
+                                          <TitledPane animated="false" text="Содержимое файла">
                                              <content>
                                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                    <children>
@@ -475,7 +495,25 @@
                                              </content>
                                           </TitledPane>
                                        </panes>
+                                       <VBox.margin>
+                                          <Insets bottom="5.0" />
+                                       </VBox.margin>
                                     </Accordion>
+                                    <HBox spacing="5.0">
+                                       <children>
+                                          <Button fx:id="createOriginalFileAES11" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" text="Создать" HBox.hgrow="ALWAYS">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </Button>
+                                          <Button fx:id="saveOriginalFileAES11" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" text="Сохранить" HBox.hgrow="ALWAYS">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </Button>
+                                          <Button fx:id="saveAsOriginalFileAES11" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" text="Сохранить как" HBox.hgrow="ALWAYS" />
+                                       </children>
+                                    </HBox>
                                  </children>
                                  <GridPane.margin>
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -486,12 +524,77 @@
                                     <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Зашифровать &gt;&gt;&gt;">
                                        <VBox.margin>
                                           <Insets bottom="25.0" />
-                                       </VBox.margin></Button>
+                                       </VBox.margin>
+                                    </Button>
                                     <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="&lt;&lt;&lt; Расшифровать" />
                                  </children>
                                  <GridPane.margin>
                                     <Insets left="5.0" right="5.0" top="5.0" />
                                  </GridPane.margin>
+                              </VBox>
+                              <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnSpan="3" GridPane.rowIndex="1">
+                                 <children>
+                                    <Separator prefWidth="200.0">
+                                       <VBox.margin>
+                                          <Insets bottom="5.0" />
+                                       </VBox.margin>
+                                    </Separator>
+                                    <HBox>
+                                       <children>
+                                          <Label alignment="CENTER" contentDisplay="CENTER" layoutX="5.0" layoutY="5.0" minWidth="-Infinity" text="Ключ AES:" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" HBox.hgrow="NEVER">
+                                             <padding>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                             </padding>
+                                          </Label>
+                                          <TextField fx:id="keyTextFieldAES1" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="420.0" promptText="Введите ключ" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </TextField>
+                                          <Button fx:id="openKeyFileAES1" mnemonicParsing="false" text="Открыть файл ключа" />
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="5.0" />
+                                       </padding>
+                                    </HBox>
+                                    <ProgressBar fx:id="CipherProgressIndicator1" maxWidth="1.7976931348623157E308" minWidth="100.0" progress="0.0">
+                                       <VBox.margin>
+                                          <Insets bottom="5.0" />
+                                       </VBox.margin>
+                                    </ProgressBar>
+                                    <VBox>
+                                       <children>
+                                          <CheckBox fx:id="CreateHMACCheckBox1" mnemonicParsing="false" text="Создать файл HMAC" />
+                                          <VBox>
+                                             <children>
+                                                <CheckBox fx:id="CreateECBCCheckBox1" mnemonicParsing="false" text="Создать файл ECBC">
+                                                   <VBox.margin>
+                                                      <Insets top="2.0" />
+                                                   </VBox.margin>
+                                                </CheckBox>
+                                                <HBox>
+                                                   <children>
+                                                      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="5.0" layoutY="5.0" minWidth="-Infinity" text="Дополнительный ключ ECBC:" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" HBox.hgrow="NEVER">
+                                                         <padding>
+                                                            <Insets bottom="5.0" right="5.0" top="5.0" />
+                                                         </padding>
+                                                      </Label>
+                                                      <TextField fx:id="key2TextFieldECBC1" disable="true" layoutX="149.0" layoutY="5.0" minWidth="10.0" prefHeight="25.0" prefWidth="420.0" promptText="Введите ключ 2 для ECBC" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="273.0" HBox.hgrow="ALWAYS">
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </TextField>
+                                                      <Button fx:id="openKey2FileECBC1" disable="true" mnemonicParsing="false" text="Открыть файл ключа" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                                 <padding>
+                                    <Insets left="5.0" right="5.0" />
+                                 </padding>
                               </VBox>
                            </children>
                         </GridPane>
