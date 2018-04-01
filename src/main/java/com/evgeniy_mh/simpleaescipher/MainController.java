@@ -136,7 +136,6 @@ public class MainController {
         this.mainApp = mainApp;
     }
 
-    @FXML
     public void initialize() {
         mAESEncryptor = new AES_CTREncryptor(CipherProgressIndicator);
         mHMACEncryptor = new HMACEncryptor();
@@ -550,7 +549,6 @@ public class MainController {
         }
     }
     
-    @FXML
     private File createNewFile(String dialogTitle) {
         fileChooser.setTitle(dialogTitle);
         File file = fileChooser.showSaveDialog(stage);
@@ -565,7 +563,6 @@ public class MainController {
         return file;
     }
 
-    @FXML
     private File openFile() {
         File file = fileChooser.showOpenDialog(stage);
         return file;
