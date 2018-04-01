@@ -1,13 +1,10 @@
 package com.evgeniy_mh.simpleaescipher;
 
 import com.evgeniy_mh.simpleaescipher.AESEngine.AES_CTREncryptor;
-import com.evgeniy_mh.simpleaescipher.AESEngine.CommonTools;
 import com.evgeniy_mh.simpleaescipher.AESEngine.ECBCEncryptor;
 import com.evgeniy_mh.simpleaescipher.AESEngine.HMACEncryptor;
 import com.evgeniy_mh.simpleaescipher.AESEngine.Nonce;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -173,7 +170,7 @@ public class MainController {
 
         saveOriginalFileAES.setOnAction((event) -> {
             if (canChangeOriginalFile) {
-                saveFile(originalFileAES, originalFileTextAreaAES.getText().getBytes(StandardCharsets.UTF_8));
+                FileUtils.saveFile(originalFileAES, originalFileTextAreaAES.getText().getBytes(StandardCharsets.UTF_8));
                 updateFileInfo(originalFilePathAES, originalFileTextAreaAES, originalFileAES);
             }
         });
@@ -461,7 +458,7 @@ public class MainController {
 
                 Task HMACTask = mHMACEncryptor.getHMAC(originalFileAES_HMACTab, tempHMAC, getKey(keyTextFieldHMAC_HMACTab, keyFileHMAC_HMACTab));
                 HMACTask.setOnSucceeded(value -> {
-                    boolean eq = CommonTools.compareFiles(originalFileHMAC_HMACTab, tempHMAC);
+                    boolean eq = FileUtils.compareFiles(originalFileHMAC_HMACTab, tempHMAC);
                     Alert alert = new Alert(AlertType.INFORMATION);
                     if (eq) {
                         alert.setTitle("Проверка HMAC пройдена");
@@ -524,7 +521,7 @@ public class MainController {
                         getKey(key2TextFieldECBC_ECBCTab, key2FileECBC_ECBCTab));
 
                 ECBCTask.setOnSucceeded(value -> {
-                    boolean eq = CommonTools.compareFiles(originalFileECBC_ECBCTab, tempECBC);
+                    boolean eq = FileUtils.compareFiles(originalFileECBC_ECBCTab, tempECBC);
                     Alert alert2 = new Alert(AlertType.INFORMATION);
                     if (eq) {
                         alert2.setTitle("Проверка ECBC пройдена");
@@ -567,7 +564,7 @@ public class MainController {
         return file;
     }
 
-    private void saveFile(File file, byte[] fileBytes) {
+    /*private void saveFile(File file, byte[] fileBytes) {
         if (file != null && fileBytes != null) {
             try {
                 FileOutputStream fos = new FileOutputStream(file);
@@ -578,13 +575,13 @@ public class MainController {
                 Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    }
+    }*/
 
     private File saveAsFile(byte[] fileBytes, String dialogTitle) {
         fileChooser.setTitle(dialogTitle);
         File file = fileChooser.showSaveDialog(stage);
         if (file != null) {
-            saveFile(file, fileBytes);
+            FileUtils.saveFile(file, fileBytes);
         }
         return file;
     }
@@ -635,7 +632,7 @@ public class MainController {
         }
     }
 
-    private byte[] readBytesFromFile(File file, int bytesToRead) {
+    /*private byte[] readBytesFromFile(File file, int bytesToRead) {
         try {
             return CommonTools.readBytesFromFile(file, 0, bytesToRead);
         } catch (IOException ex) {
@@ -643,7 +640,7 @@ public class MainController {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
-    }
+    }*/
 
     private void clearKey() {
         keyTextFieldAES.clear();
@@ -655,10 +652,10 @@ public class MainController {
         if (keyTextField.isEditable()) {
             return keyTextField.getText().getBytes(StandardCharsets.UTF_8);
         } else {
-            return readBytesFromFile(keyFile, 128);
+            return FileUtils.readBytesFromFile(keyFile, 128);
         }
     }
-
+    
     public static void showExceptionToUser(Throwable e, String message) {
         Alert errorAlert = new Alert(Alert.AlertType.ERROR);
         errorAlert.setTitle("Exception!");
@@ -666,6 +663,5 @@ public class MainController {
         e.printStackTrace(new PrintWriter(sw));
         errorAlert.setContentText(message + "\n" + sw.toString());
         errorAlert.showAndWait();
-    }
-
+}
 }

@@ -1,5 +1,7 @@
 package com.evgeniy_mh.simpleaescipher.AESEngine;
 
+import com.evgeniy_mh.simpleaescipher.CommonUtils;
+import com.evgeniy_mh.simpleaescipher.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -51,7 +53,7 @@ public class AES_CTREncryptor {
 
                     RandomAccessFile INraf = new RandomAccessFile(in, "r");
 
-                    int nBlocks = CommonTools.countBlocks(in,AES.BLOCK_SIZE); //сколько блоков открытого текста
+                    int nBlocks = CommonUtils.countBlocks(in,AES.BLOCK_SIZE); //сколько блоков открытого текста
                     byte[] temp = new byte[AES.BLOCK_SIZE];
 
                     for (int i = 0; i < nBlocks + 1; i++) {
@@ -89,7 +91,7 @@ public class AES_CTREncryptor {
                     OUTraf.close();
                     INraf.close();
                 } catch (IOException e) {
-                    CommonTools.reportExceptionToMainThread(e,"Exception in encrypt thread!");
+                    CommonUtils.reportExceptionToMainThread(e,"Exception in encrypt thread!");
                 }
                 progressIndicator.setProgress(0.0);
                 return null;
@@ -110,7 +112,7 @@ public class AES_CTREncryptor {
             @Override
             protected Void call() throws IOException {
                 byte[] nonceAndCounterInfo = new byte[8]; //8 байт которые добавл в начало сообщения и несут инфу о nonce и counter //nonceAndCounterInfo: nnnncccc        
-                nonceAndCounterInfo = CommonTools.readBytesFromFile(in, 0, 8);
+                nonceAndCounterInfo = FileUtils.readBytesFromFile(in, 0, 8);
 
                 byte[] nonce = new byte[8];
                 byte[] counter = new byte[8];
@@ -129,7 +131,7 @@ public class AES_CTREncryptor {
                     OUTraf.setLength(in.length() - 8);
                     RandomAccessFile INraf = new RandomAccessFile(in, "r");
 
-                    int nBlocks = CommonTools.countBlocks(in,AES.BLOCK_SIZE); //сколько блоков шифро текста
+                    int nBlocks = CommonUtils.countBlocks(in,AES.BLOCK_SIZE); //сколько блоков шифро текста
                     int nToDeleteBytes = 0; //сколько байт нужно удалить с конца сообщения
 
                     byte[] temp = new byte[AES.BLOCK_SIZE];
@@ -163,7 +165,7 @@ public class AES_CTREncryptor {
                     OUTraf.close();
                     INraf.close();
                 } catch (IOException e) {
-                    CommonTools.reportExceptionToMainThread(e, "Exception in decrypt thread!");
+                    CommonUtils.reportExceptionToMainThread(e, "Exception in decrypt thread!");
                 }
                 progressIndicator.setProgress(0.0);
                 return null;

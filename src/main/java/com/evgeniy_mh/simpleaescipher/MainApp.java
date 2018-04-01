@@ -16,7 +16,7 @@ public class MainApp extends Application {
         AnchorPane rootOverview = (AnchorPane) loader.load();
 
         Scene scene = new Scene(rootOverview);
-        stage.setTitle("Simple AES Cipher");
+        stage.setTitle("AES Cipher");
         stage.setScene(scene);
         stage.show();
 

@@ -1,5 +1,6 @@
 package com.evgeniy_mh.simpleaescipher.AESEngine;
 
+import com.evgeniy_mh.simpleaescipher.CommonUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -44,7 +45,7 @@ public class ECBCEncryptor {
                     mAES.makeKey(tempKey1, 128, AES.DIR_BOTH);
 
                     RandomAccessFile INraf = new RandomAccessFile(in, "r");
-                    int nBlocks = CommonTools.countBlocks(in, AES.BLOCK_SIZE); //сколько блоков открытого текста
+                    int nBlocks = CommonUtils.countBlocks(in, AES.BLOCK_SIZE); //сколько блоков открытого текста
 
                     byte[] temp = new byte[AES.BLOCK_SIZE];
                     byte[] IV = new byte[AES.BLOCK_SIZE];
@@ -78,7 +79,7 @@ public class ECBCEncryptor {
                     mAES.encrypt(IV, IV);
                     Files.write(out.toPath(), IV, StandardOpenOption.WRITE);
                 } catch (IOException ex) {
-                    CommonTools.reportExceptionToMainThread(ex, "Exception in encrypt thread, ECBC task!");
+                    CommonUtils.reportExceptionToMainThread(ex, "Exception in encrypt thread, ECBC task!");
                 }
                 return null;
             }

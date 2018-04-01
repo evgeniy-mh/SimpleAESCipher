@@ -1,5 +1,6 @@
 package com.evgeniy_mh.simpleaescipher.AESEngine;
 
+import com.evgeniy_mh.simpleaescipher.CommonUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -30,7 +31,7 @@ public class HMACEncryptor {
         try {
             md5 = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException ex) {
-            CommonTools.reportExceptionToMainThread(ex,"Exception in HMACEncryptor() !");
+            CommonUtils.reportExceptionToMainThread(ex,"Exception in HMACEncryptor() !");
         }
     }
 
@@ -58,15 +59,15 @@ public class HMACEncryptor {
                     }
 
                     byte[] m = Files.readAllBytes(in.toPath());
-                    byte[] temp = CommonTools.concat(Si, m);
+                    byte[] temp = CommonUtils.concat(Si, m);
                     temp = md5.digest(temp);
 
-                    temp = CommonTools.concat(So, temp);
+                    temp = CommonUtils.concat(So, temp);
                     temp = md5.digest(temp);
 
                     Files.write(out.toPath(), temp, StandardOpenOption.WRITE);
                 } catch (IOException ex) {
-                    CommonTools.reportExceptionToMainThread(ex,"Exception in encrypt thread, HMAC task!");
+                    CommonUtils.reportExceptionToMainThread(ex,"Exception in encrypt thread, HMAC task!");
                 }
                 return null;
             }
