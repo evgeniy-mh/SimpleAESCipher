@@ -2,9 +2,11 @@ package com.evgeniy_mh.simpleaescipher;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,7 +25,7 @@ public class FileUtils {
         }
     }
 
-    static public byte[] readBytesFromFile(File file, int bytesToRead) {
+    public static byte[] readBytesFromFile(File file, int bytesToRead) {
         return readBytesFromFile(file, 0, bytesToRead);
     }
 
@@ -50,9 +52,10 @@ public class FileUtils {
             return null;
         }
     }
-    
+
     /**
      * Выполняет сравнение двух файлов
+     *
      * @param A Первый файл
      * @param B Второй файл
      * @return Результат сравнения
@@ -72,10 +75,24 @@ public class FileUtils {
                     }
                     return result;
                 } catch (IOException ex) {
-                    CommonUtils.reportExceptionToMainThread(ex,"compareFiles(File A, File B)");
+                    CommonUtils.reportExceptionToMainThread(ex, "compareFiles(File A, File B)");
                 }
             }
         }
         return false;
+    }
+
+    public static void createFileCopy(File source, File distination) {
+        try {
+            FileChannel sourceChannel = null;
+            FileChannel destChannel = null;
+            sourceChannel = new FileInputStream(source).getChannel();
+            destChannel = new FileOutputStream(distination).getChannel();
+            destChannel.transferFrom(sourceChannel, 0, sourceChannel.size());
+            sourceChannel.close();
+            destChannel.close();
+        } catch (IOException ex) {
+            CommonUtils.reportExceptionToMainThread(ex, "createFileCopy(File source, File distination)");
+        }
     }
 }

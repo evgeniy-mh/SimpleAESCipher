@@ -9,10 +9,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import javafx.concurrent.Task;
 
-/**
- *
- * @author evgeniy
- */
 public class HMACEncryptor {
 
     private static final int BLOCK_SIZE = 64;
@@ -40,8 +36,9 @@ public class HMACEncryptor {
      * @param in Файл шифрованного текста
      * @param out Файл для сохранения результата
      * @param key Ключ шифрования
+     * @param appendToInFile Если true то HMAC будет добавлен в конец файла in, фалй out не будет задействован.
      */
-    public Task getHMAC(File in, File out, byte[] key) {
+    public Task getHMAC(File in, File out, byte[] key, boolean appendToInFile) {
         return new Task<Void>() {
             @Override
             protected Void call() {
@@ -65,7 +62,12 @@ public class HMACEncryptor {
                     temp = CommonUtils.concat(So, temp);
                     temp = md5.digest(temp);
 
-                    Files.write(out.toPath(), temp, StandardOpenOption.WRITE);
+                    if(appendToInFile){
+                        Files.write(out.toPath(), temp, StandardOpenOption.WRITE);
+                    }else{
+                        Files.write(in.toPath(), temp, StandardOpenOption.APPEND);
+                    }
+                    
                 } catch (IOException ex) {
                     CommonUtils.reportExceptionToMainThread(ex,"Exception in encrypt thread, HMAC task!");
                 }

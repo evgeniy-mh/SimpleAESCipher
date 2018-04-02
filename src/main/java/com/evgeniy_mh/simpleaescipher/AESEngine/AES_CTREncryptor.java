@@ -2,6 +2,7 @@ package com.evgeniy_mh.simpleaescipher.AESEngine;
 
 import com.evgeniy_mh.simpleaescipher.CommonUtils;
 import com.evgeniy_mh.simpleaescipher.FileUtils;
+import com.evgeniy_mh.simpleaescipher.MACOptions;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -18,8 +19,8 @@ public class AES_CTREncryptor {
     private ProgressIndicator progressIndicator;
 
     public AES_CTREncryptor(ProgressIndicator progressIndicator) {
-        mAES = new AES();        
-        this.progressIndicator=progressIndicator;
+        mAES = new AES();
+        this.progressIndicator = progressIndicator;
     }
 
     /**
@@ -53,7 +54,7 @@ public class AES_CTREncryptor {
 
                     RandomAccessFile INraf = new RandomAccessFile(in, "r");
 
-                    int nBlocks = CommonUtils.countBlocks(in,AES.BLOCK_SIZE); //сколько блоков открытого текста
+                    int nBlocks = CommonUtils.countBlocks(in, AES.BLOCK_SIZE); //сколько блоков открытого текста
                     byte[] temp = new byte[AES.BLOCK_SIZE];
 
                     for (int i = 0; i < nBlocks + 1; i++) {
@@ -86,18 +87,18 @@ public class AES_CTREncryptor {
                             c[j] = (byte) (temp[j] ^ k[j]);
                         }
                         OUTraf.write(c);
-                        progressIndicator.setProgress((double)i / nBlocks);
+                        progressIndicator.setProgress((double) i / nBlocks);
                     }
                     OUTraf.close();
                     INraf.close();
                 } catch (IOException e) {
-                    CommonUtils.reportExceptionToMainThread(e,"Exception in encrypt thread!");
+                    CommonUtils.reportExceptionToMainThread(e, "Exception in encrypt thread!");
                 }
                 progressIndicator.setProgress(0.0);
                 return null;
             }
         };
-    } 
+    }
 
     /**
      * Выполняет дешифрование файла
@@ -107,7 +108,7 @@ public class AES_CTREncryptor {
      * перезаписан)
      * @param key Ключ шифрования
      */
-    public void decrypt(File in, File out, final byte[] key){
+    public void decrypt(File in, File out, final byte[] key) {
         Task t = new Task<Void>() {
             @Override
             protected Void call() throws IOException {
@@ -131,7 +132,7 @@ public class AES_CTREncryptor {
                     OUTraf.setLength(in.length() - 8);
                     RandomAccessFile INraf = new RandomAccessFile(in, "r");
 
-                    int nBlocks = CommonUtils.countBlocks(in,AES.BLOCK_SIZE); //сколько блоков шифро текста
+                    int nBlocks = CommonUtils.countBlocks(in, AES.BLOCK_SIZE); //сколько блоков шифро текста
                     int nToDeleteBytes = 0; //сколько байт нужно удалить с конца сообщения
 
                     byte[] temp = new byte[AES.BLOCK_SIZE];
@@ -158,7 +159,7 @@ public class AES_CTREncryptor {
                                 nToDeleteBytes = c[AES.BLOCK_SIZE - 1]; //на случай дешифрования с неправильным ключем
                             }
                         }
-                        progressIndicator.setProgress((double)i / nBlocks);
+                        progressIndicator.setProgress((double) i / nBlocks);
                     }
                     OUTraf.setLength(OUTraf.length() - nToDeleteBytes);
 
@@ -169,10 +170,10 @@ public class AES_CTREncryptor {
                 }
                 progressIndicator.setProgress(0.0);
                 return null;
-            }            
+            }
         };
         new Thread(t).start();
-    }  
+    }
 
     /**
      * Дополняет массив байт до размера кратного AES.BLOCK_SIZE по стандарту
@@ -196,10 +197,26 @@ public class AES_CTREncryptor {
         } else {
             return b;
         }
-    }    
+    }
+
+    public Task MAC_then_EncryptHMAC(File in, File out, MACOptions options) {
+        return new Task<Void>() {
+            @Override
+            protected Void call() throws IOException {  
+                File temp=new File(in.getAbsolutePath()+"_temp");
+                FileUtils.createFileCopy(in, temp);   
+                
+                switch(MACOptions.)
+                
+                
+                return null;
+            }
+        };
+    }
 
     /**
      * Получить Nonce
+     *
      * @return значение Nonce
      */
     private int getNonce() {
@@ -213,5 +230,5 @@ public class AES_CTREncryptor {
      */
     private static int countDeltaBlocks(byte[] b) {
         return AES.BLOCK_SIZE - b.length % AES.BLOCK_SIZE;
-    }   
+    }
 }

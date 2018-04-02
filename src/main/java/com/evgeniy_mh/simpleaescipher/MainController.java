@@ -406,6 +406,11 @@ public class MainController {
     }
     
     private void encryptAES() {
+        
+        
+        Task t= mAESEncryptor.MAC_then_EncryptHMAC(originalFileAES, resultFileAES, new MACOptions(MACOptions.MACType.ECBC,null, null));
+        t.run();
+        
         if (originalFileAES != null && resultFileAES != null && getKey(keyTextFieldAES, keyFileAES).length != 0) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Результирующий файл будет перезаписан!");
@@ -420,7 +425,7 @@ public class MainController {
 
                     if (CreateHMACCheckBox.isSelected()) {
                         File hmacFile = createNewFile("Создайте или выберите файл для сохранения HMAC");
-                        Task HMACTask = mHMACEncryptor.getHMAC(resultFileAES, hmacFile, getKey(keyTextFieldAES, keyFileAES));
+                        Task HMACTask = mHMACEncryptor.getHMAC(resultFileAES, hmacFile, getKey(keyTextFieldAES, keyFileAES),false);
                         HMACTask.setOnSucceeded(event -> {
                             Alert alertHMACDone = new Alert(Alert.AlertType.INFORMATION);
                             alertHMACDone.setTitle("HMAC файл создан");
@@ -494,7 +499,7 @@ public class MainController {
                 File tempHMAC = new File(originalFileHMAC_HMACTab.getAbsolutePath() + "_temp");
                 tempHMAC.createNewFile();
 
-                Task HMACTask = mHMACEncryptor.getHMAC(originalFileAES_HMACTab, tempHMAC, getKey(keyTextFieldHMAC_HMACTab, keyFileHMAC_HMACTab));
+                Task HMACTask = mHMACEncryptor.getHMAC(originalFileAES_HMACTab, tempHMAC, getKey(keyTextFieldHMAC_HMACTab, keyFileHMAC_HMACTab), false);
                 HMACTask.setOnSucceeded(value -> {
                     boolean eq = FileUtils.compareFiles(originalFileHMAC_HMACTab, tempHMAC);
                     Alert alert = new Alert(AlertType.INFORMATION);
