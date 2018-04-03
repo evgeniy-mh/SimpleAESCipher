@@ -42,6 +42,7 @@ public class MainController {
     private File resultFileAES;
     private File keyFileAES;
     private File key2FileECBC;
+    boolean usingCCM = false;
 
     @FXML
     TextField originalFilePathAES;
@@ -83,7 +84,7 @@ public class MainController {
     Button openKey2FileECBC;
     @FXML
     ProgressIndicator CipherProgressIndicator;
-    
+
     @FXML
     ChoiceBox<ChoiceBoxItem> CCMChioceBox;
     @FXML
@@ -157,13 +158,13 @@ public class MainController {
             showExceptionToUser(ex, "Exception in initialize(). fileChooser.setInitialDirectory failed.");
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         initAESCTR_Tab();
         initECBC_Tab();
         initHMAC_Tab();
     }
-    
-    private void initAESCTR_Tab(){        
+
+    private void initAESCTR_Tab() {
         createOriginalFileAES.setOnAction((event) -> {
             File f = createNewFile("Сохраните новый исходный файл");
             if (f != null) {
@@ -267,32 +268,33 @@ public class MainController {
                 key2TextFieldECBC.setText(f.getPath());
             }
         });
-        
-        
+
         CCMChioceBox.setItems(FXCollections.observableArrayList(
                 new ChoiceBoxItem(0, "Не использовать CCM"),
                 new ChoiceBoxItem(1, "MAC-then-Encrypt"),
                 new ChoiceBoxItem(2, "Encrypt-then-MAC"),
                 new ChoiceBoxItem(3, "Encrypt-and-MAC")
-        ));        
+        ));
         CCMChioceBox.getSelectionModel().selectFirst();
-        
-        CCMChioceBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ChoiceBoxItem>(){
+        usingCCM = false;
+
+        CCMChioceBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ChoiceBoxItem>() {
             @Override
             public void changed(ObservableValue<? extends ChoiceBoxItem> observable, ChoiceBoxItem oldValue, ChoiceBoxItem newValue) {
-                CCM_MACChioceBox.setDisable(newValue.id==0);                
-            }            
+                usingCCM = newValue.id != 0;
+                CCM_MACChioceBox.setDisable(newValue.id == 0);
+            }
         });
-        
+
         CCM_MACChioceBox.setItems(FXCollections.observableArrayList(
                 new ChoiceBoxItem(0, "HMAC"),
                 new ChoiceBoxItem(1, "ECBC")
-        ));        
+        ));
         CCM_MACChioceBox.getSelectionModel().selectFirst();
         CCM_MACChioceBox.setDisable(true);
     }
 
-    private void initECBC_Tab(){
+    private void initECBC_Tab() {
         openOriginalFileAESPath_ECBCTab.setOnAction((event) -> {
             File f = openFile();
             if (f != null) {
@@ -359,8 +361,8 @@ public class MainController {
             checkECBC();
         });
     }
-    
-    private void initHMAC_Tab(){
+
+    private void initHMAC_Tab() {
         openOriginalFileAESPath_HMACTab.setOnAction((event) -> {
             File f = openFile();
             if (f != null) {
@@ -404,13 +406,8 @@ public class MainController {
             checkHMAC();
         });
     }
-    
+
     private void encryptAES() {
-        
-        
-        Task t= mAESEncryptor.MAC_then_EncryptHMAC(originalFileAES, resultFileAES, new MACOptions(MACOptions.MACType.ECBC,null, null));
-        t.run();
-        
         if (originalFileAES != null && resultFileAES != null && getKey(keyTextFieldAES, keyFileAES).length != 0) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Результирующий файл будет перезаписан!");
@@ -419,34 +416,50 @@ public class MainController {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
 
-                Task AESTask = mAESEncryptor.encrypt(originalFileAES, resultFileAES, getKey(keyTextFieldAES, keyFileAES));
-                AESTask.setOnSucceeded(value -> {
-                    updateFileInfo(resultFilePathAES, resultFileTextAreaAES, resultFileAES);
+                Task AESTask = null;
+                if (usingCCM) {
+                    MACOptions options=null;
+                    
+                    switch(CCM_MACChioceBox.getValue().id){
+                        case 0: //HMAC
+                            options=new MACOptions(MACOptions.MACType.HMAC, getKey(keyTextFieldAES, keyFileAES), null);
+                            break;
+                        case 1: //ECBC
+                            
+                            break;
+                    }                   
+                    AESTask=mAESEncryptor.MAC_then_Encrypt(originalFileAES, resultFileAES, options);   
+                    
+                } else {
+                    AESTask = mAESEncryptor.encrypt(originalFileAES, resultFileAES, getKey(keyTextFieldAES, keyFileAES));
+                    AESTask.setOnSucceeded(value -> {
+                        updateFileInfo(resultFilePathAES, resultFileTextAreaAES, resultFileAES);
 
-                    if (CreateHMACCheckBox.isSelected()) {
-                        File hmacFile = createNewFile("Создайте или выберите файл для сохранения HMAC");
-                        Task HMACTask = mHMACEncryptor.getHMAC(resultFileAES, hmacFile, getKey(keyTextFieldAES, keyFileAES),false);
-                        HMACTask.setOnSucceeded(event -> {
-                            Alert alertHMACDone = new Alert(Alert.AlertType.INFORMATION);
-                            alertHMACDone.setTitle("HMAC файл создан");
-                            alertHMACDone.setHeaderText("HMAC файл создан, путь файла: " + hmacFile.getPath());
-                            alertHMACDone.show();
-                        });
-                        HMACTask.run();
-                    }
+                        if (CreateHMACCheckBox.isSelected()) {
+                            File hmacFile = createNewFile("Создайте или выберите файл для сохранения HMAC");
+                            Task HMACTask = mHMACEncryptor.getHMAC(resultFileAES, hmacFile, getKey(keyTextFieldAES, keyFileAES), false);
+                            HMACTask.setOnSucceeded(event -> {
+                                Alert alertHMACDone = new Alert(Alert.AlertType.INFORMATION);
+                                alertHMACDone.setTitle("HMAC файл создан");
+                                alertHMACDone.setHeaderText("HMAC файл создан, путь файла: " + hmacFile.getPath());
+                                alertHMACDone.show();
+                            });
+                            HMACTask.run();
+                        }
 
-                    if (CreateECBCCheckBox.isSelected()) {
-                        File ecbcFile = createNewFile("Создайте или выберите файл для сохранения ECBC");
-                        Task ECBCTasc = mECBCEncryptor.getECBC(resultFileAES, ecbcFile, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC));
-                        ECBCTasc.setOnSucceeded(event -> {
-                            Alert alertECBCDone = new Alert(Alert.AlertType.INFORMATION);
-                            alertECBCDone.setTitle("ECBC файл создан");
-                            alertECBCDone.setHeaderText("ECBC файл создан, путь файла: " + ecbcFile.getPath());
-                            alertECBCDone.show();
-                        });
-                        ECBCTasc.run();
-                    }
-                });
+                        if (CreateECBCCheckBox.isSelected()) {
+                            File ecbcFile = createNewFile("Создайте или выберите файл для сохранения ECBC");
+                            Task ECBCTasc = mECBCEncryptor.getECBC(resultFileAES, ecbcFile, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC));
+                            ECBCTasc.setOnSucceeded(event -> {
+                                Alert alertECBCDone = new Alert(Alert.AlertType.INFORMATION);
+                                alertECBCDone.setTitle("ECBC файл создан");
+                                alertECBCDone.setHeaderText("ECBC файл создан, путь файла: " + ecbcFile.getPath());
+                                alertECBCDone.show();
+                            });
+                            ECBCTasc.run();
+                        }
+                    });
+                }
                 Thread AESThread = new Thread(AESTask);
                 AESThread.start();
             }
@@ -585,7 +598,7 @@ public class MainController {
             }
         }
     }
-    
+
     private File createNewFile(String dialogTitle) {
         fileChooser.setTitle(dialogTitle);
         File file = fileChooser.showSaveDialog(stage);
@@ -617,7 +630,6 @@ public class MainController {
             }
         }
     }*/
-
     private File saveAsFile(byte[] fileBytes, String dialogTitle) {
         fileChooser.setTitle(dialogTitle);
         File file = fileChooser.showSaveDialog(stage);
@@ -682,7 +694,6 @@ public class MainController {
             return null;
         }
     }*/
-
     private void clearKey() {
         keyTextFieldAES.clear();
         keyTextFieldAES.setEditable(true);
@@ -696,7 +707,7 @@ public class MainController {
             return FileUtils.readBytesFromFile(keyFile, 128);
         }
     }
-    
+
     public static void showExceptionToUser(Throwable e, String message) {
         Alert errorAlert = new Alert(Alert.AlertType.ERROR);
         errorAlert.setTitle("Exception!");
@@ -704,5 +715,5 @@ public class MainController {
         e.printStackTrace(new PrintWriter(sw));
         errorAlert.setContentText(message + "\n" + sw.toString());
         errorAlert.showAndWait();
-}
+    }
 }

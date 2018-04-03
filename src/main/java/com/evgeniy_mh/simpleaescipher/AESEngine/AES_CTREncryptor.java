@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.concurrent.Task;
 import javafx.scene.control.ProgressIndicator;
 
@@ -199,16 +201,36 @@ public class AES_CTREncryptor {
         }
     }
 
-    public Task MAC_then_EncryptHMAC(File in, File out, MACOptions options) {
+    public Task MAC_then_Encrypt(File in, File out, MACOptions options) {
         return new Task<Void>() {
             @Override
-            protected Void call() throws IOException {  
-                File temp=new File(in.getAbsolutePath()+"_temp");
-                FileUtils.createFileCopy(in, temp);   
-                
-                switch(MACOptions.)
-                
-                
+            protected Void call() throws IOException {
+                File temp = new File(in.getAbsolutePath() + "_temp");
+                FileUtils.createFileCopy(in, temp);
+
+                Task MACTask = null;
+
+                switch (options.getType()) {
+                    case ECBC:
+
+                        break;
+                    case HMAC:
+                        HMACEncryptor hmace = new HMACEncryptor();
+                        MACTask = hmace.getHMAC(temp, null, options.getKey1(), true);
+                        break;
+                }
+                Thread MACThread = new Thread(MACTask);
+                MACThread.start();
+
+                try {
+                    MACThread.join();
+                } catch (InterruptedException ex) {
+                    CommonUtils.reportExceptionToMainThread(ex, "MACThread.join();");
+                }
+
+                Task AESTask = encrypt(temp, out, options.getKey1());
+                AESTask.run();
+
                 return null;
             }
         };
