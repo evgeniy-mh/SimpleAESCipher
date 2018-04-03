@@ -281,8 +281,7 @@ public class MainController {
         CCMChioceBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ChoiceBoxItem>() {
             @Override
             public void changed(ObservableValue<? extends ChoiceBoxItem> observable, ChoiceBoxItem oldValue, ChoiceBoxItem newValue) {
-                usingCCM = newValue.id != 0;
-                CCM_MACChioceBox.setDisable(newValue.id == 0);
+                setUsingCCM(newValue.id != 0);
             }
         });
 
@@ -290,9 +289,15 @@ public class MainController {
                 new ChoiceBoxItem(0, "HMAC"),
                 new ChoiceBoxItem(1, "ECBC")
         ));
+        CCM_MACChioceBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ChoiceBoxItem>() {
+            @Override
+            public void changed(ObservableValue<? extends ChoiceBoxItem> observable, ChoiceBoxItem oldValue, ChoiceBoxItem newValue) {
+                key2TextFieldECBC.setDisable(newValue.id != 1);
+            }
+        });
         CCM_MACChioceBox.getSelectionModel().selectFirst();
         CCM_MACChioceBox.setDisable(true);
-    }
+    }    
 
     private void initECBC_Tab() {
         openOriginalFileAESPath_ECBCTab.setOnAction((event) -> {
@@ -418,18 +423,18 @@ public class MainController {
 
                 Task AESTask = null;
                 if (usingCCM) {
-                    MACOptions options=null;
-                    
-                    switch(CCM_MACChioceBox.getValue().id){
+                    MACOptions options = null;
+
+                    switch (CCM_MACChioceBox.getValue().id) {
                         case 0: //HMAC
-                            options=new MACOptions(MACOptions.MACType.HMAC, getKey(keyTextFieldAES, keyFileAES), null);
+                            options = new MACOptions(MACOptions.MACType.HMAC, getKey(keyTextFieldAES, keyFileAES), null);
                             break;
                         case 1: //ECBC
-                            
+
                             break;
-                    }                   
-                    AESTask=mAESEncryptor.MAC_then_Encrypt(originalFileAES, resultFileAES, options);   
-                    
+                    }
+                    AESTask = mAESEncryptor.MAC_then_Encrypt(originalFileAES, resultFileAES, options);
+
                 } else {
                     AESTask = mAESEncryptor.encrypt(originalFileAES, resultFileAES, getKey(keyTextFieldAES, keyFileAES));
                     AESTask.setOnSucceeded(value -> {
@@ -618,18 +623,6 @@ public class MainController {
         return file;
     }
 
-    /*private void saveFile(File file, byte[] fileBytes) {
-        if (file != null && fileBytes != null) {
-            try {
-                FileOutputStream fos = new FileOutputStream(file);
-                fos.write(fileBytes);
-                fos.close();
-            } catch (IOException ex) {
-                showExceptionToUser(ex, "Exception in saveFile");
-                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }*/
     private File saveAsFile(byte[] fileBytes, String dialogTitle) {
         fileChooser.setTitle(dialogTitle);
         File file = fileChooser.showSaveDialog(stage);
@@ -685,15 +678,6 @@ public class MainController {
         }
     }
 
-    /*private byte[] readBytesFromFile(File file, int bytesToRead) {
-        try {
-            return CommonTools.readBytesFromFile(file, 0, bytesToRead);
-        } catch (IOException ex) {
-            showExceptionToUser(ex, "Exception in readBytesFromFile");
-            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
-    }*/
     private void clearKey() {
         keyTextFieldAES.clear();
         keyTextFieldAES.setEditable(true);
@@ -706,6 +690,14 @@ public class MainController {
         } else {
             return FileUtils.readBytesFromFile(keyFile, 128);
         }
+    }
+    
+    private void setUsingCCM(boolean isUsingCCM) {
+        usingCCM = isUsingCCM;
+        CCM_MACChioceBox.setDisable(!isUsingCCM);
+
+        CreateHMACCheckBox.setDisable(usingCCM);
+        CreateECBCCheckBox.setDisable(usingCCM);
     }
 
     public static void showExceptionToUser(Throwable e, String message) {
