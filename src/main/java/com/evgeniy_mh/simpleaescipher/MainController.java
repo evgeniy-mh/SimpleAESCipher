@@ -297,7 +297,7 @@ public class MainController {
         });
         CCM_MACChioceBox.getSelectionModel().selectFirst();
         CCM_MACChioceBox.setDisable(true);
-    }    
+    }
 
     private void initECBC_Tab() {
         openOriginalFileAESPath_ECBCTab.setOnAction((event) -> {
@@ -492,8 +492,13 @@ public class MainController {
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
-                mAESEncryptor.decrypt(resultFileAES, originalFileAES, getKey(keyTextFieldAES, keyFileAES));
-                updateFileInfo(originalFilePathAES, originalFileTextAreaAES, originalFileAES);
+                Task AESTask = mAESEncryptor.decrypt(resultFileAES, originalFileAES, getKey(keyTextFieldAES, keyFileAES));
+                AESTask.setOnSucceeded(value -> {
+                    updateFileInfo(originalFilePathAES, originalFileTextAreaAES, originalFileAES);
+                });
+
+                Thread AESThread = new Thread(AESTask);
+                AESThread.start();
             }
         } else {
             Alert alert = new Alert(AlertType.WARNING);
@@ -691,7 +696,7 @@ public class MainController {
             return FileUtils.readBytesFromFile(keyFile, 128);
         }
     }
-    
+
     private void setUsingCCM(boolean isUsingCCM) {
         usingCCM = isUsingCCM;
         CCM_MACChioceBox.setDisable(!isUsingCCM);

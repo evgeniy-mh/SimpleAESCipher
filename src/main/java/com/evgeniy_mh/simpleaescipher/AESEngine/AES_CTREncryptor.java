@@ -110,8 +110,8 @@ public class AES_CTREncryptor {
      * перезаписан)
      * @param key Ключ шифрования
      */
-    public void decrypt(File in, File out, final byte[] key) {
-        Task t = new Task<Void>() {
+    public Task decrypt(File in, File out, final byte[] key) {
+        return new Task<Void>() {
             @Override
             protected Void call() throws IOException {
                 byte[] nonceAndCounterInfo = new byte[8]; //8 байт которые добавл в начало сообщения и несут инфу о nonce и counter //nonceAndCounterInfo: nnnncccc        
@@ -174,7 +174,6 @@ public class AES_CTREncryptor {
                 return null;
             }
         };
-        new Thread(t).start();
     }
 
     /**
@@ -230,6 +229,19 @@ public class AES_CTREncryptor {
 
                 Task AESTask = encrypt(temp, out, options.getKey1());
                 AESTask.run();
+
+                return null;
+            }
+        };
+    }
+    
+    public Task MAC_then_Encrypt_Decrypt(File in, File out, MACOptions options) {
+        return new Task<Void>() {
+            @Override
+            protected Void call() throws IOException {
+                
+                
+                //Task AESTask =decrypt(in, out, key);
 
                 return null;
             }
