@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.concurrent.Task;
 
 public class HMACEncryptor {
@@ -27,22 +29,24 @@ public class HMACEncryptor {
         try {
             md5 = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException ex) {
-            CommonUtils.reportExceptionToMainThread(ex,"Exception in HMACEncryptor() !");
+            CommonUtils.reportExceptionToMainThread(ex, "Exception in HMACEncryptor() !");
         }
     }
 
     /**
      * Создает Task для подсчета HMAC
+     *
      * @param in Файл шифрованного текста
      * @param out Файл для сохранения результата
      * @param key Ключ шифрования
-     * @param appendToInFile Если true то HMAC будет добавлен в конец файла in, фалй out не будет задействован.
+     * @param appendToInFile Если true то HMAC будет добавлен в конец файла in,
+     * фалй out не будет задействован.
      */
     public Task getHMAC(File in, File out, byte[] key, boolean appendToInFile) {
         return new Task<Void>() {
             @Override
             protected Void call() {
-                try {       
+                try {
                     byte[] tempkey = prepareKey(key);
 
                     byte[] Si = new byte[BLOCK_SIZE];
@@ -62,22 +66,41 @@ public class HMACEncryptor {
                     temp = CommonUtils.concat(So, temp);
                     temp = md5.digest(temp);
 
-                    if(appendToInFile){
-                        Files.write(out.toPath(), temp, StandardOpenOption.WRITE);
-                    }else{
+                    if (appendToInFile) {
                         Files.write(in.toPath(), temp, StandardOpenOption.APPEND);
+                    } else {                        
+                        Files.write(out.toPath(), temp, StandardOpenOption.WRITE);
                     }
-                    
+
                 } catch (IOException ex) {
-                    CommonUtils.reportExceptionToMainThread(ex,"Exception in encrypt thread, HMAC task!");
+                    CommonUtils.reportExceptionToMainThread(ex, "Exception in encrypt thread, HMAC task!");
                 }
                 return null;
             }
         };
     }
-    
+
+    public byte[] getHMAC(byte[] in, byte[] key) {
+        byte[] tempkey = prepareKey(key);
+        byte[] Si = new byte[BLOCK_SIZE];
+        for (int i = 0; i < BLOCK_SIZE; i++) {
+            Si[i] = (byte) (tempkey[i] ^ ipad[i]);
+        }
+        byte[] So = new byte[BLOCK_SIZE];
+        for (int i = 0; i < BLOCK_SIZE; i++) {
+            So[i] = (byte) (tempkey[i] ^ opad[i]);
+        }
+        //byte[] m = Files.readAllBytes(in.toPath());
+        byte[] temp = CommonUtils.concat(Si, in);
+        temp = md5.digest(temp);
+        temp = CommonUtils.concat(So, temp);
+        temp = md5.digest(temp);
+        return temp;
+    }
+
     /**
      * Подготовка ключа по алгоритму HMAC
+     *
      * @param key Ключ шифрования
      * @return Подготовленный ключ шифрования
      */

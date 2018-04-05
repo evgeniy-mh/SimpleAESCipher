@@ -421,7 +421,7 @@ public class MainController {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
 
-                Task AESTask = null;
+                Task AESTask;
                 if (usingCCM) {
                     MACOptions options = null;
 
@@ -492,7 +492,23 @@ public class MainController {
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
-                Task AESTask = mAESEncryptor.decrypt(resultFileAES, originalFileAES, getKey(keyTextFieldAES, keyFileAES));
+
+                Task AESTask;
+                if (usingCCM) {
+                    MACOptions options = null;
+                    switch (CCM_MACChioceBox.getValue().id) {
+                        case 0: //HMAC
+                            options = new MACOptions(MACOptions.MACType.HMAC, getKey(keyTextFieldAES, keyFileAES), null);
+                            break;
+                        case 1: //ECBC
+
+                            break;
+                    }
+                    AESTask = mAESEncryptor.MAC_then_Encrypt_Decrypt(resultFileAES, originalFileAES, options);
+                } else {
+                    AESTask = mAESEncryptor.decrypt(resultFileAES, originalFileAES, getKey(keyTextFieldAES, keyFileAES));
+                }
+
                 AESTask.setOnSucceeded(value -> {
                     updateFileInfo(originalFilePathAES, originalFileTextAreaAES, originalFileAES);
                 });

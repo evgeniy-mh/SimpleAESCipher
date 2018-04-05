@@ -7,10 +7,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.ProgressIndicator;
+import java.util.Arrays;
 
 /**
  * Created by evgeniy on 08.04.17.
@@ -234,14 +238,31 @@ public class AES_CTREncryptor {
             }
         };
     }
-    
+
     public Task MAC_then_Encrypt_Decrypt(File in, File out, MACOptions options) {
         return new Task<Void>() {
             @Override
             protected Void call() throws IOException {
+                File temp = new File(out.getAbsolutePath() + "_temp");
+
+                Task AESTask = decrypt(in, temp, options.getKey1());
+                AESTask.run();
+
+                /*CommonUtils.debugPrintByteArray("FileUtils", FileUtils.readBytesFromFile(temp,0, (int)temp.length()));
+                CommonUtils.debugPrintByteArray("FileUtils", FileUtils.readBytesFromFile(temp, (int) temp.length() - 16, (int) temp.length()));
+                CommonUtils.debugPrintByteArray("FileUtils", FileUtils.readBytesFromFile(temp, 0, (int) temp.length() - 16));*/
                 
+                byte[] MACFromFile = FileUtils.readBytesFromFile(temp, (int) temp.length() - 16, (int) temp.length());
                 
-                //Task AESTask =decrypt(in, out, key);
+                HMACEncryptor hmace = new HMACEncryptor();
+                byte[] MAC=hmace.getHMAC(FileUtils.readBytesFromFile(temp, 0, (int) temp.length() - 16), options.getKey1());    
+                
+                /*CommonUtils.debugPrintByteArray("MACFromFile", MACFromFile);
+                CommonUtils.debugPrintByteArray("MAC", MAC);*/
+                
+                if(Arrays.equals(MACFromFile,MAC)){
+                    FileUtils.createFileCopy(temp, out, temp.length() - 16);
+                }
 
                 return null;
             }

@@ -82,17 +82,33 @@ public class FileUtils {
         return false;
     }
 
-    public static void createFileCopy(File source, File distination) {
+    public static void createFileCopy(File source, File destination) {
         try {
-            FileChannel sourceChannel = null;
-            FileChannel destChannel = null;
-            sourceChannel = new FileInputStream(source).getChannel();
-            destChannel = new FileOutputStream(distination).getChannel();
+            FileChannel sourceChannel = new FileInputStream(source).getChannel();
+            FileChannel destChannel = new FileOutputStream(destination).getChannel();
             destChannel.transferFrom(sourceChannel, 0, sourceChannel.size());
             sourceChannel.close();
             destChannel.close();
         } catch (IOException ex) {
             CommonUtils.reportExceptionToMainThread(ex, "createFileCopy(File source, File distination)");
+        }
+    }
+    
+    /**
+     *
+     * @param source
+     * @param destination
+     * @param bytesCount сколько байт скопировать в файл out
+     */
+    public static void createFileCopy(File source, File destination, long bytesCount) {
+        try {
+            FileChannel sourceChannel = new FileInputStream(source).getChannel();
+            FileChannel destChannel = new FileOutputStream(destination).getChannel();
+            destChannel.transferFrom(sourceChannel, 0, bytesCount);
+            sourceChannel.close();
+            destChannel.close();
+        } catch (IOException ex) {
+            CommonUtils.reportExceptionToMainThread(ex, "createFileCopy(File source, File destination, long bytesCount)");
         }
     }
 }
