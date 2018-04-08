@@ -208,8 +208,8 @@ public class AES_CTREncryptor {
         return new Task<Void>() {
             @Override
             protected Void call() throws IOException {
-                File temp = new File(in.getAbsolutePath() + "_temp");
-                FileUtils.createFileCopy(in, temp);
+                File tempFile = new File(in.getAbsolutePath() + "_temp");
+                FileUtils.createFileCopy(in, tempFile);
 
                 Task MACTask = null;
 
@@ -219,7 +219,7 @@ public class AES_CTREncryptor {
                         break;
                     case HMAC:
                         HMACEncryptor hmace = new HMACEncryptor();
-                        MACTask = hmace.getHMAC(temp, null, options.getKey1(), true);
+                        MACTask = hmace.getHMAC(tempFile, null, options.getKey1(), true);
                         break;
                 }
                 Thread MACThread = new Thread(MACTask);
@@ -231,9 +231,9 @@ public class AES_CTREncryptor {
                     CommonUtils.reportExceptionToMainThread(ex, "MACThread.join();");
                 }
 
-                Task AESTask = encrypt(temp, out, options.getKey1());
-                AESTask.run();
+                encrypt(tempFile, out, options.getKey1()).run();
 
+                tempFile.delete();
                 return null;
             }
         };
@@ -243,27 +243,20 @@ public class AES_CTREncryptor {
         return new Task<Void>() {
             @Override
             protected Void call() throws IOException {
-                File temp = new File(out.getAbsolutePath() + "_temp");
+                File tempFile = new File(out.getAbsolutePath() + "_temp");
 
-                Task AESTask = decrypt(in, temp, options.getKey1());
-                AESTask.run();
-
-                /*CommonUtils.debugPrintByteArray("FileUtils", FileUtils.readBytesFromFile(temp,0, (int)temp.length()));
-                CommonUtils.debugPrintByteArray("FileUtils", FileUtils.readBytesFromFile(temp, (int) temp.length() - 16, (int) temp.length()));
-                CommonUtils.debugPrintByteArray("FileUtils", FileUtils.readBytesFromFile(temp, 0, (int) temp.length() - 16));*/
+                decrypt(in, tempFile, options.getKey1()).run();
                 
-                byte[] MACFromFile = FileUtils.readBytesFromFile(temp, (int) temp.length() - 16, (int) temp.length());
+                byte[] MACFromFile = FileUtils.readBytesFromFile(tempFile, (int) tempFile.length() - 16, (int) tempFile.length());
                 
                 HMACEncryptor hmace = new HMACEncryptor();
-                byte[] MAC=hmace.getHMAC(FileUtils.readBytesFromFile(temp, 0, (int) temp.length() - 16), options.getKey1());    
-                
-                /*CommonUtils.debugPrintByteArray("MACFromFile", MACFromFile);
-                CommonUtils.debugPrintByteArray("MAC", MAC);*/
+                byte[] MAC=hmace.getHMAC(FileUtils.readBytesFromFile(tempFile, 0, (int) tempFile.length() - 16), options.getKey1());    
+
                 
                 if(Arrays.equals(MACFromFile,MAC)){
-                    FileUtils.createFileCopy(temp, out, temp.length() - 16);
+                    FileUtils.createFileCopy(tempFile, out, tempFile.length() - 16);
                 }
-
+                tempFile.delete();
                 return null;
             }
         };

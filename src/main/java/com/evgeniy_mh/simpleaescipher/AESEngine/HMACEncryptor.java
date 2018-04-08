@@ -7,8 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.concurrent.Task;
 
 public class HMACEncryptor {
@@ -46,32 +44,14 @@ public class HMACEncryptor {
         return new Task<Void>() {
             @Override
             protected Void call() {
-                try {
-                    byte[] tempkey = prepareKey(key);
-
-                    byte[] Si = new byte[BLOCK_SIZE];
-                    for (int i = 0; i < BLOCK_SIZE; i++) {
-                        Si[i] = (byte) (tempkey[i] ^ ipad[i]);
-                    }
-
-                    byte[] So = new byte[BLOCK_SIZE];
-                    for (int i = 0; i < BLOCK_SIZE; i++) {
-                        So[i] = (byte) (tempkey[i] ^ opad[i]);
-                    }
-
-                    byte[] m = Files.readAllBytes(in.toPath());
-                    byte[] temp = CommonUtils.concat(Si, m);
-                    temp = md5.digest(temp);
-
-                    temp = CommonUtils.concat(So, temp);
-                    temp = md5.digest(temp);
+                try {                    
+                    byte[] temp=getHMAC(Files.readAllBytes(in.toPath()), key);
 
                     if (appendToInFile) {
                         Files.write(in.toPath(), temp, StandardOpenOption.APPEND);
                     } else {                        
                         Files.write(out.toPath(), temp, StandardOpenOption.WRITE);
                     }
-
                 } catch (IOException ex) {
                     CommonUtils.reportExceptionToMainThread(ex, "Exception in encrypt thread, HMAC task!");
                 }
@@ -80,6 +60,13 @@ public class HMACEncryptor {
         };
     }
 
+    /**
+     * Подсчитывает HMAC
+     * 
+     * @param in - биты для обработки
+     * @param key - ключ штфрования
+     * @return HMAC
+     */
     public byte[] getHMAC(byte[] in, byte[] key) {
         byte[] tempkey = prepareKey(key);
         byte[] Si = new byte[BLOCK_SIZE];
@@ -90,7 +77,6 @@ public class HMACEncryptor {
         for (int i = 0; i < BLOCK_SIZE; i++) {
             So[i] = (byte) (tempkey[i] ^ opad[i]);
         }
-        //byte[] m = Files.readAllBytes(in.toPath());
         byte[] temp = CommonUtils.concat(Si, in);
         temp = md5.digest(temp);
         temp = CommonUtils.concat(So, temp);
