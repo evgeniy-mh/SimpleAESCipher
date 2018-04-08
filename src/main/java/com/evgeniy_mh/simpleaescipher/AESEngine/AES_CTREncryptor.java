@@ -7,12 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
-import java.nio.file.Files;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.ProgressIndicator;
 import java.util.Arrays;
 
@@ -240,9 +235,9 @@ public class AES_CTREncryptor {
     }
 
     public Task MAC_then_Encrypt_Decrypt(File in, File out, MACOptions options) {
-        return new Task<Void>() {
+        return new Task<Boolean>() {
             @Override
-            protected Void call() throws IOException {
+            protected Boolean call() throws IOException {
                 File tempFile = new File(out.getAbsolutePath() + "_temp");
 
                 decrypt(in, tempFile, options.getKey1()).run();
@@ -255,9 +250,12 @@ public class AES_CTREncryptor {
                 
                 if(Arrays.equals(MACFromFile,MAC)){
                     FileUtils.createFileCopy(tempFile, out, tempFile.length() - 16);
-                }
-                tempFile.delete();
-                return null;
+                    tempFile.delete();
+                    return true;
+                }else{
+                    tempFile.delete();
+                    return false;
+                }  
             }
         };
     }

@@ -493,7 +493,7 @@ public class MainController {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
 
-                Task AESTask;
+                Task<Boolean> AESTask;
                 if (usingCCM) {
                     MACOptions options = null;
                     switch (CCM_MACChioceBox.getValue().id) {
@@ -505,13 +505,28 @@ public class MainController {
                             break;
                     }
                     AESTask = mAESEncryptor.MAC_then_Encrypt_Decrypt(resultFileAES, originalFileAES, options);
+
+                    AESTask.setOnSucceeded(value -> {
+                        Alert MACAlert = new Alert(AlertType.INFORMATION);
+                        if (AESTask.getValue()) {
+                            MACAlert.setTitle("Проверка CCM успешно пройдена");
+                            MACAlert.setHeaderText("Проверка CCM успешно пройдена.");
+                        } else {
+                            MACAlert.setAlertType(AlertType.WARNING);
+                            MACAlert.setTitle("Внимание!");
+                            MACAlert.setHeaderText("Проверка CCM не пройдена. Возможно исходный файл или MAC были скомпрометированны!");
+                        }
+                        MACAlert.showAndWait();
+                        updateFileInfo(originalFilePathAES, originalFileTextAreaAES, originalFileAES);
+                    });
+
                 } else {
                     AESTask = mAESEncryptor.decrypt(resultFileAES, originalFileAES, getKey(keyTextFieldAES, keyFileAES));
-                }
 
-                AESTask.setOnSucceeded(value -> {
-                    updateFileInfo(originalFilePathAES, originalFileTextAreaAES, originalFileAES);
-                });
+                    AESTask.setOnSucceeded(value -> {
+                        updateFileInfo(originalFilePathAES, originalFileTextAreaAES, originalFileAES);
+                    });
+                }
 
                 Thread AESThread = new Thread(AESTask);
                 AESThread.start();
