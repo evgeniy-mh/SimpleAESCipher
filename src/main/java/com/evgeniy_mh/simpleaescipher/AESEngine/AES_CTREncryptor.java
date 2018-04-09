@@ -245,10 +245,23 @@ public class AES_CTREncryptor {
 
                 byte[] MACFromFile = FileUtils.readBytesFromFile(tempFile, (int) tempFile.length() - 16, (int) tempFile.length());
 
-                HMACEncryptor hmace = new HMACEncryptor();
-                byte[] resultMAC=hmace.getHMAC(FileUtils.readBytesFromFile(tempFile, 0, (int) tempFile.length() - 16), options.getKey1());
+                try (RandomAccessFile OUTraf = new RandomAccessFile(tempFile, "rw")) {
+                    OUTraf.setLength(tempFile.length() - 16);
+                }
 
-                if (Arrays.equals(MACFromFile, resultMAC)) {
+                byte[] resultMAC = null;
+                switch (options.getType()) {
+                    case ECBC:
+                        ECBCEncryptor ecbce = new ECBCEncryptor();
+                        resultMAC = ecbce.getECBC(tempFile, options.getKey1(), options.getKey2());
+                        break;
+                    case HMAC:
+                        HMACEncryptor hmace = new HMACEncryptor();
+                        resultMAC = hmace.getHMAC(FileUtils.readBytesFromFile(tempFile, (int) tempFile.length()), options.getKey1());
+                        break;
+                }
+
+                if (resultMAC != null && Arrays.equals(MACFromFile, resultMAC)) {
                     FileUtils.createFileCopy(tempFile, out, tempFile.length() - 16);
                     tempFile.delete();
                     return true;

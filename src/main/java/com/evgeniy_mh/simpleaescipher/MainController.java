@@ -430,7 +430,7 @@ public class MainController {
                             options = new MACOptions(MACOptions.MACType.HMAC, getKey(keyTextFieldAES, keyFileAES), null);
                             break;
                         case 1: //ECBC
-
+                            options = new MACOptions(MACOptions.MACType.ECBC, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC));
                             break;
                     }
                     AESTask = mAESEncryptor.MAC_then_Encrypt(originalFileAES, resultFileAES, options);
