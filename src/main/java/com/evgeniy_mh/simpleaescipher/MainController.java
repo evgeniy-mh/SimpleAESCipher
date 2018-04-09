@@ -454,7 +454,7 @@ public class MainController {
 
                         if (CreateECBCCheckBox.isSelected()) {
                             File ecbcFile = createNewFile("Создайте или выберите файл для сохранения ECBC");
-                            Task ECBCTasc = mECBCEncryptor.getECBC(resultFileAES, ecbcFile, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC));
+                            Task ECBCTasc = mECBCEncryptor.getECBC(resultFileAES, ecbcFile, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC), false);
                             ECBCTasc.setOnSucceeded(event -> {
                                 Alert alertECBCDone = new Alert(Alert.AlertType.INFORMATION);
                                 alertECBCDone.setTitle("ECBC файл создан");
@@ -501,7 +501,7 @@ public class MainController {
                             options = new MACOptions(MACOptions.MACType.HMAC, getKey(keyTextFieldAES, keyFileAES), null);
                             break;
                         case 1: //ECBC
-
+                            options=new MACOptions(MACOptions.MACType.ECBC, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC));
                             break;
                     }
                     AESTask = mAESEncryptor.MAC_then_Encrypt_Decrypt(resultFileAES, originalFileAES, options);
@@ -615,7 +615,8 @@ public class MainController {
 
                 Task ECBCTask = mECBCEncryptor.getECBC(originalFileAES_ECBCTab, tempECBC,
                         getKey(keyTextFieldECBC_ECBCTab, keyFileECBC_ECBCTab),
-                        getKey(key2TextFieldECBC_ECBCTab, key2FileECBC_ECBCTab));
+                        getKey(key2TextFieldECBC_ECBCTab, key2FileECBC_ECBCTab),
+                        false);
 
                 ECBCTask.setOnSucceeded(value -> {
                     boolean eq = FileUtils.compareFiles(originalFileECBC_ECBCTab, tempECBC);

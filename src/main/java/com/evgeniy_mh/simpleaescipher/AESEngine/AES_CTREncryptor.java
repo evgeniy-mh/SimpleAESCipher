@@ -210,7 +210,8 @@ public class AES_CTREncryptor {
 
                 switch (options.getType()) {
                     case ECBC:
-
+                        ECBCEncryptor ecbce = new ECBCEncryptor();
+                        MACTask = ecbce.getECBC(tempFile, null, options.getKey1(), options.getKey2(), true);
                         break;
                     case HMAC:
                         HMACEncryptor hmace = new HMACEncryptor();
@@ -241,21 +242,20 @@ public class AES_CTREncryptor {
                 File tempFile = new File(out.getAbsolutePath() + "_temp");
 
                 decrypt(in, tempFile, options.getKey1()).run();
-                
-                byte[] MACFromFile = FileUtils.readBytesFromFile(tempFile, (int) tempFile.length() - 16, (int) tempFile.length());
-                
-                HMACEncryptor hmace = new HMACEncryptor();
-                byte[] MAC=hmace.getHMAC(FileUtils.readBytesFromFile(tempFile, 0, (int) tempFile.length() - 16), options.getKey1());    
 
-                
-                if(Arrays.equals(MACFromFile,MAC)){
+                byte[] MACFromFile = FileUtils.readBytesFromFile(tempFile, (int) tempFile.length() - 16, (int) tempFile.length());
+
+                HMACEncryptor hmace = new HMACEncryptor();
+                byte[] MAC = hmace.getHMAC(FileUtils.readBytesFromFile(tempFile, 0, (int) tempFile.length() - 16), options.getKey1());
+
+                if (Arrays.equals(MACFromFile, MAC)) {
                     FileUtils.createFileCopy(tempFile, out, tempFile.length() - 16);
                     tempFile.delete();
                     return true;
-                }else{
+                } else {
                     tempFile.delete();
                     return false;
-                }  
+                }
             }
         };
     }
