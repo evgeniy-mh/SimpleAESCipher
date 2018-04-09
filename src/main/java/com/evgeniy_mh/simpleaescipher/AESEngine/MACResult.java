@@ -10,4 +10,8 @@ public class MACResult {
     public byte[] getMAC() {
         return MAC;
     }
+
+    public void setMAC(byte[] MAC) {
+        this.MAC = MAC;
+    }
 }

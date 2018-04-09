@@ -246,9 +246,16 @@ public class AES_CTREncryptor {
                 byte[] MACFromFile = FileUtils.readBytesFromFile(tempFile, (int) tempFile.length() - 16, (int) tempFile.length());
 
                 HMACEncryptor hmace = new HMACEncryptor();
-                byte[] MAC = hmace.getHMAC(FileUtils.readBytesFromFile(tempFile, 0, (int) tempFile.length() - 16), options.getKey1());
-
-                if (Arrays.equals(MACFromFile, MAC)) {
+                
+                Task<MACResult> HMACTask=hmace.getHMAC(FileUtils.readBytesFromFile(tempFile, 0, (int) tempFile.length() - 16), options.getKey1());
+                MACResult resultMAC=new MACResult(null);
+                HMACTask.setOnSucceeded(value->{
+                    resultMAC.setMAC(HMACTask.getValue().getMAC());
+                });
+                
+                HMACTask.run();
+                
+                if (resultMAC.getMAC()!=null || Arrays.equals(MACFromFile, resultMAC.getMAC())) {
                     FileUtils.createFileCopy(tempFile, out, tempFile.length() - 16);
                     tempFile.delete();
                     return true;

@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.concurrent.Task;
 
 public class HMACEncryptor {
@@ -44,14 +46,22 @@ public class HMACEncryptor {
         return new Task<Void>() {
             @Override
             protected Void call() {
-                try {                    
-                    byte[] temp=getHMAC(Files.readAllBytes(in.toPath()), key);
-
-                    if (appendToInFile) {
-                        Files.write(in.toPath(), temp, StandardOpenOption.APPEND);
-                    } else {                        
-                        Files.write(out.toPath(), temp, StandardOpenOption.WRITE);
-                    }
+                try {
+                    Task<MACResult> HMACTask = getHMAC(Files.readAllBytes(in.toPath()), key);
+                    HMACTask.setOnSucceeded(value -> {
+                        try {
+                            byte[] res=HMACTask.getValue().getMAC();
+                            
+                            if (appendToInFile) {
+                                Files.write(in.toPath(), HMACTask.getValue().getMAC(), StandardOpenOption.APPEND);
+                            } else {
+                                Files.write(out.toPath(), HMACTask.getValue().getMAC(), StandardOpenOption.WRITE);
+                            }
+                        } catch (IOException ex) {
+                            CommonUtils.reportExceptionToMainThread(ex, "Exception in encrypt thread, HMAC task!");
+                        }
+                    });
+                    HMACTask.run();
                 } catch (IOException ex) {
                     CommonUtils.reportExceptionToMainThread(ex, "Exception in encrypt thread, HMAC task!");
                 }
@@ -62,26 +72,31 @@ public class HMACEncryptor {
 
     /**
      * Подсчитывает HMAC
-     * 
+     *
      * @param in - биты для обработки
      * @param key - ключ штфрования
      * @return HMAC
      */
-    public byte[] getHMAC(byte[] in, byte[] key) {
-        byte[] tempkey = prepareKey(key);
-        byte[] Si = new byte[BLOCK_SIZE];
-        for (int i = 0; i < BLOCK_SIZE; i++) {
-            Si[i] = (byte) (tempkey[i] ^ ipad[i]);
-        }
-        byte[] So = new byte[BLOCK_SIZE];
-        for (int i = 0; i < BLOCK_SIZE; i++) {
-            So[i] = (byte) (tempkey[i] ^ opad[i]);
-        }
-        byte[] temp = CommonUtils.concat(Si, in);
-        temp = md5.digest(temp);
-        temp = CommonUtils.concat(So, temp);
-        temp = md5.digest(temp);
-        return temp;
+    public Task<MACResult> getHMAC(byte[] in, byte[] key) {
+        return new Task<MACResult>() {
+            @Override
+            protected MACResult call() {
+                byte[] tempkey = prepareKey(key);
+                byte[] Si = new byte[BLOCK_SIZE];
+                for (int i = 0; i < BLOCK_SIZE; i++) {
+                    Si[i] = (byte) (tempkey[i] ^ ipad[i]);
+                }
+                byte[] So = new byte[BLOCK_SIZE];
+                for (int i = 0; i < BLOCK_SIZE; i++) {
+                    So[i] = (byte) (tempkey[i] ^ opad[i]);
+                }
+                byte[] temp = CommonUtils.concat(Si, in);
+                temp = md5.digest(temp);
+                temp = CommonUtils.concat(So, temp);
+                temp = md5.digest(temp);
+                return new MACResult(temp);
+            }
+        };
     }
 
     /**
