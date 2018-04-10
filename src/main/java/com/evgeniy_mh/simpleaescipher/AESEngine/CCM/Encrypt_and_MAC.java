@@ -8,36 +8,38 @@ import com.evgeniy_mh.simpleaescipher.FileUtils;
 import com.evgeniy_mh.simpleaescipher.MACOptions;
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.Arrays;
 import javafx.concurrent.Task;
 import javafx.scene.control.ProgressIndicator;
 
-public class MAC_then_Encrypt {
-    
+public class Encrypt_and_MAC {
+
     private AES_CTREncryptor mAESEncryptor;
-    
-    public MAC_then_Encrypt(ProgressIndicator progressIndicator){
-        mAESEncryptor=new AES_CTREncryptor(progressIndicator);
+
+    public Encrypt_and_MAC(ProgressIndicator progressIndicator) {
+        mAESEncryptor = new AES_CTREncryptor(progressIndicator);
     }
 
+    /**
+     * Выполняет шифрование файла
+     *
+     * @param in Файл открытого текста
+     * @param out Файл для сохранения результата шифрования (будет перезаписан)
+     */
     public Task encrypt(File in, File out, MACOptions options) {
         return new Task<Void>() {
             @Override
-            protected Void call(){
-                File tempFile = new File(in.getAbsolutePath() + "_temp");
-                FileUtils.createFileCopy(in, tempFile);
-
+            protected Void call() throws IOException {
+                mAESEncryptor.encrypt(in, out, options.getKey1()).run();
                 Task MACTask = null;
-
                 switch (options.getType()) {
                     case ECBC:
                         ECBCEncryptor ecbce = new ECBCEncryptor();
-                        MACTask = ecbce.addECBCToFile(tempFile, options.getKey1(), options.getKey2());
+                        MACTask = ecbce.addECBCToFile(in, out, options.getKey1(), options.getKey2());
                         break;
                     case HMAC:
                         HMACEncryptor hmace = new HMACEncryptor();
-                        MACTask = hmace.addHMACToFile(tempFile, options.getKey1());
+                        MACTask = hmace.addHMACToFile(in, out, options.getKey1());
                         break;
                 }
                 Thread MACThread = new Thread(MACTask);
@@ -48,44 +50,40 @@ public class MAC_then_Encrypt {
                 } catch (InterruptedException ex) {
                     CommonUtils.reportExceptionToMainThread(ex, "MACThread.join();");
                 }
-
-                mAESEncryptor.encrypt(tempFile, out, options.getKey1()).run();
-
-                tempFile.delete();
                 return null;
             }
         };
     }
 
+    /**
+     * Выполняет дешифрование файла
+     *
+     * @param in Файл шифрованного текста
+     * @param out Файл для сохранения результата расшифрования (будет
+     * перезаписан)
+     */
     public Task decrypt(File in, File out, MACOptions options) {
         return new Task<Boolean>() {
             @Override
             protected Boolean call() throws IOException {
-                File tempFile = new File(out.getAbsolutePath() + "_temp");
-
-                mAESEncryptor.decrypt(in, tempFile, options.getKey1()).run();
-
-                System.out.println("tempFile.length()="+tempFile.length());
-                byte[] MACFromFile = FileUtils.readBytesFromFile(tempFile, (int) tempFile.length() - 16, (int) tempFile.length());
-
-                try (RandomAccessFile OUTraf = new RandomAccessFile(tempFile, "rw")) {
-                    OUTraf.setLength(tempFile.length() - 16);
-                }
+                byte[] MACFromFile = FileUtils.readBytesFromFile(in, (int) in.length() - 16, (int) in.length());
+                File tempFile = new File(in.toPath() + "_temp");
+                FileUtils.createFileCopy(in, tempFile, in.length() - 16);
+                mAESEncryptor.decrypt(tempFile, out, options.getKey1()).run();
 
                 byte[] MAC = null;
                 switch (options.getType()) {
                     case ECBC:
                         ECBCEncryptor ecbce = new ECBCEncryptor();
-                        MAC = ecbce.getECBC(tempFile, options.getKey1(), options.getKey2());
+                        MAC = ecbce.getECBC(out, options.getKey1(), options.getKey2());
                         break;
                     case HMAC:
                         HMACEncryptor hmace = new HMACEncryptor();
-                        MAC = hmace.getHMAC(FileUtils.readBytesFromFile(tempFile, (int) tempFile.length()), options.getKey1());
+                        MAC = hmace.getHMAC(FileUtils.readBytesFromFile(out, (int) out.length()), options.getKey1());
                         break;
                 }
 
                 if (MAC != null && Arrays.equals(MACFromFile, MAC)) {
-                    FileUtils.createFileCopy(tempFile, out, tempFile.length());
                     tempFile.delete();
                     return true;
                 } else {

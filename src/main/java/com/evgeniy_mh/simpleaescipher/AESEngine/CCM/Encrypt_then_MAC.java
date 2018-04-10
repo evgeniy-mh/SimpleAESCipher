@@ -29,11 +29,11 @@ public class Encrypt_then_MAC {
                 switch (options.getType()) {
                     case ECBC:
                         ECBCEncryptor ecbce = new ECBCEncryptor();
-                        MACTask = ecbce.getECBC(out, null, options.getKey1(), options.getKey2(), true);
+                        MACTask = ecbce.addECBCToFile(out, options.getKey1(), options.getKey2());
                         break;
                     case HMAC:
                         HMACEncryptor hmace = new HMACEncryptor();
-                        MACTask = hmace.getHMAC(out, null, options.getKey1(), true);
+                        MACTask = hmace.addHMACToFile(out, options.getKey1());
                         break;
                 }
                 Thread MACThread = new Thread(MACTask);

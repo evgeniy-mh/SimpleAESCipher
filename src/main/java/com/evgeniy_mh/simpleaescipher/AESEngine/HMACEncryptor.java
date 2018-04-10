@@ -37,20 +37,14 @@ public class HMACEncryptor {
      * @param in Файл шифрованного текста
      * @param out Файл для сохранения результата
      * @param key Ключ шифрования
-     * @param appendToInFile Если true то HMAC будет добавлен в конец файла in,
-     * фалй out не будет задействован.
      */
-    public Task getHMAC(File in, File out, byte[] key, boolean appendToInFile) {
+    public Task getHMAC(File in, File out, byte[] key) {
         return new Task<Void>() {
             @Override
             protected Void call() {
                 try {
                     byte[] HMAC = getHMAC(Files.readAllBytes(in.toPath()), key);
-                    if (appendToInFile) {
-                        Files.write(in.toPath(), HMAC, StandardOpenOption.APPEND);
-                    } else {
-                        Files.write(out.toPath(), HMAC, StandardOpenOption.WRITE);
-                    }
+                    Files.write(out.toPath(), HMAC, StandardOpenOption.WRITE);
                 } catch (IOException ex) {
                     CommonUtils.reportExceptionToMainThread(ex, "Exception in encrypt thread, HMAC task!");
                 }
@@ -59,13 +53,37 @@ public class HMACEncryptor {
         };
     }
 
-    /**
-     * Подсчитывает HMAC
-     *
-     * @param in - биты для обработки
-     * @param key - ключ штфрования
-     * @return HMAC
-     */
+    public Task addHMACToFile(File in, byte[] key) {
+        return new Task<Void>() {
+            @Override
+            protected Void call() {
+                try {
+                    byte[] HMAC = getHMAC(Files.readAllBytes(in.toPath()), key);
+                    Files.write(in.toPath(), HMAC, StandardOpenOption.APPEND);
+                } catch (IOException ex) {
+                    CommonUtils.reportExceptionToMainThread(ex, "Exception in encrypt thread, HMAC task!");
+                }
+                return null;
+            }
+        };
+    }
+
+    //добавить HMAC in файла в out file
+    public Task addHMACToFile(File in, File out, byte[] key) {
+        return new Task<Void>() {
+            @Override
+            protected Void call() {
+                try {
+                    byte[] HMAC = getHMAC(Files.readAllBytes(in.toPath()), key);
+                    Files.write(out.toPath(), HMAC, StandardOpenOption.APPEND);
+                } catch (IOException ex) {
+                    CommonUtils.reportExceptionToMainThread(ex, "Exception in encrypt thread, HMAC task!");
+                }
+                return null;
+            }
+        };
+    }
+
     public byte[] getHMAC(byte[] in, byte[] key) {
         byte[] tempkey = prepareKey(key);
         byte[] Si = new byte[BLOCK_SIZE];

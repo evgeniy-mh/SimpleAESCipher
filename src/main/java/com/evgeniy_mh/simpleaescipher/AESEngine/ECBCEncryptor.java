@@ -25,21 +25,48 @@ public class ECBCEncryptor {
      * @param key2 Доп. ключ ECBC
      * @param appendToInFile Если true то ECBC будет добавлен в конец файла in,
      */
-    public Task getECBC(File in, File out, byte[] key1, byte[] key2, boolean appendToInFile) {
+    public Task getECBC(File in, File out, byte[] key1, byte[] key2) {
         return new Task<Void>() {
             @Override
             protected Void call() {
                 try {
                     byte[] ECBC = getECBC(in, key1, key2);
-                    if (appendToInFile) {
-                        Files.write(in.toPath(), ECBC, StandardOpenOption.APPEND);
-                    } else {
-                        Files.write(out.toPath(), ECBC, StandardOpenOption.WRITE);
-                    }
+                    Files.write(out.toPath(), ECBC, StandardOpenOption.WRITE);
                 } catch (IOException ex) {
                     CommonUtils.reportExceptionToMainThread(ex, "Exception in encrypt thread, ECBC task!");
                 }
 
+                return null;
+            }
+        };
+    }
+
+    public Task addECBCToFile(File in, byte[] key1, byte[] key2) {
+        return new Task<Void>() {
+            @Override
+            protected Void call() {
+                try {
+                    byte[] ECBC = getECBC(in, key1, key2);
+                    Files.write(in.toPath(), ECBC, StandardOpenOption.APPEND);
+                } catch (IOException ex) {
+                    CommonUtils.reportExceptionToMainThread(ex, "Exception in encrypt thread, ECBC task!");
+                }
+                return null;
+            }
+        };
+    }
+
+    //добавить ECBC in файла в out file
+    public Task addECBCToFile(File in, File out, byte[] key1, byte[] key2) {
+        return new Task<Void>() {
+            @Override
+            protected Void call() {
+                try {
+                    byte[] ECBC = getECBC(in, key1, key2);
+                    Files.write(out.toPath(), ECBC, StandardOpenOption.APPEND);
+                } catch (IOException ex) {
+                    CommonUtils.reportExceptionToMainThread(ex, "Exception in encrypt thread, ECBC task!");
+                }
                 return null;
             }
         };

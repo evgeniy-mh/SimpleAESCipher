@@ -1,6 +1,7 @@
 package com.evgeniy_mh.simpleaescipher;
 
 import com.evgeniy_mh.simpleaescipher.AESEngine.AES_CTREncryptor;
+import com.evgeniy_mh.simpleaescipher.AESEngine.CCM.Encrypt_and_MAC;
 import com.evgeniy_mh.simpleaescipher.AESEngine.CCM.Encrypt_then_MAC;
 import com.evgeniy_mh.simpleaescipher.AESEngine.ECBCEncryptor;
 import com.evgeniy_mh.simpleaescipher.AESEngine.HMACEncryptor;
@@ -142,6 +143,7 @@ public class MainController {
 
     private MAC_then_Encrypt mMAC_then_Encrypt;
     private Encrypt_then_MAC mEncrypt_then_MAC;
+    private Encrypt_and_MAC mEncrypt_and_MAC;
 
     private boolean canChangeOriginalFile = true;
     private final int MAX_FILE_TO_SHOW_SIZE = 5000;
@@ -157,6 +159,7 @@ public class MainController {
         mAESEncryptor = new AES_CTREncryptor(CipherProgressIndicator);
         mMAC_then_Encrypt = new MAC_then_Encrypt(CipherProgressIndicator);
         mEncrypt_then_MAC = new Encrypt_then_MAC(CipherProgressIndicator);
+        mEncrypt_and_MAC=new Encrypt_and_MAC(CipherProgressIndicator);
         mHMACEncryptor = new HMACEncryptor();
         mECBCEncryptor = new ECBCEncryptor();
 
@@ -451,7 +454,7 @@ public class MainController {
                             AESTask = mEncrypt_then_MAC.encrypt(originalFileAES, resultFileAES, options);
                             break;
                         case 3: //Encrypt-and-MAC
-                            AESTask = null;
+                            AESTask = mEncrypt_and_MAC.encrypt(originalFileAES, resultFileAES, options);
                             break;
                     }
 
@@ -466,7 +469,7 @@ public class MainController {
 
                         if (CreateHMACCheckBox.isSelected()) {
                             File hmacFile = createNewFile("Создайте или выберите файл для сохранения HMAC");
-                            Task HMACTask = mHMACEncryptor.getHMAC(resultFileAES, hmacFile, getKey(keyTextFieldAES, keyFileAES), false);
+                            Task HMACTask = mHMACEncryptor.getHMAC(resultFileAES, hmacFile, getKey(keyTextFieldAES, keyFileAES));
                             HMACTask.setOnSucceeded(event -> {
                                 Alert alertHMACDone = new Alert(Alert.AlertType.INFORMATION);
                                 alertHMACDone.setTitle("HMAC файл создан");
@@ -478,7 +481,7 @@ public class MainController {
 
                         if (CreateECBCCheckBox.isSelected()) {
                             File ecbcFile = createNewFile("Создайте или выберите файл для сохранения ECBC");
-                            Task ECBCTasc = mECBCEncryptor.getECBC(resultFileAES, ecbcFile, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC), false);
+                            Task ECBCTasc = mECBCEncryptor.getECBC(resultFileAES, ecbcFile, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC));
                             ECBCTasc.setOnSucceeded(event -> {
                                 Alert alertECBCDone = new Alert(Alert.AlertType.INFORMATION);
                                 alertECBCDone.setTitle("ECBC файл создан");
@@ -536,7 +539,7 @@ public class MainController {
                             AESTask = mEncrypt_then_MAC.decrypt(resultFileAES, originalFileAES, options);
                             break;
                         case 3: //Encrypt-and-MAC
-                            AESTask = null;
+                            AESTask = mEncrypt_and_MAC.decrypt(resultFileAES, originalFileAES, options);;
                             break;
                         default:
                             AESTask=null;
@@ -590,7 +593,7 @@ public class MainController {
                 File tempHMAC = new File(originalFileHMAC_HMACTab.getAbsolutePath() + "_temp");
                 tempHMAC.createNewFile();
 
-                Task HMACTask = mHMACEncryptor.getHMAC(originalFileAES_HMACTab, tempHMAC, getKey(keyTextFieldHMAC_HMACTab, keyFileHMAC_HMACTab), false);
+                Task HMACTask = mHMACEncryptor.getHMAC(originalFileAES_HMACTab, tempHMAC, getKey(keyTextFieldHMAC_HMACTab, keyFileHMAC_HMACTab));
                 HMACTask.setOnSucceeded(value -> {
                     boolean eq = FileUtils.compareFiles(originalFileHMAC_HMACTab, tempHMAC);
                     Alert alert = new Alert(AlertType.INFORMATION);
@@ -652,8 +655,7 @@ public class MainController {
 
                 Task ECBCTask = mECBCEncryptor.getECBC(originalFileAES_ECBCTab, tempECBC,
                         getKey(keyTextFieldECBC_ECBCTab, keyFileECBC_ECBCTab),
-                        getKey(key2TextFieldECBC_ECBCTab, key2FileECBC_ECBCTab),
-                        false);
+                        getKey(key2TextFieldECBC_ECBCTab, key2FileECBC_ECBCTab));
 
                 ECBCTask.setOnSucceeded(value -> {
                     boolean eq = FileUtils.compareFiles(originalFileECBC_ECBCTab, tempECBC);
