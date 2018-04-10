@@ -3,7 +3,7 @@ package com.evgeniy_mh.simpleaescipher;
 import com.evgeniy_mh.simpleaescipher.AESEngine.AES_CTREncryptor;
 import com.evgeniy_mh.simpleaescipher.AESEngine.ECBCEncryptor;
 import com.evgeniy_mh.simpleaescipher.AESEngine.HMACEncryptor;
-import com.evgeniy_mh.simpleaescipher.AESEngine.MAC_then_Encrypt;
+import com.evgeniy_mh.simpleaescipher.AESEngine.CCM.MAC_then_Encrypt;
 import com.evgeniy_mh.simpleaescipher.AESEngine.Nonce;
 import java.io.File;
 import java.io.IOException;
