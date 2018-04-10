@@ -32,6 +32,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import jdk.nashorn.internal.runtime.ECMAException;
 
 public class MainController {
 
@@ -526,7 +527,22 @@ public class MainController {
                             options = new MACOptions(MACOptions.MACType.ECBC, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC));
                             break;
                     }
-                    AESTask = mMAC_then_Encrypt.decrypt(resultFileAES, originalFileAES, options);
+                    
+                    switch (CCMChioceBox.getValue().id) {
+                        case 1: //MAC-then-Encrypt
+                            AESTask = mMAC_then_Encrypt.decrypt(resultFileAES, originalFileAES, options);
+                            break;
+                        case 2: //Encrypt-then-MAC
+                            AESTask = mEncrypt_then_MAC.decrypt(resultFileAES, originalFileAES, options);
+                            break;
+                        case 3: //Encrypt-and-MAC
+                            AESTask = null;
+                            break;
+                        default:
+                            AESTask=null;
+                            CommonUtils.reportExceptionToMainThread(new Exception(), "CCMChioceBox.getValue().id");
+                            break;
+                    }    
 
                     AESTask.setOnSucceeded(value -> {
                         Alert MACAlert = new Alert(AlertType.INFORMATION);
