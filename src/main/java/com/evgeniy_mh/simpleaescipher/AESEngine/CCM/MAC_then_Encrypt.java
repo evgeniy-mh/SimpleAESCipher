@@ -24,7 +24,7 @@ public class MAC_then_Encrypt {
     public Task encrypt(File in, File out, MACOptions options) {
         return new Task<Void>() {
             @Override
-            protected Void call() throws IOException {
+            protected Void call(){
                 File tempFile = new File(in.getAbsolutePath() + "_temp");
                 FileUtils.createFileCopy(in, tempFile);
 
@@ -72,19 +72,19 @@ public class MAC_then_Encrypt {
                     OUTraf.setLength(tempFile.length() - 16);
                 }
 
-                byte[] resultMAC = null;
+                byte[] MAC = null;
                 switch (options.getType()) {
                     case ECBC:
                         ECBCEncryptor ecbce = new ECBCEncryptor();
-                        resultMAC = ecbce.getECBC(tempFile, options.getKey1(), options.getKey2());
+                        MAC = ecbce.getECBC(tempFile, options.getKey1(), options.getKey2());
                         break;
                     case HMAC:
                         HMACEncryptor hmace = new HMACEncryptor();
-                        resultMAC = hmace.getHMAC(FileUtils.readBytesFromFile(tempFile, (int) tempFile.length()), options.getKey1());
+                        MAC = hmace.getHMAC(FileUtils.readBytesFromFile(tempFile, (int) tempFile.length()), options.getKey1());
                         break;
                 }
 
-                if (resultMAC != null && Arrays.equals(MACFromFile, resultMAC)) {
+                if (MAC != null && Arrays.equals(MACFromFile, MAC)) {
                     FileUtils.createFileCopy(tempFile, out, tempFile.length());
                     tempFile.delete();
                     return true;

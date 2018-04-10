@@ -1,6 +1,7 @@
 package com.evgeniy_mh.simpleaescipher;
 
 import com.evgeniy_mh.simpleaescipher.AESEngine.AES_CTREncryptor;
+import com.evgeniy_mh.simpleaescipher.AESEngine.CCM.Encrypt_then_MAC;
 import com.evgeniy_mh.simpleaescipher.AESEngine.ECBCEncryptor;
 import com.evgeniy_mh.simpleaescipher.AESEngine.HMACEncryptor;
 import com.evgeniy_mh.simpleaescipher.AESEngine.CCM.MAC_then_Encrypt;
@@ -137,7 +138,10 @@ public class MainController {
     Button checkECBCButton_ECBCTab;
 
     private AES_CTREncryptor mAESEncryptor;
+
     private MAC_then_Encrypt mMAC_then_Encrypt;
+    private Encrypt_then_MAC mEncrypt_then_MAC;
+
     private boolean canChangeOriginalFile = true;
     private final int MAX_FILE_TO_SHOW_SIZE = 5000;
 
@@ -151,6 +155,7 @@ public class MainController {
     public void initialize() {
         mAESEncryptor = new AES_CTREncryptor(CipherProgressIndicator);
         mMAC_then_Encrypt = new MAC_then_Encrypt(CipherProgressIndicator);
+        mEncrypt_then_MAC = new Encrypt_then_MAC(CipherProgressIndicator);
         mHMACEncryptor = new HMACEncryptor();
         mECBCEncryptor = new ECBCEncryptor();
 
@@ -424,7 +429,7 @@ public class MainController {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
 
-                Task AESTask;
+                Task AESTask=null;
                 if (usingCCM) {
                     MACOptions options = null;
 
@@ -436,7 +441,19 @@ public class MainController {
                             options = new MACOptions(MACOptions.MACType.ECBC, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC));
                             break;
                     }
-                    AESTask = mMAC_then_Encrypt.encrypt(originalFileAES, resultFileAES, options);
+
+                    switch (CCMChioceBox.getValue().id) {
+                        case 1: //MAC-then-Encrypt
+                            AESTask = mMAC_then_Encrypt.encrypt(originalFileAES, resultFileAES, options);
+                            break;
+                        case 2: //Encrypt-then-MAC
+                            AESTask = mEncrypt_then_MAC.encrypt(originalFileAES, resultFileAES, options);
+                            break;
+                        case 3: //Encrypt-and-MAC
+                            AESTask = null;
+                            break;
+                    }
+
                     AESTask.setOnSucceeded(value -> {
                         updateFileInfo(resultFilePathAES, resultFileTextAreaAES, resultFileAES);
                     });
@@ -530,7 +547,7 @@ public class MainController {
 
                     AESTask.setOnSucceeded(value -> {
                         updateFileInfo(originalFilePathAES, originalFileTextAreaAES, originalFileAES);
-                    });                    
+                    });
                 }
                 Thread AESThread = new Thread(AESTask);
                 AESThread.start();

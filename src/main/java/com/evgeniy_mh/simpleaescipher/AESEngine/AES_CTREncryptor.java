@@ -2,14 +2,12 @@ package com.evgeniy_mh.simpleaescipher.AESEngine;
 
 import com.evgeniy_mh.simpleaescipher.CommonUtils;
 import com.evgeniy_mh.simpleaescipher.FileUtils;
-import com.evgeniy_mh.simpleaescipher.MACOptions;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import javafx.concurrent.Task;
 import javafx.scene.control.ProgressIndicator;
-import java.util.Arrays;
 
 /**
  * Created by evgeniy on 08.04.17.
