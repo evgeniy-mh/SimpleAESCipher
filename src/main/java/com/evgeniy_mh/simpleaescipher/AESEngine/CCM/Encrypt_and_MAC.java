@@ -1,6 +1,5 @@
 package com.evgeniy_mh.simpleaescipher.AESEngine.CCM;
 
-import com.evgeniy_mh.simpleaescipher.AESEngine.AES_CTREncryptor;
 import com.evgeniy_mh.simpleaescipher.AESEngine.ECBCEncryptor;
 import com.evgeniy_mh.simpleaescipher.AESEngine.HMACEncryptor;
 import com.evgeniy_mh.simpleaescipher.CommonUtils;
@@ -12,25 +11,18 @@ import java.util.Arrays;
 import javafx.concurrent.Task;
 import javafx.scene.control.ProgressIndicator;
 
-public class Encrypt_and_MAC {
-
-    private AES_CTREncryptor mAESEncryptor;
+public class Encrypt_and_MAC extends CCMEncryptor{
 
     public Encrypt_and_MAC(ProgressIndicator progressIndicator) {
-        mAESEncryptor = new AES_CTREncryptor(progressIndicator);
+        super(progressIndicator);
     }
-
-    /**
-     * Выполняет шифрование файла
-     *
-     * @param in Файл открытого текста
-     * @param out Файл для сохранения результата шифрования (будет перезаписан)
-     */
+    
+    @Override
     public Task encrypt(File in, File out, MACOptions options) {
         return new Task<Void>() {
             @Override
             protected Void call() throws IOException {
-                mAESEncryptor.encrypt(in, out, options.getKey1()).run();
+                mAES_CTREncryptor.encrypt(in, out, options.getKey1()).run();
                 Task MACTask = null;
                 switch (options.getType()) {
                     case ECBC:
@@ -54,14 +46,8 @@ public class Encrypt_and_MAC {
             }
         };
     }
-
-    /**
-     * Выполняет дешифрование файла
-     *
-     * @param in Файл шифрованного текста
-     * @param out Файл для сохранения результата расшифрования (будет
-     * перезаписан)
-     */
+    
+    @Override
     public Task decrypt(File in, File out, MACOptions options) {
         return new Task<Boolean>() {
             @Override
@@ -69,7 +55,7 @@ public class Encrypt_and_MAC {
                 byte[] MACFromFile = FileUtils.readBytesFromFile(in, (int) in.length() - 16, (int) in.length());
                 File tempFile = new File(in.toPath() + "_temp");
                 FileUtils.createFileCopy(in, tempFile, in.length() - 16);
-                mAESEncryptor.decrypt(tempFile, out, options.getKey1()).run();
+                mAES_CTREncryptor.decrypt(tempFile, out, options.getKey1()).run();
 
                 byte[] MAC = null;
                 switch (options.getType()) {

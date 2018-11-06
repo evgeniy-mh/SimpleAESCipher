@@ -75,12 +75,12 @@ public class ECBCEncryptor {
 
         byte[] tempKey1 = key1;
         if (key1.length % AES.BLOCK_SIZE != 0) {
-            tempKey1 = AES_CTREncryptor.PKCS7(key1);
+            tempKey1 = PKCS7.PKCS7(key1);
         }
 
         byte[] tempKey2 = key2;
         if (key2.length % AES.BLOCK_SIZE != 0) {
-            tempKey2 = AES_CTREncryptor.PKCS7(key2);
+            tempKey2 = PKCS7.PKCS7(key2);
         }
 
         mAES.makeKey(tempKey1, 128, AES.DIR_BOTH);
@@ -100,7 +100,7 @@ public class ECBCEncryptor {
                 if (deltaToBlock > 0) {
                     temp = new byte[deltaToBlock];
                     INraf.read(temp, 0, deltaToBlock);  //считывание неполного блока в temp
-                    temp = AES_CTREncryptor.PKCS7(temp);
+                    temp = PKCS7.PKCS7(temp);
                 } else {
                     temp = new byte[AES.BLOCK_SIZE];
                     for (int t = 0; t < AES.BLOCK_SIZE; t++) {

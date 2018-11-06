@@ -12,23 +12,13 @@ import javafx.scene.control.ProgressIndicator;
 /**
  * Created by evgeniy on 08.04.17.
  */
-public class AES_CTREncryptor {
-
-    private AES mAES;
-    private ProgressIndicator progressIndicator;
+public class AES_CTREncryptor extends Encryptor{
 
     public AES_CTREncryptor(ProgressIndicator progressIndicator) {
-        mAES = new AES();
-        this.progressIndicator = progressIndicator;
+        super(progressIndicator);
     }
 
-    /**
-     * Выполняет шифрование файла
-     *
-     * @param in Файл открытого текста
-     * @param out Файл для сохранения результата шифрования (будет перезаписан)
-     * @param key Ключ шифрования
-     */
+    @Override
     public Task encrypt(File in, File out, final byte[] key) {
         return new Task<Void>() {
             @Override
@@ -42,7 +32,7 @@ public class AES_CTREncryptor {
 
                 byte[] tempKey = key;
                 if (key.length % AES.BLOCK_SIZE != 0) {
-                    tempKey = PKCS7(key);
+                    tempKey = PKCS7.PKCS7(key);
                 }
                 mAES.makeKey(tempKey, 128, AES.DIR_BOTH);
                 try {
@@ -64,7 +54,7 @@ public class AES_CTREncryptor {
                             if (deltaToBlock > 0) {
                                 temp = new byte[deltaToBlock];
                                 INraf.read(temp, 0, deltaToBlock);  //считывание неполного блока в temp
-                                temp = PKCS7(temp);
+                                temp = PKCS7.PKCS7(temp);
                             } else {
                                 temp = new byte[AES.BLOCK_SIZE];
                                 for (int t = 0; t < AES.BLOCK_SIZE; t++) {
@@ -99,14 +89,7 @@ public class AES_CTREncryptor {
         };
     }
 
-    /**
-     * Выполняет дешифрование файла
-     *
-     * @param in Файл шифрованного текста
-     * @param out Файл для сохранения результата расшифрования (будет
-     * перезаписан)
-     * @param key Ключ шифрования
-     */
+    @Override
     public Task decrypt(File in, File out, final byte[] key) {
         return new Task<Void>() {
             @Override
@@ -123,7 +106,7 @@ public class AES_CTREncryptor {
 
                 byte[] tempKey = key;
                 if (key.length % AES.BLOCK_SIZE != 0) {
-                    tempKey = PKCS7(key);
+                    tempKey = PKCS7.PKCS7(key);
                 }
                 mAES.makeKey(tempKey, 128, AES.DIR_BOTH);
                 try {
@@ -171,30 +154,6 @@ public class AES_CTREncryptor {
                 return null;
             }
         };
-    }
-
-    /**
-     * Дополняет массив байт до размера кратного AES.BLOCK_SIZE по стандарту
-     * PKCS7
-     *
-     * @param b-массив байт для которого будет выполнено дополнение PKCS7
-     * @return Дополненный массив байт
-     */
-    public static byte[] PKCS7(byte[] b) {
-        int n = countDeltaBlocks(b); //сколько байт нужно добавить и какое у них будет значение 
-        if (n != 0) {
-            byte[] bPadded = new byte[b.length + n];
-            for (int i = 0; i < bPadded.length; i++) {
-                if (i < b.length) {
-                    bPadded[i] = b[i];
-                } else {
-                    bPadded[i] = (byte) n;
-                }
-            }
-            return bPadded;
-        } else {
-            return b;
-        }
     }    
 
     /**
@@ -204,14 +163,5 @@ public class AES_CTREncryptor {
      */
     private int getNonce() {
         return Nonce.getInstance().getNonce();
-    }
-
-    /**
-     * Подсчет скольких байт не хватает до полного блока
-     *
-     * @param b Массив байт
-     */
-    private static int countDeltaBlocks(byte[] b) {
-        return AES.BLOCK_SIZE - b.length % AES.BLOCK_SIZE;
-    }
+    }    
 }

@@ -1,6 +1,5 @@
 package com.evgeniy_mh.simpleaescipher.AESEngine.CCM;
 
-import com.evgeniy_mh.simpleaescipher.AESEngine.AES_CTREncryptor;
 import com.evgeniy_mh.simpleaescipher.AESEngine.ECBCEncryptor;
 import com.evgeniy_mh.simpleaescipher.AESEngine.HMACEncryptor;
 import com.evgeniy_mh.simpleaescipher.CommonUtils;
@@ -12,19 +11,18 @@ import java.util.Arrays;
 import javafx.concurrent.Task;
 import javafx.scene.control.ProgressIndicator;
 
-public class Encrypt_then_MAC {
-
-    private AES_CTREncryptor mAESEncryptor;
+public class Encrypt_then_MAC extends CCMEncryptor{
 
     public Encrypt_then_MAC(ProgressIndicator progressIndicator) {
-        mAESEncryptor = new AES_CTREncryptor(progressIndicator);
+        super(progressIndicator);
     }
 
+    @Override
     public Task encrypt(File in, File out, MACOptions options) {
         return new Task<Void>() {
             @Override
             protected Void call() throws IOException {
-                mAESEncryptor.encrypt(in, out, options.getKey1()).run();
+                mAES_CTREncryptor.encrypt(in, out, options.getKey1()).run();
                 Task MACTask = null;
                 switch (options.getType()) {
                     case ECBC:
@@ -49,13 +47,7 @@ public class Encrypt_then_MAC {
         };
     }
 
-    /**
-     * Выполняет дешифрование файла
-     *
-     * @param in Файл шифрованного текста
-     * @param out Файл для сохранения результата расшифрования (будет
-     * перезаписан)
-     */
+    @Override
     public Task decrypt(File in, File out, MACOptions options) {
         return new Task<Boolean>() {
             @Override
@@ -78,7 +70,7 @@ public class Encrypt_then_MAC {
                 }               
                 
                 if (MAC != null && Arrays.equals(MACFromFile, MAC)) {
-                    mAESEncryptor.decrypt(tempFile, out, options.getKey1()).run();  
+                    mAES_CTREncryptor.decrypt(tempFile, out, options.getKey1()).run();  
                     tempFile.delete();
                     return true;
                 } else {

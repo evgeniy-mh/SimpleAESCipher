@@ -1,6 +1,5 @@
 package com.evgeniy_mh.simpleaescipher.AESEngine.CCM;
 
-import com.evgeniy_mh.simpleaescipher.AESEngine.AES_CTREncryptor;
 import com.evgeniy_mh.simpleaescipher.AESEngine.ECBCEncryptor;
 import com.evgeniy_mh.simpleaescipher.AESEngine.HMACEncryptor;
 import com.evgeniy_mh.simpleaescipher.CommonUtils;
@@ -13,14 +12,13 @@ import java.util.Arrays;
 import javafx.concurrent.Task;
 import javafx.scene.control.ProgressIndicator;
 
-public class MAC_then_Encrypt {
-    
-    private AES_CTREncryptor mAESEncryptor;
+public class MAC_then_Encrypt extends CCMEncryptor{
     
     public MAC_then_Encrypt(ProgressIndicator progressIndicator){
-        mAESEncryptor=new AES_CTREncryptor(progressIndicator);
+        super(progressIndicator);
     }
 
+    @Override
     public Task encrypt(File in, File out, MACOptions options) {
         return new Task<Void>() {
             @Override
@@ -49,7 +47,7 @@ public class MAC_then_Encrypt {
                     CommonUtils.reportExceptionToMainThread(ex, "MACThread.join();");
                 }
 
-                mAESEncryptor.encrypt(tempFile, out, options.getKey1()).run();
+                mAES_CTREncryptor.encrypt(tempFile, out, options.getKey1()).run();
 
                 tempFile.delete();
                 return null;
@@ -57,13 +55,14 @@ public class MAC_then_Encrypt {
         };
     }
 
+    @Override
     public Task decrypt(File in, File out, MACOptions options) {
         return new Task<Boolean>() {
             @Override
             protected Boolean call() throws IOException {
                 File tempFile = new File(out.getAbsolutePath() + "_temp");
 
-                mAESEncryptor.decrypt(in, tempFile, options.getKey1()).run();
+                mAES_CTREncryptor.decrypt(in, tempFile, options.getKey1()).run();
 
                 //System.out.println("tempFile.length()="+tempFile.length());
                 byte[] MACFromFile = FileUtils.readBytesFromFile(tempFile, (int) tempFile.length() - 16, (int) tempFile.length());
