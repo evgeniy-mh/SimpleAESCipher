@@ -33,7 +33,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import jdk.nashorn.internal.runtime.ECMAException;
 
 public class MainController {
 
@@ -78,6 +77,8 @@ public class MainController {
     Button encryptButtonAES;
     @FXML
     Button decryptButtonAES;
+    @FXML
+    ChoiceBox<ChoiceBoxItem> CipherModeChioceBox;
     @FXML
     CheckBox CreateHMACCheckBox;
     @FXML
@@ -280,6 +281,12 @@ public class MainController {
                 key2TextFieldECBC.setText(f.getPath());
             }
         });
+        
+        CipherModeChioceBox.setItems(FXCollections.observableArrayList(
+                new ChoiceBoxItem(0, "CTR (Counter mode)"),
+                new ChoiceBoxItem(1, "CBC (Cipher Block Chaining)")
+        ));
+        CipherModeChioceBox.getSelectionModel().selectFirst();
 
         CCMChioceBox.setItems(FXCollections.observableArrayList(
                 new ChoiceBoxItem(0, "Не использовать AEAD"),

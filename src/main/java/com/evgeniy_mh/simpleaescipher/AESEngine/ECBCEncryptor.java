@@ -23,7 +23,6 @@ public class ECBCEncryptor {
      * @param out Файл для сохранения результата
      * @param key1 Ключ шифрования
      * @param key2 Доп. ключ ECBC
-     * @param appendToInFile Если true то ECBC будет добавлен в конец файла in,
      */
     public Task getECBC(File in, File out, byte[] key1, byte[] key2) {
         return new Task<Void>() {
