@@ -210,7 +210,7 @@
                                     </Separator>
                                     <HBox spacing="5.0">
                                        <children>
-                                          <Label alignment="CENTER" contentDisplay="CENTER" text="Использовать CCM / Проверка CCM:">
+                                          <Label alignment="CENTER" contentDisplay="CENTER" text="Использовать AEAD / Проверка AEAD:">
                                              <padding>
                                                 <Insets top="5.0" />
                                              </padding>

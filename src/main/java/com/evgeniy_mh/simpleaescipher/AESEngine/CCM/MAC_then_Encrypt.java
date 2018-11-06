@@ -65,7 +65,7 @@ public class MAC_then_Encrypt {
 
                 mAESEncryptor.decrypt(in, tempFile, options.getKey1()).run();
 
-                System.out.println("tempFile.length()="+tempFile.length());
+                //System.out.println("tempFile.length()="+tempFile.length());
                 byte[] MACFromFile = FileUtils.readBytesFromFile(tempFile, (int) tempFile.length() - 16, (int) tempFile.length());
 
                 try (RandomAccessFile OUTraf = new RandomAccessFile(tempFile, "rw")) {

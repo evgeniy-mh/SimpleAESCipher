@@ -282,7 +282,7 @@ public class MainController {
         });
 
         CCMChioceBox.setItems(FXCollections.observableArrayList(
-                new ChoiceBoxItem(0, "Не использовать CCM"),
+                new ChoiceBoxItem(0, "Не использовать AEAD"),
                 new ChoiceBoxItem(1, "MAC-then-Encrypt"),
                 new ChoiceBoxItem(2, "Encrypt-then-MAC"),
                 new ChoiceBoxItem(3, "Encrypt-and-MAC")
@@ -550,12 +550,12 @@ public class MainController {
                     AESTask.setOnSucceeded(value -> {
                         Alert MACAlert = new Alert(AlertType.INFORMATION);
                         if (AESTask.getValue()) {
-                            MACAlert.setTitle("Проверка CCM успешно пройдена");
-                            MACAlert.setHeaderText("Проверка CCM успешно пройдена.");
+                            MACAlert.setTitle("Проверка AEAD успешно пройдена");
+                            MACAlert.setHeaderText("Проверка AEAD успешно пройдена.");
                         } else {
                             MACAlert.setAlertType(AlertType.WARNING);
                             MACAlert.setTitle("Внимание!");
-                            MACAlert.setHeaderText("Проверка CCM не пройдена. Возможно исходный файл или MAC были скомпрометированны!");
+                            MACAlert.setHeaderText("Проверка AEAD не пройдена. Возможно исходный файл или MAC были скомпрометированны!");
                         }
                         MACAlert.showAndWait();
                         updateFileInfo(originalFilePathAES, originalFileTextAreaAES, originalFileAES);
