@@ -12,9 +12,9 @@ import java.util.Arrays;
 import javafx.concurrent.Task;
 import javafx.scene.control.ProgressIndicator;
 
-public class MAC_then_Encrypt extends CCMEncryptor{
-    
-    public MAC_then_Encrypt(ProgressIndicator progressIndicator){
+public class MAC_then_Encrypt extends CCMEncryptor {
+
+    public MAC_then_Encrypt(ProgressIndicator progressIndicator) {
         super(progressIndicator);
     }
 
@@ -22,7 +22,7 @@ public class MAC_then_Encrypt extends CCMEncryptor{
     public Task encrypt(File in, File out, MACOptions options) {
         return new Task<Void>() {
             @Override
-            protected Void call(){
+            protected Void call() {
                 File tempFile = new File(in.getAbsolutePath() + "_temp");
                 FileUtils.createFileCopy(in, tempFile);
 
@@ -47,7 +47,14 @@ public class MAC_then_Encrypt extends CCMEncryptor{
                     CommonUtils.reportExceptionToMainThread(ex, "MACThread.join();");
                 }
 
-                mAES_CTREncryptor.encrypt(tempFile, out, options.getKey1()).run();
+                switch (options.getMode()) {
+                    case CBC:
+                        mAES_CBCEncryptor.encrypt(tempFile, out, options.getKey1()).run();
+                        break;
+                    case CTR:
+                        mAES_CTREncryptor.encrypt(tempFile, out, options.getKey1()).run();
+                        break;
+                }
 
                 tempFile.delete();
                 return null;
@@ -62,9 +69,15 @@ public class MAC_then_Encrypt extends CCMEncryptor{
             protected Boolean call() throws IOException {
                 File tempFile = new File(out.getAbsolutePath() + "_temp");
 
-                mAES_CTREncryptor.decrypt(in, tempFile, options.getKey1()).run();
-
-                //System.out.println("tempFile.length()="+tempFile.length());
+                switch (options.getMode()) {
+                    case CBC:
+                        mAES_CBCEncryptor.decrypt(in, tempFile, options.getKey1()).run();
+                        break;
+                    case CTR:
+                        mAES_CTREncryptor.decrypt(in, tempFile, options.getKey1()).run();
+                        break;
+                }
+                
                 byte[] MACFromFile = FileUtils.readBytesFromFile(tempFile, (int) tempFile.length() - 16, (int) tempFile.length());
 
                 try (RandomAccessFile OUTraf = new RandomAccessFile(tempFile, "rw")) {

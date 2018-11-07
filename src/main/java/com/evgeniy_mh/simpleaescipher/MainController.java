@@ -1,5 +1,6 @@
 package com.evgeniy_mh.simpleaescipher;
 
+import com.evgeniy_mh.simpleaescipher.AESEngine.AES_CBCEncryptor;
 import com.evgeniy_mh.simpleaescipher.AESEngine.AES_CTREncryptor;
 import com.evgeniy_mh.simpleaescipher.AESEngine.CCM.Encrypt_and_MAC;
 import com.evgeniy_mh.simpleaescipher.AESEngine.CCM.Encrypt_then_MAC;
@@ -140,7 +141,8 @@ public class MainController {
     @FXML
     Button checkECBCButton_ECBCTab;
 
-    private AES_CTREncryptor mAESEncryptor;
+    private AES_CTREncryptor mAES_CTREncryptor;
+    private AES_CBCEncryptor mAES_CBCEncryptor;
 
     private MAC_then_Encrypt mMAC_then_Encrypt;
     private Encrypt_then_MAC mEncrypt_then_MAC;
@@ -157,10 +159,11 @@ public class MainController {
     }
 
     public void initialize() {
-        mAESEncryptor = new AES_CTREncryptor(CipherProgressIndicator);
+        mAES_CTREncryptor = new AES_CTREncryptor(CipherProgressIndicator);
+        mAES_CBCEncryptor = new AES_CBCEncryptor(CipherProgressIndicator);
         mMAC_then_Encrypt = new MAC_then_Encrypt(CipherProgressIndicator);
         mEncrypt_then_MAC = new Encrypt_then_MAC(CipherProgressIndicator);
-        mEncrypt_and_MAC=new Encrypt_and_MAC(CipherProgressIndicator);
+        mEncrypt_and_MAC = new Encrypt_and_MAC(CipherProgressIndicator);
         mHMACEncryptor = new HMACEncryptor();
         mECBCEncryptor = new ECBCEncryptor();
 
@@ -281,7 +284,7 @@ public class MainController {
                 key2TextFieldECBC.setText(f.getPath());
             }
         });
-        
+
         CipherModeChioceBox.setItems(FXCollections.observableArrayList(
                 new ChoiceBoxItem(0, "CTR (Counter mode)"),
                 new ChoiceBoxItem(1, "CBC (Cipher Block Chaining)")
@@ -440,16 +443,26 @@ public class MainController {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
 
-                Task AESTask=null;
+                Task AESTask = null;
                 if (usingCCM) {
                     MACOptions options = null;
 
+                    MACOptions.CipherMode mode = null;
+                    switch (CipherModeChioceBox.getValue().id) {
+                        case 0: //CTR
+                            mode = MACOptions.CipherMode.CTR;
+                            break;
+                        case 1: //CBC
+                            mode = MACOptions.CipherMode.CBC;
+                            break;
+                    }
+
                     switch (CCM_MACChioceBox.getValue().id) {
                         case 0: //HMAC
-                            options = new MACOptions(MACOptions.MACType.HMAC, getKey(keyTextFieldAES, keyFileAES), null);
+                            options = new MACOptions(MACOptions.MACType.HMAC, mode, getKey(keyTextFieldAES, keyFileAES), null);
                             break;
                         case 1: //ECBC
-                            options = new MACOptions(MACOptions.MACType.ECBC, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC));
+                            options = new MACOptions(MACOptions.MACType.ECBC, mode, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC));
                             break;
                     }
 
@@ -470,7 +483,16 @@ public class MainController {
                     });
 
                 } else {
-                    AESTask = mAESEncryptor.encrypt(originalFileAES, resultFileAES, getKey(keyTextFieldAES, keyFileAES));
+
+                    switch (CipherModeChioceBox.getValue().id) {
+                        case 0: //CTR
+                            AESTask = mAES_CTREncryptor.encrypt(originalFileAES, resultFileAES, getKey(keyTextFieldAES, keyFileAES));
+                            break;
+                        case 1: //CBC
+                            AESTask = mAES_CBCEncryptor.encrypt(originalFileAES, resultFileAES, getKey(keyTextFieldAES, keyFileAES));
+                            break;
+                    }
+
                     AESTask.setOnSucceeded(value -> {
                         updateFileInfo(resultFilePathAES, resultFileTextAreaAES, resultFileAES);
 
@@ -529,15 +551,26 @@ public class MainController {
                 Task<Boolean> AESTask;
                 if (usingCCM) {
                     MACOptions options = null;
-                    switch (CCM_MACChioceBox.getValue().id) {
-                        case 0: //HMAC
-                            options = new MACOptions(MACOptions.MACType.HMAC, getKey(keyTextFieldAES, keyFileAES), null);
+
+                    MACOptions.CipherMode mode = null;
+                    switch (CipherModeChioceBox.getValue().id) {
+                        case 0: //CTR
+                            mode = MACOptions.CipherMode.CTR;
                             break;
-                        case 1: //ECBC
-                            options = new MACOptions(MACOptions.MACType.ECBC, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC));
+                        case 1: //CBC
+                            mode = MACOptions.CipherMode.CBC;
                             break;
                     }
-                    
+
+                    switch (CCM_MACChioceBox.getValue().id) {
+                        case 0: //HMAC
+                            options = new MACOptions(MACOptions.MACType.HMAC, mode, getKey(keyTextFieldAES, keyFileAES), null);
+                            break;
+                        case 1: //ECBC
+                            options = new MACOptions(MACOptions.MACType.ECBC, mode, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC));
+                            break;
+                    }
+
                     switch (CCMChioceBox.getValue().id) {
                         case 1: //MAC-then-Encrypt
                             AESTask = mMAC_then_Encrypt.decrypt(resultFileAES, originalFileAES, options);
@@ -546,13 +579,14 @@ public class MainController {
                             AESTask = mEncrypt_then_MAC.decrypt(resultFileAES, originalFileAES, options);
                             break;
                         case 3: //Encrypt-and-MAC
-                            AESTask = mEncrypt_and_MAC.decrypt(resultFileAES, originalFileAES, options);;
+                            AESTask = mEncrypt_and_MAC.decrypt(resultFileAES, originalFileAES, options);
+                            ;
                             break;
                         default:
-                            AESTask=null;
+                            AESTask = null;
                             CommonUtils.reportExceptionToMainThread(new Exception(), "CCMChioceBox.getValue().id");
                             break;
-                    }    
+                    }
 
                     AESTask.setOnSucceeded(value -> {
                         Alert MACAlert = new Alert(AlertType.INFORMATION);
@@ -569,7 +603,18 @@ public class MainController {
                     });
 
                 } else {
-                    AESTask = mAESEncryptor.decrypt(resultFileAES, originalFileAES, getKey(keyTextFieldAES, keyFileAES));
+
+                    switch (CipherModeChioceBox.getValue().id) {
+                        case 0: //CTR
+                            AESTask = mAES_CTREncryptor.decrypt(resultFileAES, originalFileAES, getKey(keyTextFieldAES, keyFileAES));
+                            break;
+                        case 1: //CBC
+                            AESTask = mAES_CBCEncryptor.decrypt(resultFileAES, originalFileAES, getKey(keyTextFieldAES, keyFileAES));
+                            break;
+                        default:
+                            AESTask = null;
+                            break;
+                    }
 
                     AESTask.setOnSucceeded(value -> {
                         updateFileInfo(originalFilePathAES, originalFileTextAreaAES, originalFileAES);

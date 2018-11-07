@@ -11,18 +11,26 @@ import java.util.Arrays;
 import javafx.concurrent.Task;
 import javafx.scene.control.ProgressIndicator;
 
-public class Encrypt_and_MAC extends CCMEncryptor{
+public class Encrypt_and_MAC extends CCMEncryptor {
 
     public Encrypt_and_MAC(ProgressIndicator progressIndicator) {
         super(progressIndicator);
     }
-    
+
     @Override
     public Task encrypt(File in, File out, MACOptions options) {
         return new Task<Void>() {
             @Override
             protected Void call() throws IOException {
-                mAES_CTREncryptor.encrypt(in, out, options.getKey1()).run();
+                switch (options.getMode()) {
+                    case CBC:
+                        mAES_CBCEncryptor.encrypt(in, out, options.getKey1()).run();
+                        break;
+                    case CTR:
+                        mAES_CTREncryptor.encrypt(in, out, options.getKey1()).run();
+                        break;
+                }
+
                 Task MACTask = null;
                 switch (options.getType()) {
                     case ECBC:
@@ -46,7 +54,7 @@ public class Encrypt_and_MAC extends CCMEncryptor{
             }
         };
     }
-    
+
     @Override
     public Task decrypt(File in, File out, MACOptions options) {
         return new Task<Boolean>() {
@@ -55,7 +63,15 @@ public class Encrypt_and_MAC extends CCMEncryptor{
                 byte[] MACFromFile = FileUtils.readBytesFromFile(in, (int) in.length() - 16, (int) in.length());
                 File tempFile = new File(in.toPath() + "_temp");
                 FileUtils.createFileCopy(in, tempFile, in.length() - 16);
-                mAES_CTREncryptor.decrypt(tempFile, out, options.getKey1()).run();
+
+                switch (options.getMode()) {
+                    case CBC:
+                        mAES_CBCEncryptor.decrypt(tempFile, out, options.getKey1()).run();
+                        break;
+                    case CTR:
+                        mAES_CTREncryptor.decrypt(tempFile, out, options.getKey1()).run();
+                        break;
+                }
 
                 byte[] MAC = null;
                 switch (options.getType()) {

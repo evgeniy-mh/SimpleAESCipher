@@ -11,7 +11,7 @@ import java.util.Arrays;
 import javafx.concurrent.Task;
 import javafx.scene.control.ProgressIndicator;
 
-public class Encrypt_then_MAC extends CCMEncryptor{
+public class Encrypt_then_MAC extends CCMEncryptor {
 
     public Encrypt_then_MAC(ProgressIndicator progressIndicator) {
         super(progressIndicator);
@@ -22,7 +22,16 @@ public class Encrypt_then_MAC extends CCMEncryptor{
         return new Task<Void>() {
             @Override
             protected Void call() throws IOException {
-                mAES_CTREncryptor.encrypt(in, out, options.getKey1()).run();
+
+                switch (options.getMode()) {
+                    case CBC:
+                        mAES_CBCEncryptor.encrypt(in, out, options.getKey1()).run();
+                        break;
+                    case CTR:
+                        mAES_CTREncryptor.encrypt(in, out, options.getKey1()).run();
+                        break;
+                }
+
                 Task MACTask = null;
                 switch (options.getType()) {
                     case ECBC:
@@ -56,7 +65,7 @@ public class Encrypt_then_MAC extends CCMEncryptor{
                 byte[] MACFromFile = FileUtils.readBytesFromFile(in, (int) in.length() - 16, (int) in.length());
                 File tempFile = new File(in.toPath() + "_temp");
                 FileUtils.createFileCopy(in, tempFile, in.length() - 16);
-                
+
                 byte[] MAC = null;
                 switch (options.getType()) {
                     case ECBC:
@@ -66,11 +75,18 @@ public class Encrypt_then_MAC extends CCMEncryptor{
                     case HMAC:
                         HMACEncryptor hmace = new HMACEncryptor();
                         MAC = hmace.getHMAC(FileUtils.readBytesFromFile(tempFile, (int) tempFile.length()), options.getKey1());
-                        break;                        
-                }               
-                
+                        break;
+                }
+
                 if (MAC != null && Arrays.equals(MACFromFile, MAC)) {
-                    mAES_CTREncryptor.decrypt(tempFile, out, options.getKey1()).run();  
+                    switch (options.getMode()) {
+                        case CBC:
+                            mAES_CBCEncryptor.decrypt(tempFile, out, options.getKey1()).run();
+                            break;
+                        case CTR:
+                            mAES_CTREncryptor.decrypt(tempFile, out, options.getKey1()).run();
+                            break;
+                    }
                     tempFile.delete();
                     return true;
                 } else {
