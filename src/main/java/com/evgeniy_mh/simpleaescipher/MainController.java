@@ -447,14 +447,7 @@ public class MainController {
             alert.showAndWait();
             return;
         } else if (getKey(keyTextFieldAES, keyFileAES) == null) {
-            //alert.setTitle("Ошибка ключа шифрования AES");
-            //alert.setHeaderText("Вы не ввели ключ или ввели ключ длина которого больше 128 бит.");
             alert.setTitle("Ошибка ключа шифрования AES");
-            alert.setHeaderText("Вы не ввели ключ или ввели ключ длина которого больше 128 бит.");
-            alert.showAndWait();
-            return;
-        } else if (getKey(key2TextFieldECBC, key2FileECBC) == null) {
-            alert.setTitle("Ошибка ключа шифрования ECBC");
             alert.setHeaderText("Вы не ввели ключ или ввели ключ длина которого больше 128 бит.");
             alert.showAndWait();
             return;
@@ -486,6 +479,12 @@ public class MainController {
                         options = new MACOptions(MACOptions.MACType.HMAC, mode, getKey(keyTextFieldAES, keyFileAES), null);
                         break;
                     case 1: //ECBC
+                        if (getKey(key2TextFieldECBC, key2FileECBC) == null) {
+                            alert.setTitle("Ошибка ключа шифрования ECBC");
+                            alert.setHeaderText("Вы не ввели ключ или ввели ключ длина которого больше 128 бит.");
+                            alert.showAndWait();
+                            return;
+                        }
                         options = new MACOptions(MACOptions.MACType.ECBC, mode, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC));
                         break;
                 }
@@ -533,6 +532,12 @@ public class MainController {
                     }
 
                     if (CreateECBCCheckBox.isSelected()) {
+                        if (getKey(key2TextFieldECBC, key2FileECBC) == null) {
+                            alert.setTitle("Ошибка ключа шифрования ECBC");
+                            alert.setHeaderText("Вы не ввели ключ или ввели ключ длина которого больше 128 бит.");
+                            alert.showAndWait();
+                            return;
+                        }
                         File ecbcFile = createNewFile("Создайте или выберите файл для сохранения ECBC");
                         Task ECBCTasc = mECBCEncryptor.getECBC(resultFileAES, ecbcFile, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC));
                         ECBCTasc.setOnSucceeded(event -> {
@@ -558,17 +563,12 @@ public class MainController {
             alert.showAndWait();
             return;
         } else if (resultFileAES == null) {
-            alert.setTitle("Вы не выбрали файл результата");
-            alert.setHeaderText("Пожалуйста, создайте или выберите файл результата расшифрования.");
+            alert.setTitle("Вы не выбрали зашифрованный файл");
+            alert.setHeaderText("Пожалуйста, создайте или выберите зашифрованный файл.");
             alert.showAndWait();
             return;
         } else if (getKey(keyTextFieldAES, keyFileAES) == null) {
             alert.setTitle("Ошибка ключа шифрования AES");
-            alert.setHeaderText("Вы не ввели ключ или ввели ключ длина которого больше 128 бит.");
-            alert.showAndWait();
-            return;
-        } else if (getKey(key2TextFieldECBC, key2FileECBC) == null) {
-            alert.setTitle("Ошибка ключа шифрования ECBC");
             alert.setHeaderText("Вы не ввели ключ или ввели ключ длина которого больше 128 бит.");
             alert.showAndWait();
             return;
@@ -599,6 +599,12 @@ public class MainController {
                         options = new MACOptions(MACOptions.MACType.HMAC, mode, getKey(keyTextFieldAES, keyFileAES), null);
                         break;
                     case 1: //ECBC
+                        if (getKey(key2TextFieldECBC, key2FileECBC) == null) {
+                            alert.setTitle("Ошибка ключа шифрования ECBC");
+                            alert.setHeaderText("Вы не ввели ключ или ввели ключ длина которого больше 128 бит.");
+                            alert.showAndWait();
+                            return;
+                        }
                         options = new MACOptions(MACOptions.MACType.ECBC, mode, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC));
                         break;
                 }
