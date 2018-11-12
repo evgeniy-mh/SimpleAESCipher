@@ -435,250 +435,271 @@ public class MainController {
     }
 
     private void encryptAES() {
-        if (originalFileAES != null && resultFileAES != null && getKey(keyTextFieldAES, keyFileAES).length != 0) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Результирующий файл будет перезаписан!");
-            alert.setHeaderText("Внимание, это перезапишет результирующий файл " + resultFileAES.getPath());
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
-
-                Task AESTask = null;
-                if (usingCCM) {
-                    MACOptions options = null;
-
-                    MACOptions.CipherMode mode = null;
-                    switch (CipherModeChioceBox.getValue().id) {
-                        case 0: //CTR
-                            mode = MACOptions.CipherMode.CTR;
-                            break;
-                        case 1: //CBC
-                            mode = MACOptions.CipherMode.CBC;
-                            break;
-                    }
-
-                    switch (CCM_MACChioceBox.getValue().id) {
-                        case 0: //HMAC
-                            options = new MACOptions(MACOptions.MACType.HMAC, mode, getKey(keyTextFieldAES, keyFileAES), null);
-                            break;
-                        case 1: //ECBC
-                            options = new MACOptions(MACOptions.MACType.ECBC, mode, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC));
-                            break;
-                    }
-
-                    switch (CCMChioceBox.getValue().id) {
-                        case 1: //MAC-then-Encrypt
-                            AESTask = mMAC_then_Encrypt.encrypt(originalFileAES, resultFileAES, options);
-                            break;
-                        case 2: //Encrypt-then-MAC
-                            AESTask = mEncrypt_then_MAC.encrypt(originalFileAES, resultFileAES, options);
-                            break;
-                        case 3: //Encrypt-and-MAC
-                            AESTask = mEncrypt_and_MAC.encrypt(originalFileAES, resultFileAES, options);
-                            break;
-                    }
-
-                    AESTask.setOnSucceeded(value -> {
-                        updateFileInfo(resultFilePathAES, resultFileTextAreaAES, resultFileAES);
-                    });
-
-                } else {
-
-                    switch (CipherModeChioceBox.getValue().id) {
-                        case 0: //CTR
-                            AESTask = mAES_CTREncryptor.encrypt(originalFileAES, resultFileAES, getKey(keyTextFieldAES, keyFileAES));
-                            break;
-                        case 1: //CBC
-                            AESTask = mAES_CBCEncryptor.encrypt(originalFileAES, resultFileAES, getKey(keyTextFieldAES, keyFileAES));
-                            break;
-                    }
-
-                    AESTask.setOnSucceeded(value -> {
-                        updateFileInfo(resultFilePathAES, resultFileTextAreaAES, resultFileAES);
-
-                        if (CreateHMACCheckBox.isSelected()) {
-                            File hmacFile = createNewFile("Создайте или выберите файл для сохранения HMAC");
-                            Task HMACTask = mHMACEncryptor.getHMAC(resultFileAES, hmacFile, getKey(keyTextFieldAES, keyFileAES));
-                            HMACTask.setOnSucceeded(event -> {
-                                Alert alertHMACDone = new Alert(Alert.AlertType.INFORMATION);
-                                alertHMACDone.setTitle("HMAC файл создан");
-                                alertHMACDone.setHeaderText("HMAC файл создан, путь файла: " + hmacFile.getPath());
-                                alertHMACDone.show();
-                            });
-                            HMACTask.run();
-                        }
-
-                        if (CreateECBCCheckBox.isSelected()) {
-                            File ecbcFile = createNewFile("Создайте или выберите файл для сохранения ECBC");
-                            Task ECBCTasc = mECBCEncryptor.getECBC(resultFileAES, ecbcFile, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC));
-                            ECBCTasc.setOnSucceeded(event -> {
-                                Alert alertECBCDone = new Alert(Alert.AlertType.INFORMATION);
-                                alertECBCDone.setTitle("ECBC файл создан");
-                                alertECBCDone.setHeaderText("ECBC файл создан, путь файла: " + ecbcFile.getPath());
-                                alertECBCDone.show();
-                            });
-                            ECBCTasc.run();
-                        }
-                    });
-                }
-                Thread AESThread = new Thread(AESTask);
-                AESThread.start();
-            }
-        } else {
-            Alert alert = new Alert(AlertType.WARNING);
-            if (originalFileAES == null) {
-                alert.setTitle("Вы не выбрали исходный файл");
-                alert.setHeaderText("Пожалуйста, создайте или выберите исходный файл(1).");
-            } else if (resultFileAES == null) {
-                alert.setTitle("Вы не выбрали файл результата ");
-                alert.setHeaderText("Пожалуйста, создайте или выберите файл результата шифрования(2).");
-            } else if (getKey(keyTextFieldAES, keyFileAES).length == 0) {
-                alert.setTitle("Вы не ввели ключ");
-                alert.setHeaderText("Пожалуйста, введите ключ или выберите файл с ключем.");
-            }
+        Alert alert = new Alert(AlertType.WARNING);
+        if (originalFileAES == null) {
+            alert.setTitle("Вы не выбрали исходный файл");
+            alert.setHeaderText("Пожалуйста, создайте или выберите исходный файл(1).");
             alert.showAndWait();
+            return;
+        } else if (resultFileAES == null) {
+            alert.setTitle("Вы не выбрали файл результата ");
+            alert.setHeaderText("Пожалуйста, создайте или выберите файл результата шифрования(2).");
+            alert.showAndWait();
+            return;
+        } else if (getKey(keyTextFieldAES, keyFileAES) == null) {
+            //alert.setTitle("Ошибка ключа шифрования AES");
+            //alert.setHeaderText("Вы не ввели ключ или ввели ключ длина которого больше 128 бит.");
+            alert.setTitle("Ошибка ключа шифрования AES");
+            alert.setHeaderText("Вы не ввели ключ или ввели ключ длина которого больше 128 бит.");
+            alert.showAndWait();
+            return;
+        } else if (getKey(key2TextFieldECBC, key2FileECBC) == null) {
+            alert.setTitle("Ошибка ключа шифрования ECBC");
+            alert.setHeaderText("Вы не ввели ключ или ввели ключ длина которого больше 128 бит.");
+            alert.showAndWait();
+            return;
+        }
+
+        Alert alertConfirm = new Alert(Alert.AlertType.CONFIRMATION);
+        alertConfirm.setTitle("Результирующий файл будет перезаписан!");
+        alertConfirm.setHeaderText("Внимание, это перезапишет результирующий файл " + resultFileAES.getPath());
+
+        Optional<ButtonType> result = alertConfirm.showAndWait();
+        if (result.get() == ButtonType.OK) {
+
+            Task AESTask = null;
+            if (usingCCM) {
+                MACOptions options = null;
+
+                MACOptions.CipherMode mode = null;
+                switch (CipherModeChioceBox.getValue().id) {
+                    case 0: //CTR
+                        mode = MACOptions.CipherMode.CTR;
+                        break;
+                    case 1: //CBC
+                        mode = MACOptions.CipherMode.CBC;
+                        break;
+                }
+
+                switch (CCM_MACChioceBox.getValue().id) {
+                    case 0: //HMAC
+                        options = new MACOptions(MACOptions.MACType.HMAC, mode, getKey(keyTextFieldAES, keyFileAES), null);
+                        break;
+                    case 1: //ECBC
+                        options = new MACOptions(MACOptions.MACType.ECBC, mode, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC));
+                        break;
+                }
+
+                switch (CCMChioceBox.getValue().id) {
+                    case 1: //MAC-then-Encrypt
+                        AESTask = mMAC_then_Encrypt.encrypt(originalFileAES, resultFileAES, options);
+                        break;
+                    case 2: //Encrypt-then-MAC
+                        AESTask = mEncrypt_then_MAC.encrypt(originalFileAES, resultFileAES, options);
+                        break;
+                    case 3: //Encrypt-and-MAC
+                        AESTask = mEncrypt_and_MAC.encrypt(originalFileAES, resultFileAES, options);
+                        break;
+                }
+
+                AESTask.setOnSucceeded(value -> {
+                    updateFileInfo(resultFilePathAES, resultFileTextAreaAES, resultFileAES);
+                });
+
+            } else {
+
+                switch (CipherModeChioceBox.getValue().id) {
+                    case 0: //CTR
+                        AESTask = mAES_CTREncryptor.encrypt(originalFileAES, resultFileAES, getKey(keyTextFieldAES, keyFileAES));
+                        break;
+                    case 1: //CBC
+                        AESTask = mAES_CBCEncryptor.encrypt(originalFileAES, resultFileAES, getKey(keyTextFieldAES, keyFileAES));
+                        break;
+                }
+
+                AESTask.setOnSucceeded(value -> {
+                    updateFileInfo(resultFilePathAES, resultFileTextAreaAES, resultFileAES);
+
+                    if (CreateHMACCheckBox.isSelected()) {
+                        File hmacFile = createNewFile("Создайте или выберите файл для сохранения HMAC");
+                        Task HMACTask = mHMACEncryptor.getHMAC(resultFileAES, hmacFile, getKey(keyTextFieldAES, keyFileAES));
+                        HMACTask.setOnSucceeded(event -> {
+                            Alert alertHMACDone = new Alert(Alert.AlertType.INFORMATION);
+                            alertHMACDone.setTitle("HMAC файл создан");
+                            alertHMACDone.setHeaderText("HMAC файл создан, путь файла: " + hmacFile.getPath());
+                            alertHMACDone.show();
+                        });
+                        HMACTask.run();
+                    }
+
+                    if (CreateECBCCheckBox.isSelected()) {
+                        File ecbcFile = createNewFile("Создайте или выберите файл для сохранения ECBC");
+                        Task ECBCTasc = mECBCEncryptor.getECBC(resultFileAES, ecbcFile, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC));
+                        ECBCTasc.setOnSucceeded(event -> {
+                            Alert alertECBCDone = new Alert(Alert.AlertType.INFORMATION);
+                            alertECBCDone.setTitle("ECBC файл создан");
+                            alertECBCDone.setHeaderText("ECBC файл создан, путь файла: " + ecbcFile.getPath());
+                            alertECBCDone.show();
+                        });
+                        ECBCTasc.run();
+                    }
+                });
+            }
+            Thread AESThread = new Thread(AESTask);
+            AESThread.start();
         }
     }
 
     private void decryptAES() {
-        if (originalFileAES != null && resultFileAES != null && getKey(keyTextFieldAES, keyFileAES).length != 0) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Оригинальный файл будет перезаписан!");
-            alert.setHeaderText("Внимание, это перезапишет исходный файл " + originalFileAES.getPath());
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
-                Task<Boolean> AESTask;
-                if (usingCCM) {
-                    MACOptions options = null;
-
-                    MACOptions.CipherMode mode = null;
-                    switch (CipherModeChioceBox.getValue().id) {
-                        case 0: //CTR
-                            mode = MACOptions.CipherMode.CTR;
-                            break;
-                        case 1: //CBC
-                            mode = MACOptions.CipherMode.CBC;
-                            break;
-                    }
-
-                    switch (CCM_MACChioceBox.getValue().id) {
-                        case 0: //HMAC
-                            options = new MACOptions(MACOptions.MACType.HMAC, mode, getKey(keyTextFieldAES, keyFileAES), null);
-                            break;
-                        case 1: //ECBC
-                            options = new MACOptions(MACOptions.MACType.ECBC, mode, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC));
-                            break;
-                    }
-
-                    switch (CCMChioceBox.getValue().id) {
-                        case 1: //MAC-then-Encrypt
-                            AESTask = mMAC_then_Encrypt.decrypt(resultFileAES, originalFileAES, options);
-                            break;
-                        case 2: //Encrypt-then-MAC
-                            AESTask = mEncrypt_then_MAC.decrypt(resultFileAES, originalFileAES, options);
-                            break;
-                        case 3: //Encrypt-and-MAC
-                            AESTask = mEncrypt_and_MAC.decrypt(resultFileAES, originalFileAES, options);
-                            ;
-                            break;
-                        default:
-                            AESTask = null;
-                            CommonUtils.reportExceptionToMainThread(new Exception(), "CCMChioceBox.getValue().id");
-                            break;
-                    }
-
-                    AESTask.setOnSucceeded(value -> {
-                        Alert MACAlert = new Alert(AlertType.INFORMATION);
-                        if (AESTask.getValue()) {
-                            MACAlert.setTitle("Проверка AEAD успешно пройдена");
-                            MACAlert.setHeaderText("Проверка AEAD успешно пройдена.");
-                        } else {
-                            MACAlert.setAlertType(AlertType.WARNING);
-                            MACAlert.setTitle("Внимание!");
-                            MACAlert.setHeaderText("Проверка AEAD не пройдена. Возможно исходный файл или MAC были скомпрометированны!");
-                        }
-                        MACAlert.showAndWait();
-                        updateFileInfo(originalFilePathAES, originalFileTextAreaAES, originalFileAES);
-                    });
-
-                } else {
-
-                    switch (CipherModeChioceBox.getValue().id) {
-                        case 0: //CTR
-                            AESTask = mAES_CTREncryptor.decrypt(resultFileAES, originalFileAES, getKey(keyTextFieldAES, keyFileAES));
-                            break;
-                        case 1: //CBC
-                            AESTask = mAES_CBCEncryptor.decrypt(resultFileAES, originalFileAES, getKey(keyTextFieldAES, keyFileAES));
-                            break;
-                        default:
-                            AESTask = null;
-                            break;
-                    }
-
-                    AESTask.setOnSucceeded(value -> {
-                        updateFileInfo(originalFilePathAES, originalFileTextAreaAES, originalFileAES);
-                    });
-                }
-                Thread AESThread = new Thread(AESTask);
-                AESThread.start();
-            }
-        } else {
-            Alert alert = new Alert(AlertType.WARNING);
-            if (originalFileAES == null) {
-                alert.setTitle("Вы не выбрали исходный файл");
-                alert.setHeaderText("Пожалуйста, создайте или выберите исходный файл.");
-            } else if (resultFileAES == null) {
-                alert.setTitle("Вы не выбрали файл результата");
-                alert.setHeaderText("Пожалуйста, создайте или выберите файл результата расшифрования.");
-            } else if (getKey(keyTextFieldAES, keyFileAES).length == 0) {
-                alert.setTitle("Вы не ввели ключ");
-                alert.setHeaderText("Пожалуйста, введите ключ или выберите файл с ключем.");
-            }
+        Alert alert = new Alert(AlertType.WARNING);
+        if (originalFileAES == null) {
+            alert.setTitle("Вы не выбрали исходный файл");
+            alert.setHeaderText("Пожалуйста, создайте или выберите исходный файл.");
             alert.showAndWait();
+            return;
+        } else if (resultFileAES == null) {
+            alert.setTitle("Вы не выбрали файл результата");
+            alert.setHeaderText("Пожалуйста, создайте или выберите файл результата расшифрования.");
+            alert.showAndWait();
+            return;
+        } else if (getKey(keyTextFieldAES, keyFileAES) == null) {
+            alert.setTitle("Ошибка ключа шифрования AES");
+            alert.setHeaderText("Вы не ввели ключ или ввели ключ длина которого больше 128 бит.");
+            alert.showAndWait();
+            return;
+        } else if (getKey(key2TextFieldECBC, key2FileECBC) == null) {
+            alert.setTitle("Ошибка ключа шифрования ECBC");
+            alert.setHeaderText("Вы не ввели ключ или ввели ключ длина которого больше 128 бит.");
+            alert.showAndWait();
+            return;
+        }
+
+        Alert alertConfirm = new Alert(Alert.AlertType.CONFIRMATION);
+        alertConfirm.setTitle("Оригинальный файл будет перезаписан!");
+        alertConfirm.setHeaderText("Внимание, это перезапишет исходный файл " + originalFileAES.getPath());
+
+        Optional<ButtonType> result = alertConfirm.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            Task<Boolean> AESTask;
+            if (usingCCM) {
+                MACOptions options = null;
+
+                MACOptions.CipherMode mode = null;
+                switch (CipherModeChioceBox.getValue().id) {
+                    case 0: //CTR
+                        mode = MACOptions.CipherMode.CTR;
+                        break;
+                    case 1: //CBC
+                        mode = MACOptions.CipherMode.CBC;
+                        break;
+                }
+
+                switch (CCM_MACChioceBox.getValue().id) {
+                    case 0: //HMAC
+                        options = new MACOptions(MACOptions.MACType.HMAC, mode, getKey(keyTextFieldAES, keyFileAES), null);
+                        break;
+                    case 1: //ECBC
+                        options = new MACOptions(MACOptions.MACType.ECBC, mode, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC));
+                        break;
+                }
+
+                switch (CCMChioceBox.getValue().id) {
+                    case 1: //MAC-then-Encrypt
+                        AESTask = mMAC_then_Encrypt.decrypt(resultFileAES, originalFileAES, options);
+                        break;
+                    case 2: //Encrypt-then-MAC
+                        AESTask = mEncrypt_then_MAC.decrypt(resultFileAES, originalFileAES, options);
+                        break;
+                    case 3: //Encrypt-and-MAC
+                        AESTask = mEncrypt_and_MAC.decrypt(resultFileAES, originalFileAES, options);
+                        ;
+                        break;
+                    default:
+                        AESTask = null;
+                        CommonUtils.reportExceptionToMainThread(new Exception(), "CCMChioceBox.getValue().id");
+                        break;
+                }
+
+                AESTask.setOnSucceeded(value -> {
+                    Alert MACAlert = new Alert(AlertType.INFORMATION);
+                    if (AESTask.getValue()) {
+                        MACAlert.setTitle("Проверка AEAD успешно пройдена");
+                        MACAlert.setHeaderText("Проверка AEAD успешно пройдена.");
+                    } else {
+                        MACAlert.setAlertType(AlertType.WARNING);
+                        MACAlert.setTitle("Внимание!");
+                        MACAlert.setHeaderText("Проверка AEAD не пройдена. Возможно исходный файл или MAC были скомпрометированны!");
+                    }
+                    MACAlert.showAndWait();
+                    updateFileInfo(originalFilePathAES, originalFileTextAreaAES, originalFileAES);
+                });
+
+            } else {
+
+                switch (CipherModeChioceBox.getValue().id) {
+                    case 0: //CTR
+                        AESTask = mAES_CTREncryptor.decrypt(resultFileAES, originalFileAES, getKey(keyTextFieldAES, keyFileAES));
+                        break;
+                    case 1: //CBC
+                        AESTask = mAES_CBCEncryptor.decrypt(resultFileAES, originalFileAES, getKey(keyTextFieldAES, keyFileAES));
+                        break;
+                    default:
+                        AESTask = null;
+                        break;
+                }
+
+                AESTask.setOnSucceeded(value -> {
+                    updateFileInfo(originalFilePathAES, originalFileTextAreaAES, originalFileAES);
+                });
+            }
+            Thread AESThread = new Thread(AESTask);
+            AESThread.start();
         }
     }
 
     private void checkHMAC() {
-        if (originalFileAES_HMACTab != null && originalFileHMAC_HMACTab != null && getKey(keyTextFieldHMAC_HMACTab, keyFileHMAC_HMACTab).length != 0) {
-            try {
-                File tempHMAC = new File(originalFileHMAC_HMACTab.getAbsolutePath() + "_temp");
-                tempHMAC.createNewFile();
-
-                Task HMACTask = mHMACEncryptor.getHMAC(originalFileAES_HMACTab, tempHMAC, getKey(keyTextFieldHMAC_HMACTab, keyFileHMAC_HMACTab));
-                HMACTask.setOnSucceeded(value -> {
-                    boolean eq = FileUtils.compareFiles(originalFileHMAC_HMACTab, tempHMAC);
-                    Alert alert = new Alert(AlertType.INFORMATION);
-                    if (eq) {
-                        alert.setTitle("Проверка HMAC пройдена");
-                        alert.setHeaderText("Проверка HMAC пройдена");
-                    } else {
-                        alert.setAlertType(AlertType.WARNING);
-                        alert.setTitle("Проверка HMAC НЕ пройдена!");
-                        alert.setHeaderText("Проверка HMAC НЕ пройдена!");
-                    }
-                    alert.showAndWait();
-                    tempHMAC.delete();
-                });
-                Thread HMACThread = new Thread(HMACTask);
-                HMACThread.start();
-
-            } catch (IOException ex) {
-                showExceptionToUser(ex, "checkHMAC()");
-            }
-        } else {
-            Alert alert = new Alert(AlertType.WARNING);
-            if (originalFileAES_HMACTab == null) {
-                alert.setTitle("Вы не выбрали исходный зашифрованный AES файл");
-                alert.setHeaderText("Пожалуйста, выберите исходный зашифрованный AES файл.");
-            } else if (originalFileHMAC_HMACTab == null) {
-                alert.setTitle("Вы не выбрали файл HMAC");
-                alert.setHeaderText("Пожалуйста, выберите файл HMAC.");
-            } else if (getKey(keyTextFieldHMAC_HMACTab, keyFileHMAC_HMACTab).length == 0) {
-                alert.setTitle("Вы не выбрали или не ввели ключ HMAC");
-                alert.setHeaderText("Пожалуйста, выберите или введите ключ HMAC.");
-            }
+        Alert alert = new Alert(AlertType.WARNING);
+        if (originalFileAES_HMACTab == null) {
+            alert.setTitle("Вы не выбрали исходный зашифрованный AES файл");
+            alert.setHeaderText("Пожалуйста, выберите исходный зашифрованный AES файл.");
             alert.showAndWait();
+            return;
+        } else if (originalFileHMAC_HMACTab == null) {
+            alert.setTitle("Вы не выбрали файл HMAC");
+            alert.setHeaderText("Пожалуйста, выберите файл HMAC.");
+            alert.showAndWait();
+            return;
+        } else if (getKey(keyTextFieldHMAC_HMACTab, keyFileHMAC_HMACTab) == null) {
+            alert.setTitle("Вы не выбрали или не ввели ключ HMAC");
+            alert.setHeaderText("Вы не ввели ключ или ввели ключ длина которого больше 128 бит.");
+            alert.showAndWait();
+            return;
+        }
+
+        try {
+            File tempHMAC = new File(originalFileHMAC_HMACTab.getAbsolutePath() + "_temp");
+            tempHMAC.createNewFile();
+
+            Task HMACTask = mHMACEncryptor.getHMAC(originalFileAES_HMACTab, tempHMAC, getKey(keyTextFieldHMAC_HMACTab, keyFileHMAC_HMACTab));
+            HMACTask.setOnSucceeded(value -> {
+                boolean eq = FileUtils.compareFiles(originalFileHMAC_HMACTab, tempHMAC);
+                Alert alertConfirm = new Alert(AlertType.INFORMATION);
+                if (eq) {
+                    alertConfirm.setTitle("Проверка HMAC пройдена");
+                    alertConfirm.setHeaderText("Проверка HMAC пройдена");
+                } else {
+                    alertConfirm.setAlertType(AlertType.WARNING);
+                    alertConfirm.setTitle("Проверка HMAC НЕ пройдена!");
+                    alertConfirm.setHeaderText("Проверка HMAC НЕ пройдена!");
+                }
+                alertConfirm.showAndWait();
+                tempHMAC.delete();
+            });
+            Thread HMACThread = new Thread(HMACTask);
+            HMACThread.start();
+
+        } catch (IOException ex) {
+            showExceptionToUser(ex, "checkHMAC()");
         }
     }
 
@@ -688,47 +709,50 @@ public class MainController {
             alert.setTitle("Вы не выбрали исходный зашифрованный AES файл");
             alert.setHeaderText("Пожалуйста, выберите исходный зашифрованный AES файл.");
             alert.showAndWait();
+            return;
         } else if (originalFileECBC_ECBCTab == null) {
             alert.setTitle("Вы не выбрали файл ECBC");
             alert.setHeaderText("Пожалуйста, выберите файл ECBC.");
             alert.showAndWait();
-        } else if (getKey(keyTextFieldECBC_ECBCTab, keyFileECBC_ECBCTab).length == 0) {
+            return;
+        } else if (getKey(keyTextFieldECBC_ECBCTab, keyFileECBC_ECBCTab) == null) {
             alert.setTitle("Вы не выбрали или не ввели ключ ECBC");
-            alert.setHeaderText("Пожалуйста, выберите или введите ключ ECBC.");
+            alert.setHeaderText("Вы не ввели ключ или ввели ключ длина которого больше 128 бит.");
             alert.showAndWait();
-        } else if (getKey(key2TextFieldECBC_ECBCTab, key2FileECBC_ECBCTab).length == 0) {
+        } else if (getKey(key2TextFieldECBC_ECBCTab, key2FileECBC_ECBCTab) == null) {
             alert.setTitle("Вы не выбрали или не ввели дополнительный ключ ECBC");
-            alert.setHeaderText("Пожалуйста, выберите или введите дополнительный ключ ECBC.");
+            alert.setHeaderText("Вы не ввели ключ или ввели ключ длина которого больше 128 бит.");
             alert.showAndWait();
-        } else {
-            try {
-                File tempECBC = new File(originalFileECBC_ECBCTab.getAbsolutePath() + "_temp");
-                tempECBC.createNewFile();
+            return;
+        }
 
-                Task ECBCTask = mECBCEncryptor.getECBC(originalFileAES_ECBCTab, tempECBC,
-                        getKey(keyTextFieldECBC_ECBCTab, keyFileECBC_ECBCTab),
-                        getKey(key2TextFieldECBC_ECBCTab, key2FileECBC_ECBCTab));
+        try {
+            File tempECBC = new File(originalFileECBC_ECBCTab.getAbsolutePath() + "_temp");
+            tempECBC.createNewFile();
 
-                ECBCTask.setOnSucceeded(value -> {
-                    boolean eq = FileUtils.compareFiles(originalFileECBC_ECBCTab, tempECBC);
-                    Alert alert2 = new Alert(AlertType.INFORMATION);
-                    if (eq) {
-                        alert2.setTitle("Проверка ECBC пройдена");
-                        alert2.setHeaderText("Проверка ECBC пройдена");
-                    } else {
-                        alert2.setAlertType(AlertType.WARNING);
-                        alert2.setTitle("Проверка ECBC НЕ пройдена!");
-                        alert2.setHeaderText("Проверка ECBC НЕ пройдена!");
-                    }
-                    alert2.showAndWait();
-                    tempECBC.delete();
-                });
-                Thread ECBCThread = new Thread(ECBCTask);
-                ECBCThread.start();
+            Task ECBCTask = mECBCEncryptor.getECBC(originalFileAES_ECBCTab, tempECBC,
+                    getKey(keyTextFieldECBC_ECBCTab, keyFileECBC_ECBCTab),
+                    getKey(key2TextFieldECBC_ECBCTab, key2FileECBC_ECBCTab));
 
-            } catch (IOException ex) {
-                showExceptionToUser(ex, "checkECBC()");
-            }
+            ECBCTask.setOnSucceeded(value -> {
+                boolean eq = FileUtils.compareFiles(originalFileECBC_ECBCTab, tempECBC);
+                Alert alert2 = new Alert(AlertType.INFORMATION);
+                if (eq) {
+                    alert2.setTitle("Проверка ECBC пройдена");
+                    alert2.setHeaderText("Проверка ECBC пройдена");
+                } else {
+                    alert2.setAlertType(AlertType.WARNING);
+                    alert2.setTitle("Проверка ECBC НЕ пройдена!");
+                    alert2.setHeaderText("Проверка ECBC НЕ пройдена!");
+                }
+                alert2.showAndWait();
+                tempECBC.delete();
+            });
+            Thread ECBCThread = new Thread(ECBCTask);
+            ECBCThread.start();
+
+        } catch (IOException ex) {
+            showExceptionToUser(ex, "checkECBC()");
         }
     }
 
@@ -814,7 +838,12 @@ public class MainController {
 
     private byte[] getKey(TextField keyTextField, File keyFile) {
         if (keyTextField.isEditable()) {
-            return keyTextField.getText().getBytes(StandardCharsets.UTF_8);
+            byte[] key = keyTextField.getText().getBytes(StandardCharsets.UTF_8);
+            if (key.length == 0 || key.length > 128) {
+                return null;
+            } else {
+                return key;
+            }
         } else {
             return FileUtils.readBytesFromFile(keyFile, 128);
         }
