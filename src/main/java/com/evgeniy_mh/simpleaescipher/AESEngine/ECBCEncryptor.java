@@ -74,49 +74,72 @@ public class ECBCEncryptor {
     public byte[] getECBC(File in, byte[] key1, byte[] key2) throws IOException {
 
         byte[] tempKey1 = key1;
+        //Если длина первого ключа не кратна размеру блока
+        //Здесь и далее длины ключей key1<128, key2<128
         if (key1.length % AES.BLOCK_SIZE != 0) {
+            //Дополнение первого ключа
             tempKey1 = PKCS7.PKCS7(key1);
         }
 
         byte[] tempKey2 = key2;
+        //Если длина второго ключа не кратна размеру блока
         if (key2.length % AES.BLOCK_SIZE != 0) {
+            //Дополнение второго ключа
             tempKey2 = PKCS7.PKCS7(key2);
         }
-
+        //Инициализация первого ключа
         mAES.makeKey(tempKey1, 128, AES.DIR_BOTH);
 
+        //Открытие файла для считывания
         RandomAccessFile INraf = new RandomAccessFile(in, "r");
-        int nBlocks = CommonUtils.countBlocks(in, AES.BLOCK_SIZE); //сколько блоков открытого текста
+        //сколько блоков открытого текста
+        int nBlocks = CommonUtils.countBlocks(in, AES.BLOCK_SIZE);
 
+        //Буфер байт
         byte[] temp = new byte[AES.BLOCK_SIZE];
+        //Вектор инициализации
         byte[] IV = new byte[AES.BLOCK_SIZE];
         java.util.Arrays.fill(IV, (byte) 0);
 
+        //Цикл по блокам файла
         for (int i = 0; i < nBlocks + 1; i++) {
-            INraf.seek(i * 16); //установка указателя для считывания файла
+            //Установка указателя для считывания файла
+            INraf.seek(i * 16);
 
-            if ((i + 1) == nBlocks + 1) { //последняя итерация
+            //Если последняя итерация
+            if ((i + 1) == nBlocks + 1) {
                 int deltaToBlock = (int) (in.length() % AES.BLOCK_SIZE);
+                //Если последний блок файла меньше 16 байт
                 if (deltaToBlock > 0) {
                     temp = new byte[deltaToBlock];
-                    INraf.read(temp, 0, deltaToBlock);  //считывание неполного блока в temp
+                    //Считывание неполного блока в temp
+                    INraf.read(temp, 0, deltaToBlock);
+                    //Дополнение неполного блока
                     temp = PKCS7.PKCS7(temp);
+
+                    //Иначе если длина последнего блока равна 16 байтам
                 } else {
                     temp = new byte[AES.BLOCK_SIZE];
+                    //Создание последнего блока где все биты равны 16
                     for (int t = 0; t < AES.BLOCK_SIZE; t++) {
                         temp[t] = (byte) AES.BLOCK_SIZE;
                     }
                 }
             } else {
-                INraf.read(temp, 0, AES.BLOCK_SIZE); //считывание блока в temp
+                //Иначе если не последняя итерация считывание из файла
+                INraf.read(temp, 0, AES.BLOCK_SIZE);
             }
 
             for (int k = 0; k < AES.BLOCK_SIZE; k++) {
+                //c_i=(c_i-1 XOR p_i)
                 temp[k] = (byte) (temp[k] ^ IV[k]);
             }
+            //Выполнение первого шифрования
             mAES.encrypt(temp, IV);
         }
+        //Инициализация второго ключа
         mAES.makeKey(tempKey2, 128, AES.DIR_BOTH);
+        //Выполнение повторного шифрования
         mAES.encrypt(IV, IV);
 
         return IV;

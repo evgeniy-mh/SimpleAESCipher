@@ -171,15 +171,20 @@ public class AES_CBCEncryptor extends Encryptor {
                         System.arraycopy(temp, 0, prev, 0, AES.BLOCK_SIZE);
                         OUTraf.write(c);
 
+                        //Если это последняя итерация
                         if ((i + 1) == nBlocks) {
+                            //На случай дешифрования с неправильным ключом
                             if (c[AES.BLOCK_SIZE - 1] > 0 && c[AES.BLOCK_SIZE - 1] <= 16) {
-                                nToDeleteBytes = c[AES.BLOCK_SIZE - 1]; //на случай дешифрования с неправильным ключем
+                                //Количество байт, которые будут удалены с конца файла
+                                nToDeleteBytes = c[AES.BLOCK_SIZE - 1];
                             }
                         }
+                        //Обновление элемента пользовательского интерфейса
                         progressIndicator.setProgress((double) i / nBlocks);
                     }
-
+                    //Удаление байт дополнения
                     OUTraf.setLength(OUTraf.length() - nToDeleteBytes);
+                    //Закрытие файловых потоков
                     OUTraf.close();
                     INraf.close();
                 } catch (IOException e) {

@@ -9,13 +9,19 @@ public class PKCS7 {
      * @return Дополненный массив байт
      */
     public static byte[] PKCS7(byte[] b) {
-        int n = countDeltaBlocks(b); //сколько байт нужно добавить и какое у них будет значение 
+        //Сколько байт нужно добавить и какое у них будет значение
+        int n = countDeltaBlocks(b);
+
+        //Если необходимо дополнить
         if (n != 0) {
+            //bPadded - результат дополнения
             byte[] bPadded = new byte[b.length + n];
             for (int i = 0; i < bPadded.length; i++) {
                 if (i < b.length) {
+                    //Запись существующих байт
                     bPadded[i] = b[i];
                 } else {
+                    //Запись дополняющей последовательности
                     bPadded[i] = (byte) n;
                 }
             }
