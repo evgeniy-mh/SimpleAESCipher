@@ -1,13 +1,14 @@
 package com.evgeniy_mh.simpleaescipher.AESEngine;
 
 import com.evgeniy_mh.simpleaescipher.CommonUtils;
+import javafx.concurrent.Task;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import javafx.concurrent.Task;
 
 public class HMACEncryptor {
 
