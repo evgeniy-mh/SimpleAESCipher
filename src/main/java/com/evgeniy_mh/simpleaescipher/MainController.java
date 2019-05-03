@@ -32,6 +32,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -253,8 +254,11 @@ public class MainController {
         keyTextFieldAES.setOnMouseClicked((event) -> {
             if (!keyTextFieldAES.isEditable()) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                 alert.setTitle("Использовать поле ввода ключа?");
                 alert.setHeaderText("Вы желаете ввести ключ самостоятельно?");
+
+                System.out.println(alert.getTitle());
 
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
@@ -349,8 +353,11 @@ public class MainController {
         keyTextFieldECBC_ECBCTab.setOnMouseClicked((event) -> {
             if (!keyTextFieldECBC_ECBCTab.isEditable()) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                 alert.setTitle("Использовать поле ввода ключа?");
                 alert.setHeaderText("Вы желаете ввести ключ самостоятельно?");
+
+                System.out.println(alert.getTitle());
 
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
@@ -372,8 +379,11 @@ public class MainController {
         key2TextFieldECBC_ECBCTab.setOnMouseClicked((event) -> {
             if (!key2TextFieldECBC_ECBCTab.isEditable()) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                 alert.setTitle("Использовать поле ввода ключа?");
                 alert.setHeaderText("Вы желаете ввести ключ самостоятельно?");
+
+                System.out.println(alert.getTitle());
 
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
@@ -417,9 +427,11 @@ public class MainController {
         keyTextFieldHMAC_HMACTab.setOnMouseClicked((event) -> {
             if (!keyTextFieldHMAC_HMACTab.isEditable()) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                 alert.setTitle("Использовать поле ввода ключа?");
                 alert.setHeaderText("Вы желаете ввести ключ самостоятельно?");
 
+                System.out.println(alert.getTitle());
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
                     keyTextFieldHMAC_HMACTab.clear();
@@ -436,6 +448,7 @@ public class MainController {
 
     private void encryptAES() {
         Alert alert = new Alert(AlertType.WARNING);
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         if (originalFileAES == null) {
             alert.setTitle("Вы не выбрали исходный файл");
             alert.setHeaderText("Пожалуйста, создайте или выберите исходный файл(1).");
@@ -452,11 +465,14 @@ public class MainController {
             alert.showAndWait();
             return;
         }
+        System.out.println(alert.getTitle());
 
         Alert alertConfirm = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         alertConfirm.setTitle("Результирующий файл будет перезаписан!");
         alertConfirm.setHeaderText("Внимание, это перезапишет результирующий файл " + resultFileAES.getPath());
 
+        System.out.println(alertConfirm.getTitle());
         Optional<ButtonType> result = alertConfirm.showAndWait();
         if (result.get() == ButtonType.OK) {
 
@@ -524,9 +540,11 @@ public class MainController {
                         Task HMACTask = mHMACEncryptor.getHMAC(resultFileAES, hmacFile, getKey(keyTextFieldAES, keyFileAES));
                         HMACTask.setOnSucceeded(event -> {
                             Alert alertHMACDone = new Alert(Alert.AlertType.INFORMATION);
+                            alertHMACDone.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                             alertHMACDone.setTitle("HMAC файл создан");
                             alertHMACDone.setHeaderText("HMAC файл создан, путь файла: " + hmacFile.getPath());
                             alertHMACDone.show();
+                            System.out.println(alertHMACDone.getTitle());
                         });
                         HMACTask.run();
                     }
@@ -542,9 +560,11 @@ public class MainController {
                         Task ECBCTasc = mECBCEncryptor.getECBC(resultFileAES, ecbcFile, getKey(keyTextFieldAES, keyFileAES), getKey(key2TextFieldECBC, key2FileECBC));
                         ECBCTasc.setOnSucceeded(event -> {
                             Alert alertECBCDone = new Alert(Alert.AlertType.INFORMATION);
+                            alertECBCDone.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                             alertECBCDone.setTitle("ECBC файл создан");
                             alertECBCDone.setHeaderText("ECBC файл создан, путь файла: " + ecbcFile.getPath());
                             alertECBCDone.show();
+                            System.out.println(alertECBCDone.getTitle());
                         });
                         ECBCTasc.run();
                     }
@@ -557,6 +577,7 @@ public class MainController {
 
     private void decryptAES() {
         Alert alert = new Alert(AlertType.WARNING);
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         if (originalFileAES == null) {
             alert.setTitle("Вы не выбрали исходный файл");
             alert.setHeaderText("Пожалуйста, создайте или выберите исходный файл.");
@@ -573,11 +594,14 @@ public class MainController {
             alert.showAndWait();
             return;
         }
+        System.out.println(alert.getTitle());
 
         Alert alertConfirm = new Alert(Alert.AlertType.CONFIRMATION);
+        alertConfirm.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         alertConfirm.setTitle("Оригинальный файл будет перезаписан!");
         alertConfirm.setHeaderText("Внимание, это перезапишет исходный файл " + originalFileAES.getPath());
 
+        System.out.println(alertConfirm.getTitle());
         Optional<ButtonType> result = alertConfirm.showAndWait();
         if (result.get() == ButtonType.OK) {
             Task<Boolean> AESTask;
@@ -628,6 +652,7 @@ public class MainController {
 
                 AESTask.setOnSucceeded(value -> {
                     Alert MACAlert = new Alert(AlertType.INFORMATION);
+                    MACAlert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                     if (AESTask.getValue()) {
                         MACAlert.setTitle("Проверка AEAD успешно пройдена");
                         MACAlert.setHeaderText("Проверка AEAD успешно пройдена.");
@@ -636,7 +661,9 @@ public class MainController {
                         MACAlert.setTitle("Внимание!");
                         MACAlert.setHeaderText("Проверка AEAD не пройдена. Возможно исходный файл или MAC были скомпрометированны!");
                     }
+                    System.out.println(MACAlert.getTitle());
                     MACAlert.showAndWait();
+
                     updateFileInfo(originalFilePathAES, originalFileTextAreaAES, originalFileAES);
                 });
 
@@ -665,6 +692,7 @@ public class MainController {
 
     private void checkHMAC() {
         Alert alert = new Alert(AlertType.WARNING);
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         if (originalFileAES_HMACTab == null) {
             alert.setTitle("Вы не выбрали исходный зашифрованный AES файл");
             alert.setHeaderText("Пожалуйста, выберите исходный зашифрованный AES файл.");
@@ -681,6 +709,7 @@ public class MainController {
             alert.showAndWait();
             return;
         }
+        System.out.println(alert.getTitle());
 
         try {
             File tempHMAC = new File(originalFileHMAC_HMACTab.getAbsolutePath() + "_temp");
@@ -690,6 +719,7 @@ public class MainController {
             HMACTask.setOnSucceeded(value -> {
                 boolean eq = FileUtils.compareFiles(originalFileHMAC_HMACTab, tempHMAC);
                 Alert alertConfirm = new Alert(AlertType.INFORMATION);
+                alertConfirm.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                 if (eq) {
                     alertConfirm.setTitle("Проверка HMAC пройдена");
                     alertConfirm.setHeaderText("Проверка HMAC пройдена");
@@ -698,6 +728,7 @@ public class MainController {
                     alertConfirm.setTitle("Проверка HMAC НЕ пройдена!");
                     alertConfirm.setHeaderText("Проверка HMAC НЕ пройдена!");
                 }
+                System.out.println(alertConfirm.getTitle());
                 alertConfirm.showAndWait();
                 tempHMAC.delete();
             });
@@ -711,6 +742,7 @@ public class MainController {
 
     private void checkECBC() {
         Alert alert = new Alert(AlertType.WARNING);
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         if (originalFileAES_ECBCTab == null) {
             alert.setTitle("Вы не выбрали исходный зашифрованный AES файл");
             alert.setHeaderText("Пожалуйста, выберите исходный зашифрованный AES файл.");
@@ -731,6 +763,7 @@ public class MainController {
             alert.showAndWait();
             return;
         }
+        System.out.println(alert.getTitle());
 
         try {
             File tempECBC = new File(originalFileECBC_ECBCTab.getAbsolutePath() + "_temp");
@@ -743,6 +776,7 @@ public class MainController {
             ECBCTask.setOnSucceeded(value -> {
                 boolean eq = FileUtils.compareFiles(originalFileECBC_ECBCTab, tempECBC);
                 Alert alert2 = new Alert(AlertType.INFORMATION);
+                alert2.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                 if (eq) {
                     alert2.setTitle("Проверка ECBC пройдена");
                     alert2.setHeaderText("Проверка ECBC пройдена");
@@ -751,6 +785,7 @@ public class MainController {
                     alert2.setTitle("Проверка ECBC НЕ пройдена!");
                     alert2.setHeaderText("Проверка ECBC НЕ пройдена!");
                 }
+                System.out.println(alert2.getTitle());
                 alert2.showAndWait();
                 tempECBC.delete();
             });
@@ -865,6 +900,7 @@ public class MainController {
 
     public static void showExceptionToUser(Throwable e, String message) {
         Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+        errorAlert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         errorAlert.setTitle("Exception!");
         StringWriter sw = new StringWriter();
         e.printStackTrace(new PrintWriter(sw));

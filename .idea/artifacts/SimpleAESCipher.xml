@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="javafx" name="SimpleAESCipher">
+    <output-path>$PROJECT_DIR$/classes/artifacts/SimpleAESCipher</output-path>
+    <root id="root">
+      <element id="archive" name="SimpleAESCipher.jar">
+        <element id="module-output" name="SimpleAESCipher" />
+      </element>
+    </root>
+  </artifact>
+</component>

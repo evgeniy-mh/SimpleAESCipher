@@ -23,35 +23,51 @@ public class MAC_then_Encrypt extends CCMEncryptor {
         return new Task<Void>() {
             @Override
             protected Void call() {
+                //Создание временного файла
                 File tempFile = new File(in.getAbsolutePath() + "_temp");
+                //Копирование содержимого файла in в временный файл
                 FileUtils.createFileCopy(in, tempFile);
 
                 Task MACTask = null;
 
                 switch (options.getType()) {
+                    //В случае использования алгоритма ECBC для создания кода аутентификации
                     case ECBC:
                         ECBCEncryptor ecbce = new ECBCEncryptor();
+                        //Добавление кода аутентификации созданного на основе
+                        //оригинального сообщения к временному файлу
                         MACTask = ecbce.addECBCToFile(tempFile, options.getKey1(), options.getKey2());
                         break;
+                    //В случае использования алгоритма HMAC для создания кода аутентификации
                     case HMAC:
                         HMACEncryptor hmace = new HMACEncryptor();
+                        //Добавление кода аутентификации созданного на основе
+                        //оригинального сообщения к временному файлу
                         MACTask = hmace.addHMACToFile(tempFile, options.getKey1());
                         break;
                 }
+                //Запуск потока прикрепляющего код аутентификации к файлу
                 Thread MACThread = new Thread(MACTask);
                 MACThread.start();
 
                 try {
+                    //Ожидание завершения потока
                     MACThread.join();
                 } catch (InterruptedException ex) {
                     CommonUtils.reportExceptionToMainThread(ex, "MACThread.join();");
                 }
 
                 switch (options.getMode()) {
+                    //В случае использования алгоритма CBC при шифровании сообщения
                     case CBC:
+                        //Шифрование оригинального сообщения вместе с кодом аутентификации
+                        //в режиме CBC, запись результата в файл out
                         mAES_CBCEncryptor.encrypt(tempFile, out, options.getKey1()).run();
                         break;
+                    //В случае использования алгоритма CTR при шифровании сообщения
                     case CTR:
+                        //Шифрование оригинального сообщения вместе с кодом аутентификации
+                        //в режиме CTR, запись результата в файл out
                         mAES_CTREncryptor.encrypt(tempFile, out, options.getKey1()).run();
                         break;
                 }
