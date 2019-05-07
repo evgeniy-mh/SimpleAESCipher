@@ -9,6 +9,7 @@
     <list default="true" id="07a9b28c-49b3-4409-8ee5-5d437362a6ee" name="Default Changelist" comment="">
       <change afterPath="$PROJECT_DIR$/.idea/artifacts/SimpleAESCipher.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/artifacts/SimpleAESCipher_jar.xml" afterDir="false" />
+<<<<<<< HEAD
       <change afterPath="$PROJECT_DIR$/.idea/dictionaries/evgenii_mikhailishin.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_base_12.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_base_win_12.xml" afterDir="false" />
@@ -18,17 +19,34 @@
       <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_fxml_win_12.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_graphics_12.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_graphics_win_12.xml" afterDir="false" />
+=======
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_base_12.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_base_linux_12.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_controls_12.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_controls_linux_12.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_fxml_12.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_fxml_linux_12.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_graphics_12.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_graphics_linux_12.xml" afterDir="false" />
+>>>>>>> 15b76b15545f774b8f8ba44a00bb17e077a9426f
       <change afterPath="$PROJECT_DIR$/classes/artifacts/SimpleAESCipher/SimpleAESCipher.jar" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/classes/artifacts/SimpleAESCipher_jar/SimpleAESCipher.jar" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/META-INF/MANIFEST.MF" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/resources/META-INF/MANIFEST.MF" afterDir="false" />
+<<<<<<< HEAD
+=======
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+>>>>>>> 15b76b15545f774b8f8ba44a00bb17e077a9426f
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SimpleAESCipher.iml" beforeDir="false" afterPath="$PROJECT_DIR$/SimpleAESCipher.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/AESEngine/CCM/Encrypt_and_MAC.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/AESEngine/CCM/Encrypt_and_MAC.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/AESEngine/CCM/Encrypt_then_MAC.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/AESEngine/CCM/Encrypt_then_MAC.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/AESEngine/CCM/MAC_then_Encrypt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/AESEngine/CCM/MAC_then_Encrypt.java" afterDir="false" />
+=======
+>>>>>>> 15b76b15545f774b8f8ba44a00bb17e077a9426f
       <change beforePath="$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/AESEngine/HMACEncryptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/AESEngine/HMACEncryptor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/MainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/MainController.java" afterDir="false" />
     </list>
@@ -45,11 +63,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+<<<<<<< HEAD
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/AESEngine/CCM/Encrypt_then_MAC.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="300">
               <caret line="26" column="20" selection-start-line="26" selection-start-column="20" selection-end-line="26" selection-end-column="83" />
+=======
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/AESEngine/HMACEncryptor.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-2056">
+              <caret line="12" column="13" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
+>>>>>>> 15b76b15545f774b8f8ba44a00bb17e077a9426f
               <folding>
                 <element signature="e#740#3178#0" expanded="true" />
                 <element signature="e#3177#3178#0" expanded="true" />
@@ -59,32 +85,52 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/AESEngine/CCM/Encrypt_and_MAC.java">
+        <entry file="file://$PROJECT_DIR$/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="335">
               <caret line="115" column="20" lean-forward="true" selection-start-line="115" selection-start-column="20" selection-end-line="115" selection-end-column="76" />
               <folding>
                 <element signature="e#738#2093#0" expanded="true" />
                 <element signature="e#2092#2093#0" expanded="true" />
               </folding>
+=======
+            <state relative-caret-position="924">
+              <caret line="42" column="42" selection-start-line="42" selection-start-column="42" selection-end-line="42" selection-end-column="42" />
+>>>>>>> 15b76b15545f774b8f8ba44a00bb17e077a9426f
             </state>
           </provider>
         </entry>
       </file>
+<<<<<<< HEAD
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/AESEngine/CCM/MAC_then_Encrypt.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="220">
               <caret line="25" column="16" selection-start-line="25" selection-start-column="16" selection-end-line="74" selection-end-column="34" />
+=======
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/MainController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="6886">
+              <caret line="460" column="19" selection-start-line="460" selection-start-column="19" selection-end-line="460" selection-end-column="19" />
+>>>>>>> 15b76b15545f774b8f8ba44a00bb17e077a9426f
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+<<<<<<< HEAD
         <entry file="file://$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/AESEngine/ECBCEncryptor.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="218">
               <caret line="42" column="16" selection-start-line="42" selection-start-column="16" selection-end-line="42" selection-end-column="16" />
+=======
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/MainApp.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="176">
+              <caret line="13" selection-start-line="13" selection-end-line="13" />
+>>>>>>> 15b76b15545f774b8f8ba44a00bb17e077a9426f
             </state>
           </provider>
         </entry>
@@ -111,9 +157,12 @@
         <option value="$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/AESEngine/HMACEncryptor.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/MainController.java" />
+<<<<<<< HEAD
         <option value="$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/AESEngine/CCM/Encrypt_and_MAC.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/AESEngine/CCM/Encrypt_then_MAC.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/AESEngine/CCM/MAC_then_Encrypt.java" />
+=======
+>>>>>>> 15b76b15545f774b8f8ba44a00bb17e077a9426f
       </list>
     </option>
   </component>
@@ -133,10 +182,38 @@
       <select />
     </treeState>
   </component>
+<<<<<<< HEAD
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="3" />
     <option name="y" value="25" />
     <option name="width" value="903" />
+=======
+  <component name="ProjectConfigurationFiles">
+    <option name="files">
+      <list>
+        <option value="$PROJECT_DIR$/SimpleAESCipher.iml" />
+        <option value="$PROJECT_DIR$/.idea/vcs.xml" />
+        <option value="$PROJECT_DIR$/.idea/compiler.xml" />
+        <option value="$PROJECT_DIR$/.idea/encodings.xml" />
+        <option value="$PROJECT_DIR$/.idea/modules.xml" />
+        <option value="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_base_12.xml" />
+        <option value="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_base_linux_12.xml" />
+        <option value="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_controls_12.xml" />
+        <option value="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_controls_linux_12.xml" />
+        <option value="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_graphics_12.xml" />
+        <option value="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_graphics_linux_12.xml" />
+        <option value="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_fxml_12.xml" />
+        <option value="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_fxml_linux_12.xml" />
+        <option value="$PROJECT_DIR$/.idea/artifacts/SimpleAESCipher.xml" />
+        <option value="$PROJECT_DIR$/.idea/artifacts/SimpleAESCipher_jar.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="4" />
+    <option name="y" value="26" />
+    <option name="width" value="902" />
+>>>>>>> 15b76b15545f774b8f8ba44a00bb17e077a9426f
     <option name="height" value="490" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -145,6 +222,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -176,6 +254,7 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
+<<<<<<< HEAD
               <item name="com" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -195,6 +274,8 @@
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="com" type="462c0819:PsiDirectoryNode" />
               <item name="evgeniy_mh" type="462c0819:PsiDirectoryNode" />
+=======
+>>>>>>> 15b76b15545f774b8f8ba44a00bb17e077a9426f
               <item name="simpleaescipher" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -203,8 +284,11 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
+<<<<<<< HEAD
               <item name="com" type="462c0819:PsiDirectoryNode" />
               <item name="evgeniy_mh" type="462c0819:PsiDirectoryNode" />
+=======
+>>>>>>> 15b76b15545f774b8f8ba44a00bb17e077a9426f
               <item name="simpleaescipher" type="462c0819:PsiDirectoryNode" />
               <item name="AESEngine" type="462c0819:PsiDirectoryNode" />
             </path>
@@ -214,8 +298,11 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
+<<<<<<< HEAD
               <item name="com" type="462c0819:PsiDirectoryNode" />
               <item name="evgeniy_mh" type="462c0819:PsiDirectoryNode" />
+=======
+>>>>>>> 15b76b15545f774b8f8ba44a00bb17e077a9426f
               <item name="simpleaescipher" type="462c0819:PsiDirectoryNode" />
               <item name="AESEngine" type="462c0819:PsiDirectoryNode" />
               <item name="CCM" type="462c0819:PsiDirectoryNode" />
@@ -240,7 +327,6 @@
         </subPane>
       </pane>
       <pane id="Scope" />
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -250,10 +336,17 @@
     <property name="Repository.Attach.Sources" value="false" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+<<<<<<< HEAD
     <property name="project.structure.last.edited" value="Facets" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="reference.settings.ide.settings.spelling" />
+=======
+    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="reference.projectsettings.compiler.javacompiler" />
+>>>>>>> 15b76b15545f774b8f8ba44a00bb17e077a9426f
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -302,9 +395,15 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
+<<<<<<< HEAD
     <frame x="-7" y="33" width="1550" height="838" extended-state="6" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15570469" />
+=======
+    <frame x="0" y="46" width="1920" height="1034" extended-state="6" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25320512" />
+>>>>>>> 15b76b15545f774b8f8ba44a00bb17e077a9426f
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -326,7 +425,11 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Palette" order="3" />
+<<<<<<< HEAD
       <window_info anchor="right" id="Maven" order="4" visible="true" weight="0.21275167" />
+=======
+      <window_info anchor="right" id="Maven" order="4" visible="true" weight="0.21314102" />
+>>>>>>> 15b76b15545f774b8f8ba44a00bb17e077a9426f
       <window_info anchor="right" id="Theme Preview" order="5" />
       <window_info anchor="right" id="Capture Analysis" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
@@ -364,6 +467,16 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+=======
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/AESEngine/ECBCEncryptor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1035">
+          <caret line="77" column="11" selection-start-line="77" selection-start-column="11" selection-end-line="77" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+>>>>>>> 15b76b15545f774b8f8ba44a00bb17e077a9426f
     <entry file="file://$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/AESEngine/Encryptor.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
@@ -384,8 +497,12 @@
     <entry file="file://$PROJECT_DIR$/nbactions.xml">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+<<<<<<< HEAD
     <entry file="jar://$MAVEN_REPOSITORY$/org/openjfx/javafx-graphics/12/javafx-graphics-12-linux.jar!/javafx/concurrent/Task.class" />
     <entry file="file://$PROJECT_DIR$/src/main/resources/fxml/mainOverview.fxml">
+=======
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/AESEngine/CCM/Encrypt_and_MAC.java">
+>>>>>>> 15b76b15545f774b8f8ba44a00bb17e077a9426f
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="280">
           <caret line="36" column="53" selection-start-line="36" selection-start-column="53" selection-end-line="36" selection-end-column="53" />
@@ -393,6 +510,7 @@
       </provider>
       <provider editor-type-id="JavaFX-Scene-Builder" />
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="840">
@@ -410,12 +528,19 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/MainApp.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="160">
+=======
+    <entry file="jar://$MAVEN_REPOSITORY$/org/openjfx/javafx-graphics/12/javafx-graphics-12-linux.jar!/javafx/concurrent/Task.class" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/MainApp.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+>>>>>>> 15b76b15545f774b8f8ba44a00bb17e077a9426f
           <caret line="13" selection-start-line="13" selection-end-line="13" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/AESEngine/CCM/CCMEncryptor.java">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="100">
           <caret line="10" column="22" selection-start-line="10" selection-start-column="22" selection-end-line="10" selection-end-column="22" />
         </state>
@@ -446,24 +571,49 @@
             <element signature="e#738#2093#0" expanded="true" />
             <element signature="e#2092#2093#0" expanded="true" />
           </folding>
+=======
+        <state relative-caret-position="924">
+          <caret line="42" column="42" selection-start-line="42" selection-start-column="42" selection-end-line="42" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/fxml/mainOverview.fxml">
+      <provider editor-type-id="JavaFX-Scene-Builder" />
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="36" column="53" selection-start-line="36" selection-start-column="53" selection-end-line="36" selection-end-column="53" />
+>>>>>>> 15b76b15545f774b8f8ba44a00bb17e077a9426f
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/AESEngine/CCM/Encrypt_then_MAC.java">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="300">
           <caret line="26" column="20" selection-start-line="26" selection-start-column="20" selection-end-line="26" selection-end-column="83" />
           <folding>
             <element signature="e#740#3178#0" expanded="true" />
             <element signature="e#3177#3178#0" expanded="true" />
           </folding>
+=======
+        <state relative-caret-position="6886">
+          <caret line="460" column="19" selection-start-line="460" selection-start-column="19" selection-end-line="460" selection-end-column="19" />
+>>>>>>> 15b76b15545f774b8f8ba44a00bb17e077a9426f
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/evgeniy_mh/simpleaescipher/AESEngine/CCM/MAC_then_Encrypt.java">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="220">
           <caret line="25" column="16" selection-start-line="25" selection-start-column="16" selection-end-line="74" selection-end-column="34" />
+=======
+        <state relative-caret-position="-2056">
+          <caret line="12" column="13" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+>>>>>>> 15b76b15545f774b8f8ba44a00bb17e077a9426f
         </state>
       </provider>
     </entry>
@@ -478,6 +628,10 @@
             <option name="proportions">
               <list>
                 <option value="0.2" />
+<<<<<<< HEAD
+=======
+                <option value="0.5" />
+>>>>>>> 15b76b15545f774b8f8ba44a00bb17e077a9426f
               </list>
             </option>
           </splitter-proportions>

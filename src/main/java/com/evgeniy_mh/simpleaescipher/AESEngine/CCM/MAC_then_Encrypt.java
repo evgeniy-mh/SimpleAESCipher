@@ -83,41 +83,60 @@ public class MAC_then_Encrypt extends CCMEncryptor {
         return new Task<Boolean>() {
             @Override
             protected Boolean call() throws IOException {
+                //Создание временного файла в котором будет хранится результат расшифрования
                 File tempFile = new File(out.getAbsolutePath() + "_temp");
 
                 switch (options.getMode()) {
+                    //Если для расшифровки используется алгоритм CBC
                     case CBC:
+                        //Расшифровка сообщения, запись результата в временный файл
                         mAES_CBCEncryptor.decrypt(in, tempFile, options.getKey1()).run();
                         break;
+                    //Если для расшифровки используется алгоритм CTR
                     case CTR:
+                        //Расшифровка сообщения, запись результата в временный файл
                         mAES_CTREncryptor.decrypt(in, tempFile, options.getKey1()).run();
                         break;
                 }
-                
+
+                //Считывание кода аутентификации сообщения из расшифрованого файла
+                //Последние 16 байт это код аутентификации
                 byte[] MACFromFile = FileUtils.readBytesFromFile(tempFile, (int) tempFile.length() - 16, (int) tempFile.length());
 
+                //Удаление кода аутентификации сообщения из расшифрованного файла
                 try (RandomAccessFile OUTraf = new RandomAccessFile(tempFile, "rw")) {
                     OUTraf.setLength(tempFile.length() - 16);
                 }
 
+                //Объявление буфера для хранения созданного кода аутентификации
                 byte[] MAC = null;
                 switch (options.getType()) {
+                    //В случае использования алгоритма ECBC для создания кода аутентификации
                     case ECBC:
                         ECBCEncryptor ecbce = new ECBCEncryptor();
+                        //Получение кода аутентификации из расшифрованного сообщения
                         MAC = ecbce.getECBC(tempFile, options.getKey1(), options.getKey2());
                         break;
+                    //В случае использования алгоритма HMAC для создания кода аутентификации
                     case HMAC:
                         HMACEncryptor hmace = new HMACEncryptor();
+                        //Получение кода аутентификации из расшифрованного сообщения
                         MAC = hmace.getHMAC(FileUtils.readBytesFromFile(tempFile, (int) tempFile.length()), options.getKey1());
                         break;
                 }
 
+                //Сравнение полученного кода аутентификации с созданным
                 if (MAC != null && Arrays.equals(MACFromFile, MAC)) {
+                    //Если коды аутентификации совпадают, то результат расшифрования записывается в файл out
                     FileUtils.createFileCopy(tempFile, out, tempFile.length());
+                    //Удаление временного файла
                     tempFile.delete();
+                    //Если коды аутентификации совпадают - возвращается true
                     return true;
                 } else {
+                    //Удаление временного файла
                     tempFile.delete();
+                    //Если коды аутентификации не совпадают - возвращается false
                     return false;
                 }
             }
